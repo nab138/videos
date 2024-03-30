@@ -11,11 +11,11 @@ import "./font.css";
 import obstacles from "./scenes/obstacles?scene";
 import logo from "./scenes/logo?scene";
 
-// export default makeProject({
-//   scenes: [intro, overview, setup, obstacles],
-//   audio: voiceover,
-// });
 export default makeProject({
-  scenes: [logo],
+  scenes: [intro, overview, setup, obstacles],
   audio: voiceover,
 });
+// export default makeProject({
+//   scenes: [logo],
+//   audio: voiceover,
+// });
