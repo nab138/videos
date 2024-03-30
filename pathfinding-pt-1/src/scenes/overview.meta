@@ -1,0 +1,14 @@
+{
+  "version": 0,
+  "timeEvents": [
+    {
+      "name": "overviewStart",
+      "targetTime": 1.4076488485632113
+    },
+    {
+      "name": "transitionToObstacles",
+      "targetTime": 38.024173594496084
+    }
+  ],
+  "seed": 2494281628
+}

@@ -1,0 +1,82 @@
+{
+  "version": 0,
+  "timeEvents": [
+    {
+      "name": "vertices",
+      "targetTime": 7.221931766132004
+    },
+    {
+      "name": "vectors",
+      "targetTime": 8.221931766132004
+    },
+    {
+      "name": "vertex",
+      "targetTime": 10.90203398755788
+    },
+    {
+      "name": "dozer",
+      "targetTime": 13.950979596661144
+    },
+    {
+      "name": "dozerZoom",
+      "targetTime": 18.80873739894387
+    },
+    {
+      "name": "dozerAxis",
+      "targetTime": 22.096093298462588
+    },
+    {
+      "name": "codeBlock",
+      "targetTime": 25.68973437856924
+    },
+    {
+      "name": "xCoord",
+      "targetTime": 27.913563487254912
+    },
+    {
+      "name": "yCoord",
+      "targetTime": 28.73459241656075
+    },
+    {
+      "name": "meters",
+      "targetTime": 30.989176331221717
+    },
+    {
+      "name": "codeDismiss",
+      "targetTime": 33.48310550707606
+    },
+    {
+      "name": "vector",
+      "targetTime": 35.17433850354254
+    },
+    {
+      "name": "contexts",
+      "targetTime": 37.49839337920886
+    },
+    {
+      "name": "contextsEnds",
+      "targetTime": 40.48447569270835
+    },
+    {
+      "name": "definition",
+      "targetTime": 47.080276839809265
+    },
+    {
+      "name": "xCoord2",
+      "targetTime": 49.2949917091866
+    },
+    {
+      "name": "vecDismiss",
+      "targetTime": 54.50500459825134
+    },
+    {
+      "name": "normalize",
+      "targetTime": 61.02575707201835
+    },
+    {
+      "name": "obstacleTransition",
+      "targetTime": 75.43073255226189
+    }
+  ],
+  "seed": 2180341840
+}
