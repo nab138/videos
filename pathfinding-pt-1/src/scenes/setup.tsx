@@ -96,7 +96,7 @@ export default makeScene2D(function* (view) {
 
   c.threeScene.background = new THREE.Color("rgb(13, 13, 13)");
 
-  draw3DGrid(c, canvasWidth, canvasHeight, 101, 346, 0x959595, 21.5);
+  draw3DGrid(c, canvasWidth, canvasHeight, 101, 346, 0xa5a5a5, 16);
 
   let [dirLight, ambLight] = addLight(c, 0xffffff, 3);
 
@@ -115,8 +115,6 @@ export default makeScene2D(function* (view) {
   dozer3D.scale([0, 0, 0]);
   dozer3D.quaternion(axisAngle(new THREE.Vector3(0, 1, 0), Math.PI));
 
-  let originalQuat: THREE.Quaternion;
-
   yield* all(dozer3D.scale([1, 1, 1], 1), point3D.position([0.585, 0, 0], 1));
   yield* all(
     tween(0.5, (tRaw) => {
@@ -132,7 +130,6 @@ export default makeScene2D(function* (view) {
         c.camera.quaternion(
           axisAngle(new THREE.Vector3(1, 0, 0), (Math.PI / 4) * t)
         );
-        if (tRaw === 1) originalQuat = c.threeCamera.quaternion.clone();
       }),
       () => c.camera.lookAt([0, 0, 0]),
       tween(1.0, (tRaw) => {
@@ -362,7 +359,7 @@ export default makeScene2D(function* (view) {
   yield* waitUntil("vector");
 
   vector.point().position(new Vector2(0, 0));
-  yield* all(vector.line().end(1, 1), vertex().size(0, 1));
+  yield* all(vector.line().end(1, 1), camera().shift(new Vector2(0, -100), 1));
 
   yield* waitUntil("contexts");
 
@@ -484,14 +481,14 @@ export default makeScene2D(function* (view) {
 
   let vectorCode = drawCode(
     camera(),
-    new Vector2(0, 700),
+    new Vector2(0, 750),
     `class Vector {
   
 
 }`
   );
 
-  yield* vectorCode.codeBackground().y(-50, 1);
+  yield* vectorCode.codeBackground().y(-150, 1);
 
   yield* waitUntil("xCoord2");
 
