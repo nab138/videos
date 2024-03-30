@@ -9,6 +9,7 @@ import voiceover from "../resources/voiceover.wav";
 
 import "./font.css";
 import obstacles from "./scenes/obstacles?scene";
+import threetest from "./scenes/threetest?scene";
 
 export default makeProject({
   scenes: [intro, overview, setup, obstacles],
@@ -16,5 +17,10 @@ export default makeProject({
 });
 // export default makeProject({
 //   scenes: [logo],
+//   audio: voiceover,
+// });
+
+// export default makeProject({
+//   scenes: [threetest],
 //   audio: voiceover,
 // });

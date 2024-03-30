@@ -5,6 +5,7 @@ import {
   makeScene2D,
   insert,
   lines,
+  useScene2D,
 } from "@motion-canvas/2d";
 import { CameraView } from "@ksassnowski/motion-canvas-camera";
 import {
@@ -13,17 +14,30 @@ import {
   Vector2,
   all,
   any,
+  chain,
   createRef,
   createSignal,
-  easeInOutQuad,
+  easeInCubic,
+  easeInOutCubic,
+  easeOutCubic,
   linear,
   sequence,
   slideTransition,
+  tween,
   waitFor,
   waitUntil,
 } from "@motion-canvas/core";
 import Colors from "../colors";
 import { Robot, VisualVector, drawCode, drawLine, drawPoint } from "../utils";
+import { ThreeCanvas, axisAngle } from "motion-canvas-3d";
+import * as THREE from "three";
+import {
+  addLight,
+  draw3DDozer,
+  draw3DGrid,
+  draw3DPoint,
+  drawVector,
+} from "../3dutils";
 
 export default makeScene2D(function* (view) {
   yield* slideTransition(Direction.Bottom, 0.5);
@@ -31,6 +45,8 @@ export default makeScene2D(function* (view) {
 
   let camera = createRef<CameraView>();
   view.add(<CameraView ref={camera} width={"100%"} height={"100%"} />);
+
+  const { x: canvasWidth, y: canvasHeight } = useScene2D().getSize();
 
   let field = createRef<Grid>();
   camera().add(
@@ -72,53 +88,197 @@ export default makeScene2D(function* (view) {
 
   yield* waitUntil("dozer");
 
-  let dozer = Robot.dozer(
-    field(),
-    new Vector2(-fieldScale, 0),
-    fieldScale * 1.5
+  const c = new ThreeCanvas({ canvasWidth, canvasHeight, fov: 10 });
+
+  // Use an orthographic camera
+  c.camera.position([0, 0, -20]);
+  c.camera.quaternion([1, 0, 0, 0]);
+
+  c.threeScene.background = new THREE.Color("rgb(13, 13, 13)");
+
+  draw3DGrid(c, canvasWidth, canvasHeight, 101, 346, 0x959595, 21.5);
+
+  let [dirLight, ambLight] = addLight(c, 0xffffff, 3);
+
+  camera().add(c);
+
+  let point3D = draw3DPoint(
+    c,
+    new THREE.Vector3(0, 0, 0),
+    new THREE.Color(Colors.path),
+    0.065
   );
 
-  yield* all(dozer.animateIn(1), vertex().x(fieldScale, 1));
+  let dozer3D = draw3DDozer(c);
 
-  yield* waitUntil("dozerZoom");
+  dozer3D.position([-0.585, 0, -0.3]);
+  dozer3D.scale([0, 0, 0]);
+  dozer3D.quaternion(axisAngle(new THREE.Vector3(0, 1, 0), Math.PI));
 
-  yield* camera().zoomOnto(dozer.body(), 1.5, 50, easeInOutQuad);
+  let originalQuat: THREE.Quaternion;
 
-  let yAxisVec = new VisualVector(0, -60, 3);
-  let xAxisVec = new VisualVector(60, 0, 3);
+  yield* all(dozer3D.scale([1, 1, 1], 1), point3D.position([0.585, 0, 0], 1));
+  yield* all(
+    tween(0.5, (tRaw) => {
+      let t = easeInOutCubic(tRaw);
+      dirLight.intensity = t * 3;
+      // Bring ambLight from 3 to 1
+      ambLight.intensity = 3 - t * 2;
+    }),
+    chain(
+      // Rotate camera 45 degrees around the z-axis
+      tween(0.5, (tRaw) => {
+        let t = easeInCubic(tRaw);
+        c.camera.quaternion(
+          axisAngle(new THREE.Vector3(1, 0, 0), (Math.PI / 4) * t)
+        );
+        if (tRaw === 1) originalQuat = c.threeCamera.quaternion.clone();
+      }),
+      () => c.camera.lookAt([0, 0, 0]),
+      tween(1.0, (tRaw) => {
+        let t = easeOutCubic(tRaw);
+        // Define the start and end positions
+        let startPos = new THREE.Vector3(0, 0, -20);
+        let endPos = new THREE.Vector3(-6, 6, -5); // adjust this as needed
+
+        // Interpolate between the start and end positions
+        let pos = startPos.lerp(endPos, t);
+
+        c.camera.position([pos.x, pos.y, pos.z]);
+
+        c.threeCamera.up.set(0, 0, -1);
+      })
+    )
+  );
+
+  yield* waitUntil("dozerMove");
+
+  yield* chain(
+    dozer3D.position([-0.585, 0, 0.3], 0.5),
+    dozer3D.position([-0.585, 0, -0.9], 0.5),
+    dozer3D.position([-0.585, 0, -0.3], 0.5)
+  );
+
+  let cornerX = -1;
+  let cornerY = 0.61;
+  let cornerZ = -0.09;
+  // let yAxisVec = new VisualVector(0, -60, 3);
+  // let xAxisVec = new VisualVector(60, 0, 3);
+  let prevZVec = drawVector(
+    c,
+    new THREE.Vector3(cornerX, cornerY, cornerZ),
+    new THREE.Vector3(cornerX, cornerY, cornerZ),
+    new THREE.Color(0x0000ff),
+    0.025,
+    0,
+    0
+  );
+  let prevYVec = drawVector(
+    c,
+    new THREE.Vector3(cornerX, cornerY, cornerZ),
+    new THREE.Vector3(cornerX, cornerY, cornerZ),
+    new THREE.Color(0x00ff00),
+    0.025,
+    0,
+    0
+  );
+  let prevXVec = drawVector(
+    c,
+    new THREE.Vector3(cornerX, cornerY, cornerZ),
+    new THREE.Vector3(cornerX, cornerY, cornerZ),
+    new THREE.Color(0xff0000),
+    0.025,
+    0,
+    0
+  );
+
+  let vecLength = 1.2;
 
   yield* waitUntil("dozerAxis");
+  yield* tween(1, (tRaw) => {
+    let t = easeInOutCubic(tRaw);
+    c.threeScene.remove(prevZVec[0]);
+    c.threeScene.remove(prevYVec[0]);
+    c.threeScene.remove(prevXVec[0]);
+    c.threeScene.remove(prevZVec[1]);
+    c.threeScene.remove(prevYVec[1]);
+    c.threeScene.remove(prevXVec[1]);
+    prevZVec = drawVector(
+      c,
+      new THREE.Vector3(cornerX, cornerY, cornerZ),
+      new THREE.Vector3(cornerX, cornerY, cornerZ - vecLength * t),
+      new THREE.Color(0x0000ff),
+      0.025,
+      0.1 * t,
+      0.1 * t
+    );
+    prevYVec = drawVector(
+      c,
+      new THREE.Vector3(cornerX, cornerY, cornerZ),
+      new THREE.Vector3(cornerX, cornerY - vecLength * t, cornerZ),
+      new THREE.Color(0x00ff00),
+      0.025,
+      0.1 * t,
+      0.1 * t
+    );
+    prevXVec = drawVector(
+      c,
+      new THREE.Vector3(cornerX, cornerY, cornerZ),
+      new THREE.Vector3(cornerX + vecLength * t, cornerY, cornerZ),
+      new THREE.Color(0xff0000),
+      0.025,
+      0.1 * t,
+      0.1 * t
+    );
+  });
+
+  yield* waitUntil("2d");
 
   yield* all(
-    yAxisVec.animateIn(field(), new Vector2(-fieldScale, 0), "green"),
-    xAxisVec.animateIn(field(), new Vector2(-fieldScale, 0), "red")
+    tween(0.75, (tRaw) => {
+      let t = easeInOutCubic(tRaw);
+      dirLight.intensity = 3 - t * 3;
+      // Bring ambLight from 3 to 1
+      ambLight.intensity = 1 + t * 2;
+    }),
+    chain(
+      tween(1.0, (tRaw) => {
+        let t = Math.min(easeOutCubic(tRaw), 0.9999);
+        // Define the start and end positions
+        let endPos = new THREE.Vector3(0, 0, -20);
+        let startPos = new THREE.Vector3(-6, 6, -5); // adjust this as needed
+
+        // Interpolate between the start and end positions
+        let pos = startPos.lerp(endPos, t);
+
+        c.camera.position([pos.x, pos.y, pos.z]);
+      }),
+      tween(0.5, (tRaw) => {
+        c.camera.setNoLookat(true);
+        let t = easeInCubic(tRaw);
+        c.camera.quaternion(
+          axisAngle(new THREE.Vector3(1, 0, 0), Math.PI / 4 - (Math.PI / 4) * t)
+        );
+      })
+    )
   );
 
-  yield* all(
-    camera().reset(1),
-    yAxisVec.point().position(0, 1),
-    yAxisVec.point().size(30, 1),
-    yAxisVec.y(-300, 1.2),
-    yAxisVec.line().lineWidth(10, 1),
-    yAxisVec.line().arrowSize(25, 1),
-    xAxisVec.point().position(0, 1),
-    xAxisVec.point().size(30, 1),
-    xAxisVec.x(300, 1.2),
-    xAxisVec.line().lineWidth(10, 1),
-    xAxisVec.line().arrowSize(25, 1)
-  );
+  yield* waitUntil("2dField");
 
-  yield* waitFor(0.2);
-  yield* all(
-    yAxisVec.point().size(0, 1),
-    yAxisVec.line().lineWidth(0, 1),
-    yAxisVec.line().arrowSize(0, 1),
-    yAxisVec.line().end(0, 1),
-    xAxisVec.point().size(0, 1),
-    xAxisVec.line().lineWidth(0, 1),
-    xAxisVec.line().arrowSize(0, 1),
-    xAxisVec.line().end(0, 1)
-  );
+  yield* tween(0.5, (tRaw) => {
+    let t = easeInOutCubic(tRaw);
+    c.threeScene.remove(prevZVec[0]);
+    c.threeScene.remove(prevZVec[1]);
+    prevZVec = drawVector(
+      c,
+      new THREE.Vector3(cornerX, cornerY, cornerZ),
+      new THREE.Vector3(cornerX, cornerY, cornerZ - vecLength + vecLength * t),
+      new THREE.Color(0x0000ff),
+      0.025,
+      0.1 - 0.1 * t,
+      0.1 - 0.1 * t
+    );
+  });
 
   yield* waitUntil("codeBlock");
 
@@ -135,17 +295,23 @@ export default makeScene2D(function* (view) {
 
   yield* waitUntil("xCoord");
 
-  yield* codeBlock().code.edit(0.8)`class Vertex {
+  yield* all(
+    codeBlock().code.edit(0.8)`class Vertex {
   ${insert("double x;")}
 
-}`;
+}`,
+    codeBlock().selection(lines(1), 0.3)
+  );
 
   yield* waitUntil("yCoord");
 
-  yield* codeBlock().code.edit(0.8)`class Vertex {
+  yield* all(
+    codeBlock().code.edit(0.8)`class Vertex {
   double x;
   ${insert("double y;")}
-}`;
+}`,
+    codeBlock().selection(lines(2), 0.3)
+  );
 
   yield* any(waitUntil("meters"), codeBlock().selection(DEFAULT, 1));
 
@@ -156,12 +322,47 @@ export default makeScene2D(function* (view) {
 
   yield* waitUntil("codeDismiss");
 
-  yield* all(xAxisVec.point().size(0, 1), codeBackground().y(700, 1));
+  yield* sequence(
+    0.1,
+    codeBackground().y(700, 1),
+    all(
+      dozer3D.scale([0, 0, 0], 1),
+      tween(1, (tRaw) => {
+        let t = 1 - easeInOutCubic(tRaw);
+        c.threeScene.remove(prevYVec[0]);
+        c.threeScene.remove(prevXVec[0]);
+        c.threeScene.remove(prevYVec[1]);
+        c.threeScene.remove(prevXVec[1]);
+        prevYVec = drawVector(
+          c,
+          new THREE.Vector3(cornerX, cornerY, cornerZ),
+          new THREE.Vector3(cornerX, cornerY - vecLength * t, cornerZ),
+          new THREE.Color(0x00ff00),
+          0.025,
+          0.1 * t,
+          0.1 * t
+        );
+        prevXVec = drawVector(
+          c,
+          new THREE.Vector3(cornerX, cornerY, cornerZ),
+          new THREE.Vector3(cornerX + vecLength * t, cornerY, cornerZ),
+          new THREE.Color(0xff0000),
+          0.025,
+          0.1 * t,
+          0.1 * t
+        );
+      }),
+      point3D.scale([0, 0, 0], 1)
+    )
+  );
+
+  vertex().remove();
+  c.remove();
 
   yield* waitUntil("vector");
 
   vector.point().position(new Vector2(0, 0));
-  yield* all(vector.line().end(1, 1), dozer.animateOut(1), vertex().size(0, 1));
+  yield* all(vector.line().end(1, 1), vertex().size(0, 1));
 
   yield* waitUntil("contexts");
 

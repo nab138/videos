@@ -10,6 +10,7 @@ export default class Colors {
   static dozer = {
     body: "#363ceb",
     wheels: "#2d2d2e",
+    wheels3D: "#3d3d3e",
   };
 
   static font = "Poppins";

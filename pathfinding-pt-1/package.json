@@ -16,11 +16,15 @@
     "@lezer/rust": "^1.0.2",
     "@motion-canvas/2d": "^3.15.1",
     "@motion-canvas/core": "^3.15.1",
-    "@motion-canvas/ffmpeg": "^1.1.0"
+    "@motion-canvas/ffmpeg": "^1.1.0",
+    "motion-canvas-3d": "github:nab138/motion-canvas-3d",
+    "three": "^0.163.0",
+    "three.meshline": "^1.4.0"
   },
   "devDependencies": {
     "@motion-canvas/ui": "^3.15.1",
     "@motion-canvas/vite-plugin": "^3.15.1",
+    "@types/three": "^0.163.0",
     "typescript": "^5.2.2",
     "vite": "^4.0.0"
   }
