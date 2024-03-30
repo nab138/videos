@@ -1,14 +1,15 @@
 import {
   Circle,
+  Code,
   Line,
   Node,
   PossibleCanvasStyle,
   Rect,
   Shape,
   Spline,
+  LezerHighlighter,
 } from "@motion-canvas/2d";
 import {
-  PossibleVector2,
   Reference,
   SignalValue,
   SimpleSignal,
@@ -20,7 +21,22 @@ import {
   easeInOutCubic,
 } from "@motion-canvas/core";
 import Colors from "./colors";
-import { CodeBlock } from "@motion-canvas/2d/lib/components/CodeBlock";
+import { parser as rustParser } from "@lezer/rust";
+import { parser as javaParser } from "@lezer/java";
+import { MaterialPalenightHighlightStyle } from "@hhenrichsen/canvas-commons/src/highlightstyle/MaterialPaleNight";
+
+const JavaHighlighter = new LezerHighlighter(
+  javaParser,
+  MaterialPalenightHighlightStyle
+);
+export const languageHighlighters = {
+  rust: new LezerHighlighter(rustParser, MaterialPalenightHighlightStyle),
+  java: JavaHighlighter,
+};
+
+type PossibleHighlighter = keyof typeof languageHighlighters;
+
+Code.defaultHighlighter = JavaHighlighter;
 
 export function drawPoint(
   view: Node,
@@ -350,15 +366,15 @@ export function drawCode(
   view: Node,
   position: Vector2,
   code: SignalValue<string>,
-  language: string = "java",
+  language: PossibleHighlighter = "java",
   fontSize: number = 48
 ) {
-  let codeBlock = createRef<CodeBlock>();
-  <CodeBlock
+  let codeBlock = createRef<Code>();
+  <Code
     ref={codeBlock}
     code={code}
-    language={language}
     fontSize={fontSize}
+    highlighter={languageHighlighters[language]}
   />;
   let codeBackground = createRef<Rect>();
   view.add(

@@ -1,5 +1,11 @@
-import { Grid, Latex, Txt, makeScene2D } from "@motion-canvas/2d";
-import { insert } from "@motion-canvas/2d/lib/components/CodeBlock";
+import {
+  Grid,
+  Latex,
+  Txt,
+  makeScene2D,
+  insert,
+  lines,
+} from "@motion-canvas/2d";
 import { CameraView } from "@ksassnowski/motion-canvas-camera";
 import {
   DEFAULT,
@@ -129,21 +135,21 @@ export default makeScene2D(function* (view) {
 
   yield* waitUntil("xCoord");
 
-  yield* codeBlock().edit(0.8, true)`class Vertex {
+  yield* codeBlock().code.edit(0.8)`class Vertex {
   ${insert("double x;")}
 
 }`;
 
   yield* waitUntil("yCoord");
 
-  yield* codeBlock().edit(0.8, true)`class Vertex {
+  yield* codeBlock().code.edit(0.8)`class Vertex {
   double x;
   ${insert("double y;")}
 }`;
 
   yield* any(waitUntil("meters"), codeBlock().selection(DEFAULT, 1));
 
-  yield* codeBlock().edit(1, false)`class Vertex {
+  yield* codeBlock().code.edit(1)`class Vertex {
   double x; ${insert("// in meters")}
   double y; ${insert("// in meters")}
 }`;
@@ -288,15 +294,21 @@ export default makeScene2D(function* (view) {
 
   yield* waitUntil("xCoord2");
 
-  yield* vectorCode.codeBlock().edit(0.5, true)`class Vector {
+  yield* all(
+    vectorCode.codeBlock().code.edit(0.5)`class Vector {
   ${insert("double x; // in meters")}
 
-}`;
+}`,
+    vectorCode.codeBlock().selection(lines(1), 0.2)
+  );
 
-  yield* vectorCode.codeBlock().edit(0.5, true)`class Vector {
+  yield* all(
+    vectorCode.codeBlock().code.edit(0.5)`class Vector {
   double x; // in meters
   ${insert("double y; // in meters")}
-}`;
+}`,
+    vectorCode.codeBlock().selection(lines(2), 0.2)
+  );
 
   yield* vectorCode.codeBlock().selection(DEFAULT, 0.5);
 

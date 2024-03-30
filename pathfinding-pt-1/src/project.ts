@@ -9,7 +9,6 @@ import voiceover from "../resources/voiceover.wav";
 
 import "./font.css";
 import obstacles from "./scenes/obstacles?scene";
-import logo from "./scenes/logo?scene";
 
 export default makeProject({
   scenes: [intro, overview, setup, obstacles],
