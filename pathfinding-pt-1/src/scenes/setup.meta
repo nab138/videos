@@ -15,67 +15,67 @@
     },
     {
       "name": "dozer",
-      "targetTime": 13.950979596661144
+      "targetTime": 13.93567699039528
     },
     {
       "name": "dozerZoom",
-      "targetTime": 18.80873739894387
+      "targetTime": 18.793434792678006
     },
     {
       "name": "dozerAxis",
-      "targetTime": 22.096093298462588
+      "targetTime": 22.080790692196725
     },
     {
       "name": "codeBlock",
-      "targetTime": 25.68973437856924
+      "targetTime": 25.67443177230338
     },
     {
       "name": "xCoord",
-      "targetTime": 27.913563487254912
+      "targetTime": 27.89826088098905
     },
     {
       "name": "yCoord",
-      "targetTime": 28.73459241656075
+      "targetTime": 28.71928981029489
     },
     {
       "name": "meters",
-      "targetTime": 30.989176331221717
+      "targetTime": 30.973873724955855
     },
     {
       "name": "codeDismiss",
-      "targetTime": 33.48310550707606
+      "targetTime": 33.4678029008102
     },
     {
       "name": "vector",
-      "targetTime": 35.17433850354254
+      "targetTime": 35.15903589727668
     },
     {
       "name": "contexts",
-      "targetTime": 37.49839337920886
+      "targetTime": 37.483090772943
     },
     {
       "name": "contextsEnds",
-      "targetTime": 40.48447569270835
+      "targetTime": 40.46917308644249
     },
     {
       "name": "definition",
-      "targetTime": 47.080276839809265
+      "targetTime": 47.0649742335434
     },
     {
       "name": "xCoord2",
-      "targetTime": 49.2949917091866
+      "targetTime": 49.279689102920734
     },
     {
       "name": "vecDismiss",
-      "targetTime": 54.50500459825134
+      "targetTime": 54.48970199198548
     },
     {
       "name": "normalize",
-      "targetTime": 61.02575707201835
+      "targetTime": 61.01045446575249
     },
     {
       "name": "obstacleTransition",
-      "targetTime": 75.43073255226189
+      "targetTime": 75.41542994599602
     }
   ],
   "seed": 2180341840

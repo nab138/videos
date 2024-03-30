@@ -5,6 +5,7 @@ import {
   makeScene2D,
   insert,
   lines,
+  useScene2D,
 } from "@motion-canvas/2d";
 import { CameraView } from "@ksassnowski/motion-canvas-camera";
 import {
@@ -13,17 +14,26 @@ import {
   Vector2,
   all,
   any,
+  chain,
   createRef,
   createSignal,
+  easeInCubic,
+  easeInOutCubic,
   easeInOutQuad,
+  easeInQuad,
+  easeOutCubic,
   linear,
   sequence,
   slideTransition,
+  tween,
   waitFor,
   waitUntil,
 } from "@motion-canvas/core";
 import Colors from "../colors";
 import { Robot, VisualVector, drawCode, drawLine, drawPoint } from "../utils";
+import { ThreeCanvas, axisAngle } from "motion-canvas-3d";
+import * as THREE from "three";
+import { MeshLine, MeshLineMaterial } from "three.meshline";
 
 export default makeScene2D(function* (view) {
   yield* slideTransition(Direction.Bottom, 0.5);
@@ -31,6 +41,13 @@ export default makeScene2D(function* (view) {
 
   let camera = createRef<CameraView>();
   view.add(<CameraView ref={camera} width={"100%"} height={"100%"} />);
+
+  const { x: canvasWidth, y: canvasHeight } = useScene2D().getSize();
+
+  const c = new ThreeCanvas({ canvasWidth, canvasHeight });
+
+  c.camera.position([0, 0, -1.975]);
+  c.camera.quaternion([1, 0, 0, 0]);
 
   let field = createRef<Grid>();
   camera().add(
@@ -76,6 +93,117 @@ export default makeScene2D(function* (view) {
     field(),
     new Vector2(-fieldScale, 0),
     fieldScale * 1.5
+  );
+
+  c.threeScene.background = new THREE.Color("rgb(13, 13, 13)");
+
+  c.create(() => {
+    const size = 10.1;
+    const divisions = 40;
+    const step = size / divisions;
+    const halfSize = size / 2;
+
+    const points = [];
+
+    for (let i = 0; i <= divisions; i++) {
+      const value = i * step - halfSize;
+
+      // Horizontal line
+      points.push(new THREE.Vector3(-halfSize, value, 0));
+      points.push(new THREE.Vector3(halfSize, value, 0));
+
+      // Vertical line
+      points.push(new THREE.Vector3(value, -halfSize, 0));
+      points.push(new THREE.Vector3(value, halfSize, 0));
+    }
+
+    const geometry = new THREE.BufferGeometry().setFromPoints(points);
+
+    const line = new MeshLine();
+    line.setGeometry(geometry);
+
+    const material = new MeshLineMaterial({
+      color: new THREE.Color(0x909090),
+      lineWidth: 30, // Adjust this value to change the line thickness
+      sizeAttenuation: 0,
+      resolution: new THREE.Vector2(canvasWidth, canvasHeight),
+      transparent: false,
+    });
+
+    const mesh = new THREE.Mesh(line, material);
+    return mesh;
+  });
+
+  c.create(() => {
+    const light = new THREE.HemisphereLight(0xffffff, 0xfffffff, 1.0);
+    return light;
+  });
+
+  const group = new THREE.Group();
+
+  // Create the first box and add it to the group
+  const body = new THREE.Mesh(
+    new THREE.BoxGeometry(0.8, 1, 0.4),
+    new THREE.MeshStandardMaterial({ color: Colors.dozer.body })
+  );
+  group.add(body);
+
+  // Create the second box and add it to the group
+  const plow = new THREE.Mesh(
+    new THREE.BoxGeometry(0.8, 0.1, 0.4),
+    new THREE.MeshStandardMaterial({ color: Colors.dozer.wheels3D })
+  );
+  plow.position.set(0, -0.55, 0); // Adjust the position as needed
+  group.add(plow);
+
+  [
+    new Vector2(-0.42, 0.3),
+    new Vector2(-0.42, 0),
+    new Vector2(-0.42, -0.3),
+    new Vector2(0.42, 0.3),
+    new Vector2(0.42, 0),
+    new Vector2(0.42, -0.3),
+  ].forEach((position) => {
+    const wheel = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.1, 0.1, 0.2, 32),
+      new THREE.MeshStandardMaterial({ color: Colors.dozer.wheels3D })
+    );
+    wheel.position.set(position.x, position.y, 0.2); // Adjust the position as needed
+    group.add(wheel);
+  });
+
+  const [dozer3D] = c.push(group);
+
+  camera().add(c);
+
+  dozer3D.scale([0, 0, 0]);
+
+  yield* dozer3D.scale([1, 1, 1], 1);
+
+  yield* chain(
+    // Rotate camera 45 degrees around the z-axis
+    tween(0.5, (tRaw) => {
+      let t = easeInCubic(tRaw);
+      c.camera.quaternion(
+        axisAngle(new THREE.Vector3(1, 0, 0), (Math.PI / 4) * t)
+      );
+    }),
+    tween(1.0, (tRaw) => {
+      let t = easeOutCubic(tRaw);
+      // Define the start and end positions
+      let startPos = new THREE.Vector3(0, 0, -1.975);
+      let endPos = new THREE.Vector3(-1, 1, -0.9); // adjust this as needed
+
+      // Interpolate between the start and end positions
+      let pos = startPos.lerp(endPos, t);
+
+      c.camera.position([pos.x, pos.y, pos.z]);
+      c.camera.lookAt([0, 0, 0]);
+      c.camera.quaternion(
+        axisAngle(new THREE.Vector3(1, 0, 0), (Math.PI / 4) * t)
+      );
+      c.threeCamera.up.set(0, 0, -1);
+    })
   );
 
   yield* all(dozer.animateIn(1), vertex().x(fieldScale, 1));
@@ -135,17 +263,23 @@ export default makeScene2D(function* (view) {
 
   yield* waitUntil("xCoord");
 
-  yield* codeBlock().code.edit(0.8)`class Vertex {
+  yield* all(
+    codeBlock().code.edit(0.8)`class Vertex {
   ${insert("double x;")}
 
-}`;
+}`,
+    codeBlock().selection(lines(1), 0.3)
+  );
 
   yield* waitUntil("yCoord");
 
-  yield* codeBlock().code.edit(0.8)`class Vertex {
+  yield* all(
+    codeBlock().code.edit(0.8)`class Vertex {
   double x;
   ${insert("double y;")}
-}`;
+}`,
+    codeBlock().selection(lines(2), 0.3)
+  );
 
   yield* any(waitUntil("meters"), codeBlock().selection(DEFAULT, 1));
 
