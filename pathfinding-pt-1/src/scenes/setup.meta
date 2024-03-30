@@ -15,67 +15,75 @@
     },
     {
       "name": "dozer",
-      "targetTime": 13.93567699039528
+      "targetTime": 13.225826580292214
     },
     {
-      "name": "dozerZoom",
-      "targetTime": 18.793434792678006
+      "name": "dozerMove",
+      "targetTime": 16.719617154436506
     },
     {
       "name": "dozerAxis",
-      "targetTime": 22.080790692196725
+      "targetTime": 19.184601018976217
+    },
+    {
+      "name": "2d",
+      "targetTime": 21.742675128437256
+    },
+    {
+      "name": "2dField",
+      "targetTime": 23.242675128437256
     },
     {
       "name": "codeBlock",
-      "targetTime": 25.67443177230338
+      "targetTime": 25.527703013408548
     },
     {
       "name": "xCoord",
-      "targetTime": 27.89826088098905
+      "targetTime": 27.909311778748503
     },
     {
       "name": "yCoord",
-      "targetTime": 28.71928981029489
+      "targetTime": 28.730340708054342
     },
     {
       "name": "meters",
-      "targetTime": 30.973873724955855
+      "targetTime": 30.984924622715308
     },
     {
       "name": "codeDismiss",
-      "targetTime": 33.4678029008102
+      "targetTime": 33.47885379856965
     },
     {
       "name": "vector",
-      "targetTime": 35.15903589727668
+      "targetTime": 35.170086795036134
     },
     {
       "name": "contexts",
-      "targetTime": 37.483090772943
+      "targetTime": 37.494141670702454
     },
     {
       "name": "contextsEnds",
-      "targetTime": 40.46917308644249
+      "targetTime": 40.48022398420194
     },
     {
       "name": "definition",
-      "targetTime": 47.0649742335434
+      "targetTime": 47.076025131302856
     },
     {
       "name": "xCoord2",
-      "targetTime": 49.279689102920734
+      "targetTime": 49.29074000068019
     },
     {
       "name": "vecDismiss",
-      "targetTime": 54.48970199198548
+      "targetTime": 54.50075288974493
     },
     {
       "name": "normalize",
-      "targetTime": 61.01045446575249
+      "targetTime": 61.02150536351194
     },
     {
       "name": "obstacleTransition",
-      "targetTime": 75.41542994599602
+      "targetTime": 75.42648084375548
     }
   ],
   "seed": 2180341840

@@ -19,8 +19,6 @@ import {
   createSignal,
   easeInCubic,
   easeInOutCubic,
-  easeInOutQuad,
-  easeInQuad,
   easeOutCubic,
   linear,
   sequence,
@@ -33,7 +31,13 @@ import Colors from "../colors";
 import { Robot, VisualVector, drawCode, drawLine, drawPoint } from "../utils";
 import { ThreeCanvas, axisAngle } from "motion-canvas-3d";
 import * as THREE from "three";
-import { MeshLine, MeshLineMaterial } from "three.meshline";
+import {
+  addLight,
+  draw3DDozer,
+  draw3DGrid,
+  draw3DPoint,
+  drawVector,
+} from "../3dutils";
 
 export default makeScene2D(function* (view) {
   yield* slideTransition(Direction.Bottom, 0.5);
@@ -43,11 +47,6 @@ export default makeScene2D(function* (view) {
   view.add(<CameraView ref={camera} width={"100%"} height={"100%"} />);
 
   const { x: canvasWidth, y: canvasHeight } = useScene2D().getSize();
-
-  const c = new ThreeCanvas({ canvasWidth, canvasHeight });
-
-  c.camera.position([0, 0, -1.975]);
-  c.camera.quaternion([1, 0, 0, 0]);
 
   let field = createRef<Grid>();
   camera().add(
@@ -89,164 +88,197 @@ export default makeScene2D(function* (view) {
 
   yield* waitUntil("dozer");
 
-  let dozer = Robot.dozer(
-    field(),
-    new Vector2(-fieldScale, 0),
-    fieldScale * 1.5
-  );
+  const c = new ThreeCanvas({ canvasWidth, canvasHeight, fov: 10 });
+
+  // Use an orthographic camera
+  c.camera.position([0, 0, -20]);
+  c.camera.quaternion([1, 0, 0, 0]);
 
   c.threeScene.background = new THREE.Color("rgb(13, 13, 13)");
 
-  c.create(() => {
-    const size = 10.1;
-    const divisions = 40;
-    const step = size / divisions;
-    const halfSize = size / 2;
+  draw3DGrid(c, canvasWidth, canvasHeight, 101, 346, 0x959595, 21.5);
 
-    const points = [];
-
-    for (let i = 0; i <= divisions; i++) {
-      const value = i * step - halfSize;
-
-      // Horizontal line
-      points.push(new THREE.Vector3(-halfSize, value, 0));
-      points.push(new THREE.Vector3(halfSize, value, 0));
-
-      // Vertical line
-      points.push(new THREE.Vector3(value, -halfSize, 0));
-      points.push(new THREE.Vector3(value, halfSize, 0));
-    }
-
-    const geometry = new THREE.BufferGeometry().setFromPoints(points);
-
-    const line = new MeshLine();
-    line.setGeometry(geometry);
-
-    const material = new MeshLineMaterial({
-      color: new THREE.Color(0x909090),
-      lineWidth: 30, // Adjust this value to change the line thickness
-      sizeAttenuation: 0,
-      resolution: new THREE.Vector2(canvasWidth, canvasHeight),
-      transparent: false,
-    });
-
-    const mesh = new THREE.Mesh(line, material);
-    return mesh;
-  });
-
-  c.create(() => {
-    const light = new THREE.HemisphereLight(0xffffff, 0xfffffff, 1.0);
-    return light;
-  });
-
-  const group = new THREE.Group();
-
-  // Create the first box and add it to the group
-  const body = new THREE.Mesh(
-    new THREE.BoxGeometry(0.8, 1, 0.4),
-    new THREE.MeshStandardMaterial({ color: Colors.dozer.body })
-  );
-  group.add(body);
-
-  // Create the second box and add it to the group
-  const plow = new THREE.Mesh(
-    new THREE.BoxGeometry(0.8, 0.1, 0.4),
-    new THREE.MeshStandardMaterial({ color: Colors.dozer.wheels3D })
-  );
-  plow.position.set(0, -0.55, 0); // Adjust the position as needed
-  group.add(plow);
-
-  [
-    new Vector2(-0.42, 0.3),
-    new Vector2(-0.42, 0),
-    new Vector2(-0.42, -0.3),
-    new Vector2(0.42, 0.3),
-    new Vector2(0.42, 0),
-    new Vector2(0.42, -0.3),
-  ].forEach((position) => {
-    const wheel = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.1, 0.1, 0.2, 32),
-      new THREE.MeshStandardMaterial({ color: Colors.dozer.wheels3D })
-    );
-    wheel.position.set(position.x, position.y, 0.2); // Adjust the position as needed
-    group.add(wheel);
-  });
-
-  const [dozer3D] = c.push(group);
+  let [dirLight, ambLight] = addLight(c, 0xffffff, 3);
 
   camera().add(c);
 
-  dozer3D.scale([0, 0, 0]);
+  let point3D = draw3DPoint(
+    c,
+    new THREE.Vector3(0, 0, 0),
+    new THREE.Color(Colors.path),
+    0.065
+  );
 
-  yield* dozer3D.scale([1, 1, 1], 1);
+  let dozer3D = draw3DDozer(c);
+
+  dozer3D.position([-0.585, 0, -0.3]);
+  dozer3D.scale([0, 0, 0]);
+  dozer3D.quaternion(axisAngle(new THREE.Vector3(0, 1, 0), Math.PI));
+
+  let originalQuat: THREE.Quaternion;
+
+  yield* all(dozer3D.scale([1, 1, 1], 1), point3D.position([0.585, 0, 0], 1));
+  yield* all(
+    tween(0.5, (tRaw) => {
+      let t = easeInOutCubic(tRaw);
+      dirLight.intensity = t * 3;
+      // Bring ambLight from 3 to 1
+      ambLight.intensity = 3 - t * 2;
+    }),
+    chain(
+      // Rotate camera 45 degrees around the z-axis
+      tween(0.5, (tRaw) => {
+        let t = easeInCubic(tRaw);
+        c.camera.quaternion(
+          axisAngle(new THREE.Vector3(1, 0, 0), (Math.PI / 4) * t)
+        );
+        if (tRaw === 1) originalQuat = c.threeCamera.quaternion.clone();
+      }),
+      () => c.camera.lookAt([0, 0, 0]),
+      tween(1.0, (tRaw) => {
+        let t = easeOutCubic(tRaw);
+        // Define the start and end positions
+        let startPos = new THREE.Vector3(0, 0, -20);
+        let endPos = new THREE.Vector3(-6, 6, -5); // adjust this as needed
+
+        // Interpolate between the start and end positions
+        let pos = startPos.lerp(endPos, t);
+
+        c.camera.position([pos.x, pos.y, pos.z]);
+
+        c.threeCamera.up.set(0, 0, -1);
+      })
+    )
+  );
+
+  yield* waitUntil("dozerMove");
 
   yield* chain(
-    // Rotate camera 45 degrees around the z-axis
-    tween(0.5, (tRaw) => {
-      let t = easeInCubic(tRaw);
-      c.camera.quaternion(
-        axisAngle(new THREE.Vector3(1, 0, 0), (Math.PI / 4) * t)
-      );
-    }),
-    tween(1.0, (tRaw) => {
-      let t = easeOutCubic(tRaw);
-      // Define the start and end positions
-      let startPos = new THREE.Vector3(0, 0, -1.975);
-      let endPos = new THREE.Vector3(-1, 1, -0.9); // adjust this as needed
-
-      // Interpolate between the start and end positions
-      let pos = startPos.lerp(endPos, t);
-
-      c.camera.position([pos.x, pos.y, pos.z]);
-      c.camera.lookAt([0, 0, 0]);
-      c.camera.quaternion(
-        axisAngle(new THREE.Vector3(1, 0, 0), (Math.PI / 4) * t)
-      );
-      c.threeCamera.up.set(0, 0, -1);
-    })
+    dozer3D.position([-0.585, 0, 0.3], 0.5),
+    dozer3D.position([-0.585, 0, -0.9], 0.5),
+    dozer3D.position([-0.585, 0, -0.3], 0.5)
   );
 
-  yield* all(dozer.animateIn(1), vertex().x(fieldScale, 1));
+  let cornerX = -1;
+  let cornerY = 0.61;
+  let cornerZ = -0.09;
+  // let yAxisVec = new VisualVector(0, -60, 3);
+  // let xAxisVec = new VisualVector(60, 0, 3);
+  let prevZVec = drawVector(
+    c,
+    new THREE.Vector3(cornerX, cornerY, cornerZ),
+    new THREE.Vector3(cornerX, cornerY, cornerZ),
+    new THREE.Color(0x0000ff),
+    0.025,
+    0,
+    0
+  );
+  let prevYVec = drawVector(
+    c,
+    new THREE.Vector3(cornerX, cornerY, cornerZ),
+    new THREE.Vector3(cornerX, cornerY, cornerZ),
+    new THREE.Color(0x00ff00),
+    0.025,
+    0,
+    0
+  );
+  let prevXVec = drawVector(
+    c,
+    new THREE.Vector3(cornerX, cornerY, cornerZ),
+    new THREE.Vector3(cornerX, cornerY, cornerZ),
+    new THREE.Color(0xff0000),
+    0.025,
+    0,
+    0
+  );
 
-  yield* waitUntil("dozerZoom");
-
-  yield* camera().zoomOnto(dozer.body(), 1.5, 50, easeInOutQuad);
-
-  let yAxisVec = new VisualVector(0, -60, 3);
-  let xAxisVec = new VisualVector(60, 0, 3);
+  let vecLength = 1.2;
 
   yield* waitUntil("dozerAxis");
+  yield* tween(1, (tRaw) => {
+    let t = easeInOutCubic(tRaw);
+    c.threeScene.remove(prevZVec[0]);
+    c.threeScene.remove(prevYVec[0]);
+    c.threeScene.remove(prevXVec[0]);
+    c.threeScene.remove(prevZVec[1]);
+    c.threeScene.remove(prevYVec[1]);
+    c.threeScene.remove(prevXVec[1]);
+    prevZVec = drawVector(
+      c,
+      new THREE.Vector3(cornerX, cornerY, cornerZ),
+      new THREE.Vector3(cornerX, cornerY, cornerZ - vecLength * t),
+      new THREE.Color(0x0000ff),
+      0.025,
+      0.1 * t,
+      0.1 * t
+    );
+    prevYVec = drawVector(
+      c,
+      new THREE.Vector3(cornerX, cornerY, cornerZ),
+      new THREE.Vector3(cornerX, cornerY - vecLength * t, cornerZ),
+      new THREE.Color(0x00ff00),
+      0.025,
+      0.1 * t,
+      0.1 * t
+    );
+    prevXVec = drawVector(
+      c,
+      new THREE.Vector3(cornerX, cornerY, cornerZ),
+      new THREE.Vector3(cornerX + vecLength * t, cornerY, cornerZ),
+      new THREE.Color(0xff0000),
+      0.025,
+      0.1 * t,
+      0.1 * t
+    );
+  });
+
+  yield* waitUntil("2d");
 
   yield* all(
-    yAxisVec.animateIn(field(), new Vector2(-fieldScale, 0), "green"),
-    xAxisVec.animateIn(field(), new Vector2(-fieldScale, 0), "red")
+    tween(0.75, (tRaw) => {
+      let t = easeInOutCubic(tRaw);
+      dirLight.intensity = 3 - t * 3;
+      // Bring ambLight from 3 to 1
+      ambLight.intensity = 1 + t * 2;
+    }),
+    chain(
+      tween(1.0, (tRaw) => {
+        let t = Math.min(easeOutCubic(tRaw), 0.9999);
+        // Define the start and end positions
+        let endPos = new THREE.Vector3(0, 0, -20);
+        let startPos = new THREE.Vector3(-6, 6, -5); // adjust this as needed
+
+        // Interpolate between the start and end positions
+        let pos = startPos.lerp(endPos, t);
+
+        c.camera.position([pos.x, pos.y, pos.z]);
+      }),
+      tween(0.5, (tRaw) => {
+        c.camera.setNoLookat(true);
+        let t = easeInCubic(tRaw);
+        c.camera.quaternion(
+          axisAngle(new THREE.Vector3(1, 0, 0), Math.PI / 4 - (Math.PI / 4) * t)
+        );
+      })
+    )
   );
 
-  yield* all(
-    camera().reset(1),
-    yAxisVec.point().position(0, 1),
-    yAxisVec.point().size(30, 1),
-    yAxisVec.y(-300, 1.2),
-    yAxisVec.line().lineWidth(10, 1),
-    yAxisVec.line().arrowSize(25, 1),
-    xAxisVec.point().position(0, 1),
-    xAxisVec.point().size(30, 1),
-    xAxisVec.x(300, 1.2),
-    xAxisVec.line().lineWidth(10, 1),
-    xAxisVec.line().arrowSize(25, 1)
-  );
+  yield* waitUntil("2dField");
 
-  yield* waitFor(0.2);
-  yield* all(
-    yAxisVec.point().size(0, 1),
-    yAxisVec.line().lineWidth(0, 1),
-    yAxisVec.line().arrowSize(0, 1),
-    yAxisVec.line().end(0, 1),
-    xAxisVec.point().size(0, 1),
-    xAxisVec.line().lineWidth(0, 1),
-    xAxisVec.line().arrowSize(0, 1),
-    xAxisVec.line().end(0, 1)
-  );
+  yield* tween(0.5, (tRaw) => {
+    let t = easeInOutCubic(tRaw);
+    c.threeScene.remove(prevZVec[0]);
+    c.threeScene.remove(prevZVec[1]);
+    prevZVec = drawVector(
+      c,
+      new THREE.Vector3(cornerX, cornerY, cornerZ),
+      new THREE.Vector3(cornerX, cornerY, cornerZ - vecLength + vecLength * t),
+      new THREE.Color(0x0000ff),
+      0.025,
+      0.1 - 0.1 * t,
+      0.1 - 0.1 * t
+    );
+  });
 
   yield* waitUntil("codeBlock");
 
@@ -290,12 +322,47 @@ export default makeScene2D(function* (view) {
 
   yield* waitUntil("codeDismiss");
 
-  yield* all(xAxisVec.point().size(0, 1), codeBackground().y(700, 1));
+  yield* sequence(
+    0.1,
+    codeBackground().y(700, 1),
+    all(
+      dozer3D.scale([0, 0, 0], 1),
+      tween(1, (tRaw) => {
+        let t = 1 - easeInOutCubic(tRaw);
+        c.threeScene.remove(prevYVec[0]);
+        c.threeScene.remove(prevXVec[0]);
+        c.threeScene.remove(prevYVec[1]);
+        c.threeScene.remove(prevXVec[1]);
+        prevYVec = drawVector(
+          c,
+          new THREE.Vector3(cornerX, cornerY, cornerZ),
+          new THREE.Vector3(cornerX, cornerY - vecLength * t, cornerZ),
+          new THREE.Color(0x00ff00),
+          0.025,
+          0.1 * t,
+          0.1 * t
+        );
+        prevXVec = drawVector(
+          c,
+          new THREE.Vector3(cornerX, cornerY, cornerZ),
+          new THREE.Vector3(cornerX + vecLength * t, cornerY, cornerZ),
+          new THREE.Color(0xff0000),
+          0.025,
+          0.1 * t,
+          0.1 * t
+        );
+      }),
+      point3D.scale([0, 0, 0], 1)
+    )
+  );
+
+  vertex().remove();
+  c.remove();
 
   yield* waitUntil("vector");
 
   vector.point().position(new Vector2(0, 0));
-  yield* all(vector.line().end(1, 1), dozer.animateOut(1), vertex().size(0, 1));
+  yield* all(vector.line().end(1, 1), vertex().size(0, 1));
 
   yield* waitUntil("contexts");
 
