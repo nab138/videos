@@ -270,7 +270,7 @@ export class Robot {
       scale,
       Colors.dozer.body,
       0,
-      5
+      0.06 * scale
     );
     robot().zIndex(100);
     let plow = drawRect(
@@ -279,7 +279,7 @@ export class Robot {
       0.9 * scale,
       0.1 * scale,
       Colors.dozer.wheels,
-      1,
+      0,
       0
     );
     let wheelPositions = [
@@ -297,7 +297,7 @@ export class Robot {
       0.27 * scale,
       Colors.dozer.wheels,
       0,
-      5
+      0.06 * scale
     );
     let robotRef = new Robot(wheels, robot);
     robotRef.setAttatchment(plow);

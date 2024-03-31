@@ -15,4 +15,10 @@ export default class Colors {
 
   static font = "Poppins";
   static codeBackground = "#151515";
+
+  static teamFont = "Audiowide";
+  static teamPurple = "#6b2686";
+  static teamPurpleDark = "#3d2c59";
+  static teamGold = "#f89a1c";
+  static teamYellow = "#fede00";
 }

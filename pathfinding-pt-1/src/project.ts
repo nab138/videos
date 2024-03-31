@@ -10,15 +10,17 @@ import voiceover from "../resources/voiceover.wav";
 import "./font.css";
 import obstacles from "./scenes/obstacles?scene";
 import threetest from "./scenes/threetest?scene";
+import logo from "./scenes/logo?scene";
+import icon from "./scenes/icon?scene";
 
-export default makeProject({
-  scenes: [intro, overview, setup, obstacles],
-  audio: voiceover,
-});
 // export default makeProject({
-//   scenes: [logo],
+//   scenes: [intro, overview, setup, obstacles],
 //   audio: voiceover,
 // });
+export default makeProject({
+  scenes: [logo],
+  audio: voiceover,
+});
 
 // export default makeProject({
 //   scenes: [threetest],
