@@ -359,7 +359,7 @@ export default makeScene2D(function* (view) {
   yield* waitUntil("vector");
 
   vector.point().position(new Vector2(0, 0));
-  yield* all(vector.line().end(1, 1), camera().shift(new Vector2(0, -100), 1));
+  yield* all(vector.line().end(1, 1));
 
   yield* waitUntil("contexts");
 
@@ -488,7 +488,7 @@ export default makeScene2D(function* (view) {
 }`
   );
 
-  yield* vectorCode.codeBackground().y(-150, 1);
+  yield* vectorCode.codeBackground().y(0, 1);
 
   yield* waitUntil("xCoord2");
 

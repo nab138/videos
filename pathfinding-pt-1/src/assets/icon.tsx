@@ -1,8 +1,8 @@
-import { Txt, makeScene2D, Img } from "@motion-canvas/2d";
+import { makeScene2D, Img } from "@motion-canvas/2d";
 import { Robot, drawRect, drawSpline } from "../utils";
-import { Vector2, waitUntil, createRef } from "@motion-canvas/core";
+import { Vector2, waitUntil } from "@motion-canvas/core";
 import Colors from "../colors";
-import logo from "../../resources/teamlogo.png";
+import logo from "../../resources/Asset_1.svg";
 import "../font.css";
 
 export default makeScene2D(function* (view) {
