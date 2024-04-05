@@ -13,6 +13,7 @@
     "@ksassnowski/motion-canvas-camera": "^0.5.0",
     "@lezer/highlight": "^1.2.0",
     "@lezer/java": "^1.1.1",
+    "@lezer/javascript": "^1.4.14",
     "@lezer/rust": "^1.0.2",
     "@motion-canvas/2d": "^3.15.1",
     "@motion-canvas/core": "^3.15.1",

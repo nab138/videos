@@ -23,6 +23,7 @@ import {
 import Colors from "./colors";
 import { parser as rustParser } from "@lezer/rust";
 import { parser as javaParser } from "@lezer/java";
+import { parser as javascriptParser } from "@lezer/javascript";
 import { MaterialPalenightHighlightStyle } from "@hhenrichsen/canvas-commons/src/highlightstyle/MaterialPaleNight";
 
 const JavaHighlighter = new LezerHighlighter(
@@ -32,6 +33,10 @@ const JavaHighlighter = new LezerHighlighter(
 export const languageHighlighters = {
   rust: new LezerHighlighter(rustParser, MaterialPalenightHighlightStyle),
   java: JavaHighlighter,
+  javascript: new LezerHighlighter(
+    javascriptParser,
+    MaterialPalenightHighlightStyle
+  ),
 };
 
 type PossibleHighlighter = keyof typeof languageHighlighters;

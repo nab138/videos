@@ -1,5 +1,34 @@
 {
   "version": 0,
-  "timeEvents": [],
+  "timeEvents": [
+    {
+      "name": "obstacles",
+      "targetTime": 1
+    },
+    {
+      "name": "Vertex Table",
+      "targetTime": 3.969844767662908
+    },
+    {
+      "name": "Edge Table",
+      "targetTime": 4.969844767662908
+    },
+    {
+      "name": "vertexTable",
+      "targetTime": 6.418336210300445
+    },
+    {
+      "name": "corners",
+      "targetTime": 8.690232371736657
+    },
+    {
+      "name": "edgeTable",
+      "targetTime": 12.371546350984264
+    },
+    {
+      "name": "indices",
+      "targetTime": 14.191604274813203
+    }
+  ],
   "seed": 1444485809
 }

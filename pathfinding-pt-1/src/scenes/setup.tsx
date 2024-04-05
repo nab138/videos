@@ -64,6 +64,22 @@ export default makeScene2D(function* (view) {
 
   yield* all(field().end(1, 1));
 
+  let text = createRef<Txt>();
+  field().add(
+    <Txt
+      ref={text}
+      x={0}
+      y={-400}
+      text={"Vertices & Vectors"}
+      fill={Colors.text}
+      fontFamily={Colors.font}
+      fontSize={1 * fieldScale}
+      opacity={0}
+      // Add outline
+      stroke={Colors.backgroundDark}
+    />
+  );
+
   yield* waitUntil("vertices");
 
   let vertex = drawPoint(
@@ -74,7 +90,7 @@ export default makeScene2D(function* (view) {
     0
   );
 
-  yield* vertex().size(40, 1);
+  yield* sequence(0.25, vertex().size(40, 1), text().opacity(1, 0.75));
 
   yield* waitUntil("vectors");
 
@@ -84,7 +100,7 @@ export default makeScene2D(function* (view) {
 
   yield* waitUntil("vertex");
 
-  yield* all(vector.animateOut(1), vertex().x(0, 1));
+  yield* all(text().opacity(0, 1), vector.animateOut(1), vertex().x(0, 1));
 
   yield* waitUntil("dozer");
 
