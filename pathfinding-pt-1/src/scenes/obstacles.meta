@@ -40,6 +40,10 @@
     {
       "name": "Obstacle Table",
       "targetTime": 29.346803653161615
+    },
+    {
+      "name": "Consecutive",
+      "targetTime": 30.346803653161615
     }
   ],
   "seed": 1444485809

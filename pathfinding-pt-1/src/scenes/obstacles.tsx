@@ -277,5 +277,12 @@ export default makeScene2D(function* (view) {
       1
     )
   );
+  yield* waitUntil("Consecutive");
+  yield* chain(
+    vertexTable.codeBlock().selection(lines(2, 3), 1),
+    vertexTable.codeBlock().selection(lines(3, 4), 1),
+    vertexTable.codeBlock().selection([lines(4), lines(2)], 1),
+    vertexTable.codeBlock().selection(DEFAULT, 1)
+  );
   yield* waitFor(20);
 });
