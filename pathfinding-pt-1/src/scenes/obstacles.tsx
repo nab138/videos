@@ -1,9 +1,11 @@
 import { CameraView } from "@ksassnowski/motion-canvas-camera";
-import { Grid, Txt, makeScene2D } from "@motion-canvas/2d";
+import { Grid, Txt, lines, makeScene2D } from "@motion-canvas/2d";
 import {
+  DEFAULT,
   Direction,
   Vector2,
   all,
+  chain,
   createRef,
   sequence,
   slideTransition,
@@ -133,34 +135,33 @@ export default makeScene2D(function* (view) {
     Colors.path
   );
 
-  yield* sequence(
-    1,
+  yield* chain(
     all(
       vertexTable.codeBlock().code(
         `0: (0, 0)
 
 `,
-        0.75
+        1
       ),
-      v1().size(25, 0.75)
+      v1().size(25, 1)
     ),
     all(
       vertexTable.codeBlock().code(
         `0: (0, 0)
 1: (1, 2)
 `,
-        0.75
+        1
       ),
-      v2().size(25, 0.75)
+      v2().size(25, 1)
     ),
     all(
       vertexTable.codeBlock().code(
         `0: (0, 0)
 1: (1, 2)
 2: (2, 0)`,
-        0.75
+        1
       ),
-      v3().size(25, 0.75)
+      v3().size(25, 1)
     )
   );
   yield* waitUntil("edgeTable");
@@ -203,7 +204,9 @@ export default makeScene2D(function* (view) {
         `,
         0.75
       ),
-      l1().end(1, 0.75)
+      l1().end(1, 0.75),
+      vertexTable.codeBlock().selection(lines(0, 1), 0.75),
+      edgeTable.codeBlock().selection(lines(0), 0.75)
     ),
     all(
       edgeTable.codeBlock().code(
@@ -212,7 +215,9 @@ export default makeScene2D(function* (view) {
         `,
         0.75
       ),
-      l2().end(1, 0.75)
+      l2().end(1, 0.75),
+      vertexTable.codeBlock().selection(lines(1, 2), 0.75),
+      edgeTable.codeBlock().selection(lines(1), 0.75)
     ),
     all(
       edgeTable.codeBlock().code(
@@ -221,7 +226,13 @@ export default makeScene2D(function* (view) {
 2, 0`,
         0.75
       ),
-      l3().end(1, 0.75)
+      l3().end(1, 0.75),
+      vertexTable.codeBlock().selection([lines(0), lines(2)], 0.75),
+      edgeTable.codeBlock().selection(lines(2), 0.75)
+    ),
+    all(
+      vertexTable.codeBlock().selection(DEFAULT, 0.75),
+      edgeTable.codeBlock().selection(DEFAULT, 0.75)
     )
   );
   yield* waitFor(20);
