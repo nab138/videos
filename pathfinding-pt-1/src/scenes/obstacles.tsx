@@ -1,12 +1,15 @@
 import { CameraView } from "@ksassnowski/motion-canvas-camera";
-import { Grid, Txt, lines, makeScene2D } from "@motion-canvas/2d";
+import { Grid, Img, Txt, lines, makeScene2D } from "@motion-canvas/2d";
 import {
   DEFAULT,
   Direction,
   Vector2,
   all,
+  any,
   chain,
   createRef,
+  linear,
+  loop,
   sequence,
   slideTransition,
   waitFor,
@@ -14,6 +17,7 @@ import {
 } from "@motion-canvas/core";
 import Colors from "../colors";
 import { drawCode, drawPoint, drawLine } from "../utils";
+import cog from "../../resources/cog.svg";
 
 export default makeScene2D(function* (view) {
   let fieldScale = 90;
@@ -233,6 +237,44 @@ export default makeScene2D(function* (view) {
     all(
       vertexTable.codeBlock().selection(DEFAULT, 0.75),
       edgeTable.codeBlock().selection(DEFAULT, 0.75)
+    )
+  );
+  yield* waitUntil("Automatic");
+  let cogImg = createRef<Img>();
+  edgeTable
+    .codeBackground()
+    .add(
+      <Img
+        size={150}
+        ref={cogImg}
+        src={cog}
+        scale={new Vector2(1, 1)}
+        opacity={0}
+      ></Img>
+    );
+  cogImg().scale(0);
+  yield any(
+    waitUntil("StopSpinning"),
+    loop(() => cogImg().rotation(0).rotation(360, 2, linear))
+  );
+  yield* all(
+    edgeTable.codeBlock().scale(0, 1),
+    cogImg().opacity(1, 1),
+    cogImg().scale(1, 1)
+  );
+  yield* waitUntil("Obstacle Table");
+  yield* all(
+    vertexTableText().text("Obstacle Table", 1),
+    vertexTableText().position(new Vector2(0, 300), 1),
+    vertexTable.codeBlock().code(
+      `[
+  [
+    (0, 0),
+    (1, 2),
+    (2, 0)
+  ]
+]`,
+      1
     )
   );
   yield* waitFor(20);

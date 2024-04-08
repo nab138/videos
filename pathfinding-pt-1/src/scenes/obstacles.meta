@@ -28,6 +28,18 @@
     {
       "name": "indices",
       "targetTime": 15.42622115595729
+    },
+    {
+      "name": "Automatic",
+      "targetTime": 25.229084256333117
+    },
+    {
+      "name": "StopSpinning",
+      "targetTime": 39.27456759962109
+    },
+    {
+      "name": "Obstacle Table",
+      "targetTime": 29.346803653161615
     }
   ],
   "seed": 1444485809
