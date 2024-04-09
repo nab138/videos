@@ -27,7 +27,7 @@ import {
   waitFor,
   waitUntil,
 } from "@motion-canvas/core";
-import Colors from "../colors";
+import { Fonts, MainColors } from "../styles";
 import { Robot, VisualVector, drawCode, drawLine, drawPoint } from "../utils";
 import { ThreeCanvas, axisAngle } from "motion-canvas-3d";
 import * as THREE from "three";
@@ -71,12 +71,12 @@ export default makeScene2D(function* (view) {
       x={0}
       y={-400}
       text={"Vertices & Vectors"}
-      fill={Colors.text}
-      fontFamily={Colors.font}
+      fill={MainColors.text}
+      fontFamily={Fonts.main}
       fontSize={1 * fieldScale}
       opacity={0}
       // Add outline
-      stroke={Colors.backgroundDark}
+      stroke={MainColors.backgroundDark}
     />
   );
 
@@ -86,7 +86,7 @@ export default makeScene2D(function* (view) {
     field(),
     new Vector2(-2 * fieldScale, 0),
     0,
-    Colors.path,
+    MainColors.path,
     0
   );
 
@@ -96,7 +96,11 @@ export default makeScene2D(function* (view) {
 
   let vector = new VisualVector(fieldScale * 2, -fieldScale * 2, 10);
 
-  yield* vector.animateIn(field(), new Vector2(2 * fieldScale, 0), Colors.path);
+  yield* vector.animateIn(
+    field(),
+    new Vector2(2 * fieldScale, 0),
+    MainColors.path
+  );
 
   yield* waitUntil("vertex");
 
@@ -121,7 +125,7 @@ export default makeScene2D(function* (view) {
   let point3D = draw3DPoint(
     c,
     new THREE.Vector3(0, 0, 0),
-    new THREE.Color(Colors.path),
+    new THREE.Color(MainColors.path.hex()),
     0.065
   );
 
@@ -408,7 +412,7 @@ export default makeScene2D(function* (view) {
     camera(),
     [new Vector2(0, 0), new Vector2(fieldScale * 4, 0)],
     5,
-    Colors.backgroundLight
+    MainColors.backgroundLight
   );
   measureLine1().lineDash([30, 10]);
   measureLine1().end(0);
@@ -419,7 +423,7 @@ export default makeScene2D(function* (view) {
       new Vector2(fieldScale * 4, -fieldScale * 4),
     ],
     5,
-    Colors.backgroundLight
+    MainColors.backgroundLight
   );
   measureLine2().lineDash([30, 10]);
   measureLine2().end(0);
@@ -430,8 +434,8 @@ export default makeScene2D(function* (view) {
   camera().add(
     <Txt
       ref={measureText1}
-      fontFamily={Colors.font}
-      fill={Colors.text}
+      fontFamily={Fonts.main}
+      fill={MainColors.text}
       text={() => `x = ${x().toFixed(2)}`}
       x={fieldScale * 2}
       y={fieldScale}
@@ -445,8 +449,8 @@ export default makeScene2D(function* (view) {
   camera().add(
     <Txt
       ref={measureText2}
-      fontFamily={Colors.font}
-      fill={Colors.text}
+      fontFamily={Fonts.main}
+      fill={MainColors.text}
       text={() => `y = ${y().toFixed(2)}`}
       x={fieldScale * 6}
       y={-fieldScale * 2}

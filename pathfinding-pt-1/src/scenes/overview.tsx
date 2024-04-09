@@ -15,7 +15,7 @@ import {
 import trafficCone from "../../resources/traffic-cone.svg";
 
 import { drawLine, drawLines, drawPoints, drawRect } from "../utils";
-import Colors from "../colors";
+import { Fonts, MainColors } from "../styles";
 
 export default makeScene2D(function* (view) {
   yield* slideTransition(Direction.Right, 1);
@@ -27,7 +27,7 @@ export default makeScene2D(function* (view) {
     new Vector2(0, 0),
     0,
     0,
-    Colors.interactionArea,
+    MainColors.interactionArea,
     0,
     20
   );
@@ -56,7 +56,7 @@ export default makeScene2D(function* (view) {
         ref={curCircle}
         layout
         size={0}
-        fill={Colors.backgroundLight}
+        fill={MainColors.backgroundLight}
         justifyContent="center"
         alignItems="center"
       >
@@ -71,8 +71,8 @@ export default makeScene2D(function* (view) {
       <Txt
         ref={curText}
         opacity={0}
-        fill={Colors.text}
-        fontFamily={Colors.font}
+        fill={MainColors.text}
+        fontFamily={Fonts.main}
       >
         Obstacles
       </Txt>
@@ -99,12 +99,16 @@ export default makeScene2D(function* (view) {
       y={0}
       gap={40}
     >
-      <Circle ref={curCircle} size={0} fill={Colors.backgroundLight}></Circle>
+      <Circle
+        ref={curCircle}
+        size={0}
+        fill={MainColors.backgroundLight}
+      ></Circle>
       <Txt
         ref={curText}
         opacity={0}
-        fill={Colors.text}
-        fontFamily={Colors.font}
+        fill={MainColors.text}
+        fontFamily={Fonts.main}
       >
         Visibility Graph
       </Txt>
@@ -119,7 +123,7 @@ export default makeScene2D(function* (view) {
     new Vector2(48, 51),
     new Vector2(-50, -45),
   ];
-  let circles = drawPoints(curCircle(), points, 0, Colors.obstacles);
+  let circles = drawPoints(curCircle(), points, 0, MainColors.obstacles);
 
   let lines1 = [
     new Vector2(-55, 51),
@@ -130,7 +134,7 @@ export default makeScene2D(function* (view) {
     new Vector2(-50, -45),
   ];
 
-  let lines = drawLines(curCircle(), lines1, 5, Colors.obstacles);
+  let lines = drawLines(curCircle(), lines1, 5, MainColors.obstacles);
 
   for (let line of lines) {
     line().endOffset(line().percentageToDistance(1));
@@ -158,12 +162,16 @@ export default makeScene2D(function* (view) {
       gap={40}
       x={70}
     >
-      <Circle ref={curCircle} size={0} fill={Colors.backgroundLight}></Circle>
+      <Circle
+        ref={curCircle}
+        size={0}
+        fill={MainColors.backgroundLight}
+      ></Circle>
       <Txt
         ref={curText}
         opacity={0}
-        fill={Colors.text}
-        fontFamily={Colors.font}
+        fill={MainColors.text}
+        fontFamily={Fonts.main}
       >
         Pathfinding
       </Txt>
@@ -178,15 +186,26 @@ export default makeScene2D(function* (view) {
     new Vector2(-50, -45),
     new Vector2(50, -45),
   ];
-  let circles2 = drawPoints(curCircle(), points2, 0, Colors.interactionArea);
-  let obs = drawRect(curCircle(), new Vector2(20, 0), 0, 0, Colors.obstacles);
+  let circles2 = drawPoints(
+    curCircle(),
+    points2,
+    0,
+    MainColors.interactionArea
+  );
+  let obs = drawRect(
+    curCircle(),
+    new Vector2(20, 0),
+    0,
+    0,
+    MainColors.obstacles
+  );
   yield* sequence(
     0.1,
     ...circles2.map((c) => c().size(8, 0.5)),
     all(obs().width(90, 0.5), obs().height(25, 0.5))
   );
 
-  let line = drawLine(curCircle(), points2, 5, Colors.path);
+  let line = drawLine(curCircle(), points2, 5, MainColors.path);
 
   line().endOffset(line().percentageToDistance(1));
 
@@ -208,12 +227,16 @@ export default makeScene2D(function* (view) {
       x={380}
       y={0}
     >
-      <Circle ref={curCircle} size={0} fill={Colors.backgroundLight}></Circle>
+      <Circle
+        ref={curCircle}
+        size={0}
+        fill={MainColors.backgroundLight}
+      ></Circle>
       <Txt
         ref={curText}
         opacity={0}
-        fill={Colors.text}
-        fontFamily={Colors.font}
+        fill={MainColors.text}
+        fontFamily={Fonts.main}
       >
         Smoothing
       </Txt>
@@ -228,15 +251,26 @@ export default makeScene2D(function* (view) {
     new Vector2(-50, -45),
     new Vector2(50, -45),
   ];
-  let circles3 = drawPoints(curCircle(), points3, 0, Colors.interactionArea);
-  let obs2 = drawRect(curCircle(), new Vector2(20, 0), 0, 0, Colors.obstacles);
+  let circles3 = drawPoints(
+    curCircle(),
+    points3,
+    0,
+    MainColors.interactionArea
+  );
+  let obs2 = drawRect(
+    curCircle(),
+    new Vector2(20, 0),
+    0,
+    0,
+    MainColors.obstacles
+  );
   yield* sequence(
     0.1,
     ...circles3.map((c) => c().size(8, 0.25)),
     all(obs2().width(90, 0.5), obs2().height(25, 0.25))
   );
 
-  let line2 = drawLine(curCircle(), points2, 5, Colors.path);
+  let line2 = drawLine(curCircle(), points2, 5, MainColors.path);
 
   line2().endOffset(line2().percentageToDistance(1));
 
@@ -265,7 +299,7 @@ export default makeScene2D(function* (view) {
     new Vector2(435, -45),
   ];
 
-  let arrow = drawLines(rect(), arrows, 5, Colors.text, false, true);
+  let arrow = drawLines(rect(), arrows, 5, MainColors.text, false, true);
   for (let curArrow of arrow) {
     curArrow().endOffset(curArrow().percentageToDistance(1));
   }

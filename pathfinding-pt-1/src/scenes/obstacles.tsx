@@ -15,7 +15,7 @@ import {
   waitFor,
   waitUntil,
 } from "@motion-canvas/core";
-import Colors from "../colors";
+import { Fonts, MainColors } from "../styles";
 import { drawCode, drawPoint, drawLine } from "../utils";
 import cog from "../../resources/cog.svg";
 
@@ -45,12 +45,12 @@ export default makeScene2D(function* (view) {
       x={0}
       y={-400}
       text={"Obstacles"}
-      fill={Colors.text}
-      fontFamily={Colors.font}
+      fill={MainColors.text}
+      fontFamily={Fonts.main}
       fontSize={1 * fieldScale}
       opacity={0}
       // Add outline
-      stroke={Colors.backgroundDark}
+      stroke={MainColors.backgroundDark}
     />
   );
   yield* waitUntil("obstacles");
@@ -78,8 +78,8 @@ export default makeScene2D(function* (view) {
         x={0}
         y={200}
         text={"Vertex Table"}
-        fill={Colors.text}
-        fontFamily={Colors.font}
+        fill={MainColors.text}
+        fontFamily={Fonts.main}
         fontSize={0.75 * fieldScale}
       />
     );
@@ -106,8 +106,8 @@ export default makeScene2D(function* (view) {
         x={0}
         y={200}
         text={"Edge Table"}
-        fill={Colors.text}
-        fontFamily={Colors.font}
+        fill={MainColors.text}
+        fontFamily={Fonts.main}
         fontSize={0.75 * fieldScale}
       />
     );
@@ -124,19 +124,19 @@ export default makeScene2D(function* (view) {
     field(),
     new Vector2(1 * fieldScale, 1 * fieldScale),
     0,
-    Colors.path
+    MainColors.path
   );
   let v2 = drawPoint(
     field(),
     new Vector2(2 * fieldScale, -1 * fieldScale),
     0,
-    Colors.path
+    MainColors.path
   );
   let v3 = drawPoint(
     field(),
     new Vector2(3 * fieldScale, 1 * fieldScale),
     0,
-    Colors.path
+    MainColors.path
   );
 
   yield* chain(
@@ -182,19 +182,19 @@ export default makeScene2D(function* (view) {
     field(),
     [v1().position(), v2().position()],
     10,
-    Colors.path
+    MainColors.path
   );
   let l2 = drawLine(
     field(),
     [v2().position(), v3().position()],
     10,
-    Colors.path
+    MainColors.path
   );
   let l3 = drawLine(
     field(),
     [v3().position(), v1().position()],
     10,
-    Colors.path
+    MainColors.path
   );
   l1().end(0);
   l2().end(0);

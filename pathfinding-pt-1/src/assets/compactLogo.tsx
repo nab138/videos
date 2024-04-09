@@ -1,12 +1,12 @@
 import { Txt, makeScene2D, Img, Rect } from "@motion-canvas/2d";
 import { Robot, drawRect, drawSpline } from "../utils";
 import { Vector2, waitUntil, createRef } from "@motion-canvas/core";
-import Colors from "../colors";
+import { Fonts, MainColors, TeamColors } from "../styles";
 import logo from "../../resources/Asset_1.svg";
 import "../font.css";
 
 export default makeScene2D(function* (view) {
-  let bg = Colors.teamPurpleDark;
+  let bg = TeamColors.purpleDark;
   let fieldScale = 85;
   let length = 13.6 * fieldScale;
   let height = 3 * fieldScale;
@@ -30,7 +30,7 @@ export default makeScene2D(function* (view) {
   //   new Vector2(300, 0),
   //   100,
   //   300,
-  //   Colors.obstacles,
+  //   MainColors.obstacles,
   //   2,
   //   15
   // );
@@ -40,8 +40,8 @@ export default makeScene2D(function* (view) {
     <Txt
       textAlign={"left"}
       ref={text}
-      fill={Colors.text}
-      fontFamily={Colors.teamFont}
+      fill={MainColors.text}
+      fontFamily={Fonts.team}
       fontSize={190}
       alignContent={"center"}
       size={new Vector2(length, height)}
@@ -67,7 +67,7 @@ export default makeScene2D(function* (view) {
       new Vector2(475, -15),
     ],
     10,
-    Colors.teamGold
+    TeamColors.gold
   );
   spline().lineDash([20, 15]);
   dozer.body().position(new Vector2(-495, -25));

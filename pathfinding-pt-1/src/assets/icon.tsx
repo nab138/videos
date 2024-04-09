@@ -1,7 +1,7 @@
 import { makeScene2D, Img } from "@motion-canvas/2d";
 import { Robot, drawRect, drawSpline } from "../utils";
 import { Vector2, waitUntil } from "@motion-canvas/core";
-import Colors from "../colors";
+import { TeamColors } from "../styles";
 import logo from "../../resources/Asset_1.svg";
 import "../font.css";
 
@@ -12,7 +12,7 @@ export default makeScene2D(function* (view) {
     new Vector2(0, 0),
     1024,
     1024,
-    Colors.teamPurpleDark,
+    TeamColors.purpleDark,
     5,
     50
   );
@@ -36,7 +36,7 @@ export default makeScene2D(function* (view) {
   //   new Vector2(300, 0),
   //   100,
   //   300,
-  //   Colors.obstacles,
+  //   MainColors.obstacles,
   //   2,
   //   15
   // );
@@ -57,7 +57,7 @@ export default makeScene2D(function* (view) {
       new Vector2(100, 50),
     ],
     20,
-    Colors.teamGold
+    TeamColors.gold
   );
   spline().lineDash([40, 20]);
   dozer.body().position(spline().getPointAtPercentage(1).position),

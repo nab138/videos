@@ -20,7 +20,7 @@ import {
   createSignal,
   easeInOutCubic,
 } from "@motion-canvas/core";
-import Colors from "./colors";
+import { MainColors } from "./styles";
 import { parser as rustParser } from "@lezer/rust";
 import { parser as javaParser } from "@lezer/java";
 import { parser as javascriptParser } from "@lezer/javascript";
@@ -49,7 +49,7 @@ export function drawPoint(
   radius: SignalValue<number>,
   color: SignalValue<PossibleCanvasStyle>,
   borderWidth: SignalValue<number> = 0,
-  borderColor: SignalValue<PossibleCanvasStyle> = Colors.border
+  borderColor: SignalValue<PossibleCanvasStyle> = MainColors.border
 ) {
   let ref = createRef<Circle>();
 
@@ -137,7 +137,7 @@ export function drawRect(
   color: SignalValue<PossibleCanvasStyle>,
   borderWidth: SignalValue<number> = 0,
   borderRadius: SignalValue<number> = 0,
-  borderColor: SignalValue<PossibleCanvasStyle> = Colors.border,
+  borderColor: SignalValue<PossibleCanvasStyle> = MainColors.border,
   rotation: SignalValue<number> = 0
 ) {
   let ref = createRef<Rect>();
@@ -167,7 +167,7 @@ export function drawRects(
   color: SignalValue<PossibleCanvasStyle>,
   borderWidth: SignalValue<number> = 0,
   borderRadius: SignalValue<number> = 0,
-  borderColor: SignalValue<PossibleCanvasStyle> = Colors.border
+  borderColor: SignalValue<PossibleCanvasStyle> = MainColors.border
 ) {
   let rects = [];
   for (let position of positions) {
@@ -273,7 +273,7 @@ export class Robot {
       position,
       0.8 * scale,
       scale,
-      Colors.dozer.body,
+      MainColors.dozer.body,
       0,
       0.06 * scale
     );
@@ -283,7 +283,7 @@ export class Robot {
       new Vector2(0, -0.55 * scale),
       0.9 * scale,
       0.1 * scale,
-      Colors.dozer.wheels,
+      MainColors.dozer.wheels,
       0,
       0
     );
@@ -300,7 +300,7 @@ export class Robot {
       wheelPositions,
       0.08 * scale,
       0.27 * scale,
-      Colors.dozer.wheels,
+      MainColors.dozer.wheels,
       0,
       0.06 * scale
     );
@@ -389,10 +389,10 @@ export function drawCode(
       y={position.y}
       width={() => codeBlock().width() + 50}
       height={() => codeBlock().height() + 50}
-      fill={Colors.codeBackground}
+      fill={MainColors.codeBackground}
       radius={15}
       shadowBlur={3}
-      shadowColor={Colors.shadow}
+      shadowColor={MainColors.shadow}
       shadowOffsetX={3}
       shadowOffsetY={3}
     />

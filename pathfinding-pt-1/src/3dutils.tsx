@@ -1,4 +1,4 @@
-import Colors from "./colors";
+import { MainColors } from "./styles";
 import * as THREE from "three";
 import { MeshLine, MeshLineMaterial } from "three.meshline";
 import { Vector2 } from "@motion-canvas/core";
@@ -54,14 +54,14 @@ export function draw3DDozer(c: ThreeCanvas) {
   // Create the first box and add it to the group
   const body = new THREE.Mesh(
     new THREE.BoxGeometry(0.8, 1, 0.4),
-    new THREE.MeshStandardMaterial({ color: Colors.dozer.body })
+    new THREE.MeshStandardMaterial({ color: MainColors.dozer.body.hex() })
   );
   group.add(body);
 
   // Create the second box and add it to the group
   const plow = new THREE.Mesh(
     new THREE.BoxGeometry(0.8, 0.1, 0.4),
-    new THREE.MeshStandardMaterial({ color: Colors.dozer.wheels3D })
+    new THREE.MeshStandardMaterial({ color: MainColors.dozer.wheels3D.hex() })
   );
   plow.position.set(0, -0.55, 0); // Adjust the position as needed
   group.add(plow);
@@ -76,7 +76,7 @@ export function draw3DDozer(c: ThreeCanvas) {
   ].forEach((position) => {
     const wheel = new THREE.Mesh(
       new THREE.CylinderGeometry(0.1, 0.1, 0.1, 32),
-      new THREE.MeshStandardMaterial({ color: Colors.dozer.wheels3D })
+      new THREE.MeshStandardMaterial({ color: MainColors.dozer.wheels3D.hex() })
     );
     wheel.rotation.z = Math.PI / 2;
     wheel.position.set(position.x, position.y, 0.2); // Adjust the position as needed

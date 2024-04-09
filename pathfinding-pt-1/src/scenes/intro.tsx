@@ -10,7 +10,7 @@ import {
   easeInElastic,
   waitUntil,
 } from "@motion-canvas/core";
-import Colors from "../colors";
+import { MainColors } from "../styles";
 
 export default makeScene2D(function* (view) {
   let fieldScale = 85;
@@ -19,7 +19,7 @@ export default makeScene2D(function* (view) {
     new Vector2(0, 0),
     0,
     0,
-    Colors.interactionArea,
+    MainColors.interactionArea,
     5,
     15
   );
@@ -41,10 +41,10 @@ export default makeScene2D(function* (view) {
       new Vector2(-150, 100),
       0,
       0,
-      Colors.obstacles,
+      MainColors.obstacles,
       2,
       15,
-      Colors.border,
+      MainColors.border,
       10
     )
   );
@@ -54,15 +54,15 @@ export default makeScene2D(function* (view) {
       new Vector2(-450, -200),
       0,
       0,
-      Colors.obstacles,
+      MainColors.obstacles,
       2,
       15,
-      Colors.border,
+      MainColors.border,
       -15
     )
   );
   rects.push(
-    drawRect(field(), new Vector2(300, 0), 0, 0, Colors.obstacles, 2, 15)
+    drawRect(field(), new Vector2(300, 0), 0, 0, MainColors.obstacles, 2, 15)
   );
 
   let sizes = [
@@ -81,7 +81,7 @@ export default makeScene2D(function* (view) {
     );
   }
 
-  let target = drawPoint(field(), new Vector2(575, 0), 0, Colors.path, 2);
+  let target = drawPoint(field(), new Vector2(575, 0), 0, MainColors.path, 2);
   yield* waitFor(2);
   yield* sequence(0.5, ...generators);
   yield* delay(1, target().size(35, 0.8));
@@ -96,7 +96,7 @@ export default makeScene2D(function* (view) {
       new Vector2(575, 0),
     ],
     10,
-    Colors.path
+    MainColors.path
   );
   spline().end(0);
   yield* delay(1, spline().end(1, 3, linear));
