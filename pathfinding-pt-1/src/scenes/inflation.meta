@@ -1,0 +1,50 @@
+{
+  "version": 0,
+  "timeEvents": [
+    {
+      "name": "Robot",
+      "targetTime": 2.9333685111867354
+    },
+    {
+      "name": "Obstacle",
+      "targetTime": 5.639566222309029
+    },
+    {
+      "name": "Inside",
+      "targetTime": 7.736752852407501
+    },
+    {
+      "name": "Bigger",
+      "targetTime": 11.736752852407502
+    },
+    {
+      "name": "Said",
+      "targetTime": 21.968732303167926
+    },
+    {
+      "name": "Minkowski",
+      "targetTime": 27.43649120546011
+    },
+    {
+      "name": "Circumcircle",
+      "targetTime": 31.008050108523637
+    },
+    {
+      "name": "Moving",
+      "targetTime": 32.00805010852363
+    },
+    {
+      "name": "center",
+      "targetTime": 34.46798982850424
+    },
+    {
+      "name": "Overkill",
+      "targetTime": 38.54914491298723
+    },
+    {
+      "name": "vertices",
+      "targetTime": 42.67038170077713
+    }
+  ],
+  "seed": 3780073274
+}

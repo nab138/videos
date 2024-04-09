@@ -17,6 +17,7 @@ import {
   chain,
   createRef,
   createSignal,
+  delay,
   easeInCubic,
   easeInOutCubic,
   easeOutCubic,
@@ -90,7 +91,9 @@ export default makeScene2D(function* (view) {
     0
   );
 
-  yield* sequence(0.25, vertex().size(40, 1), text().opacity(1, 0.75));
+  yield* vertex().size(40, 1);
+
+  yield delay(0.25, text().opacity(1, 1.5));
 
   yield* waitUntil("vectors");
 

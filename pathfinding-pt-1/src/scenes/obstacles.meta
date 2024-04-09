@@ -34,16 +34,16 @@
       "targetTime": 25.229084256333117
     },
     {
-      "name": "StopSpinning",
-      "targetTime": 38.15424534760562
-    },
-    {
       "name": "Obstacle Table",
       "targetTime": 29.346803653161615
     },
     {
       "name": "Consecutive",
       "targetTime": 34.58162176578013
+    },
+    {
+      "name": "Inflation",
+      "targetTime": 39.424950785470564
     }
   ],
   "seed": 1444485809

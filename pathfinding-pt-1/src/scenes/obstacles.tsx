@@ -5,14 +5,12 @@ import {
   Direction,
   Vector2,
   all,
-  any,
   chain,
   createRef,
   linear,
   loop,
   sequence,
   slideTransition,
-  waitFor,
   waitUntil,
 } from "@motion-canvas/core";
 import { Fonts, MainColors } from "../styles";
@@ -253,10 +251,7 @@ export default makeScene2D(function* (view) {
       ></Img>
     );
   cogImg().scale(0);
-  yield any(
-    waitUntil("StopSpinning"),
-    loop(() => cogImg().rotation(0).rotation(360, 2, linear))
-  );
+  yield loop(() => cogImg().rotation(0).rotation(360, 2, linear));
   yield* all(
     edgeTable.codeBlock().scale(0, 1),
     cogImg().opacity(1, 1),
@@ -284,5 +279,5 @@ export default makeScene2D(function* (view) {
     vertexTable.codeBlock().selection([lines(4), lines(2)], 1),
     vertexTable.codeBlock().selection(DEFAULT, 1)
   );
-  yield* waitFor(20);
+  yield* waitUntil("Inflation");
 });
