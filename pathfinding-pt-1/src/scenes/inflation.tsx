@@ -73,7 +73,8 @@ export default makeScene2D(function* (view) {
       dozer
         .body()
         .rotation(
-          invisibleCircle().getPointAtPercentage(0.5).normal.degrees + 180,
+          (invisibleCircle().getPointAtPercentage(0.5).normal.degrees + 180) %
+            360,
           1
         )
     ),
@@ -95,7 +96,7 @@ export default makeScene2D(function* (view) {
     250,
     250,
     new Color("#00000000"),
-    2,
+    5,
     15,
     MainColors.obstacles.brighten(0.5),
     0
