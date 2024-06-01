@@ -314,17 +314,24 @@ export class VisualVector {
   x: SimpleSignal<number, void>;
   y: SimpleSignal<number, void>;
   thickness: number;
+  pointThickness: number;
   line: Reference<Line>;
   point: Reference<Circle>;
 
-  constructor(x: number, y: number, thickness: number = 6) {
+  constructor(
+    x: number,
+    y: number,
+    thickness: number = 6,
+    pointThickness: number = 3
+  ) {
     this.x = createSignal(x);
     this.y = createSignal(y);
     this.thickness = thickness;
+    this.pointThickness = pointThickness ?? thickness * 3.5;
   }
 
   draw(view: Node, position: Vector2, color: SignalValue<PossibleCanvasStyle>) {
-    this.point = drawPoint(view, position, 4 * this.thickness, color);
+    this.point = drawPoint(view, position, this.pointThickness, color);
     this.line = createRef<Line>();
     this.point().add(
       <Line
@@ -351,7 +358,7 @@ export class VisualVector {
     this.point().size(0);
     this.line().end(0);
     return all(
-      this.point().size(4 * this.thickness, duration, timingFunction),
+      this.point().size(this.pointThickness, duration, timingFunction),
       this.line().end(1, duration, timingFunction)
     );
   }

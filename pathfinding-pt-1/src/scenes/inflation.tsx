@@ -1,45 +1,39 @@
-import { CameraView } from "@ksassnowski/motion-canvas-camera";
-import { Circle, Grid, Txt, makeScene2D } from "@motion-canvas/2d";
+import { Camera, Circle, Grid, Txt, makeScene2D } from "@motion-canvas/2d";
 import {
   Color,
   Direction,
   Vector2,
   all,
-  any,
   chain,
   createRef,
-  easeInCubic,
-  easeInOutCubic,
   easeInOutQuad,
-  easeInQuad,
-  linear,
-  loop,
   sequence,
   slideTransition,
   tween,
   waitFor,
   waitUntil,
 } from "@motion-canvas/core";
-import { Robot, drawPoint, drawRect } from "../utils";
+import { Robot, VisualVector, drawLine, drawPoint, drawRect } from "../utils";
 import { Fonts, MainColors } from "../styles";
-import obstacles from "./obstacles";
+
 export default makeScene2D(function* (view) {
   let fieldScale = 90;
-
-  let camera = createRef<CameraView>();
-  view.add(<CameraView ref={camera} width={"100%"} height={"100%"} />);
-
+  let camera = createRef<Camera>();
   let field = createRef<Grid>();
-  camera().add(
-    <Grid
-      ref={field}
-      width={"100%"}
-      height={"100%"}
-      stroke={"#666"}
-      lineWidth={3}
-      spacing={fieldScale}
-    />
+
+  view.add(
+    <Camera ref={camera}>
+      <Grid
+        ref={field}
+        width={"100%"}
+        height={"100%"}
+        stroke={"#666"}
+        lineWidth={3}
+        spacing={fieldScale}
+      />
+    </Camera>
   );
+
   yield* all(slideTransition(Direction.Bottom, 1), field().stroke("#444", 1));
   yield* waitUntil("Robot");
   let dozer = Robot.dozer(field(), new Vector2(0, 0), fieldScale * 2);
@@ -89,6 +83,7 @@ export default makeScene2D(function* (view) {
         );
     })
   );
+  invisibleCircle().remove();
   yield* waitUntil("Bigger");
   let obsOutline = drawRect(
     obs(),
@@ -184,7 +179,7 @@ export default makeScene2D(function* (view) {
     0,
     MainColors.path
   );
-  circumcircle().zIndex(99999999999999);
+  circumcircle().zIndex(999999999999);
   yield* circleCenter().size(25, 0.75);
   yield* waitUntil("Overkill");
   yield* all(
@@ -194,6 +189,9 @@ export default makeScene2D(function* (view) {
     obsOutline().position([0, 0], 1.5),
     dozer.animateOut(1)
   );
+  dozer.body().remove();
+  circumcircle().remove();
+
   let points = [];
   let lastUnrotatedPos = obsOutline().getPointAtPercentage(0).position;
   for (let i = 0; i < 100; i++) {
@@ -209,5 +207,62 @@ export default makeScene2D(function* (view) {
   }
   yield* waitUntil("vertices");
   yield* sequence(0.02, ...points.map((p) => p().size(15, 0.5)));
+  yield* waitUntil("approximate");
+  yield* sequence(
+    0.01,
+    chain(obsOutline().start(0.9999, 0.8)),
+    ...points.map((p) => p().size(0, 0.4))
+  );
+  obsOutline().remove();
+  yield* waitUntil("edge");
+
+  let line = drawLine(
+    field(),
+    [new Vector2(-125, -125), new Vector2(125, -125)],
+    10,
+    MainColors.path
+  );
+  line().opacity(0).rotation(10);
+  obs().zIndex(999999999999999);
+  yield* sequence(
+    0.4,
+    all(
+      obs().rotation(0, 0.7),
+      line().rotation(0, 0.7),
+      line().opacity(1, 0.7)
+    ),
+    all(camera().centerOn([0, -130], 0.7), camera().zoom(1.75, 0.7))
+  );
+
+  let normalVec = new VisualVector(100, -100, 10, 0);
+  yield* waitUntil("vector");
+  yield* normalVec.animateIn(
+    field(),
+    new Vector2(0, -125),
+    MainColors.path.brighten(0.5)
+  );
+  yield* waitUntil("direction");
+  yield* chain(
+    all(normalVec.x(-200, 1), normalVec.y(-50, 1)),
+    all(normalVec.x(100, 1), normalVec.y(-150, 1)),
+    all(normalVec.x(0, 1.5), normalVec.y(-120, 1.5))
+  );
+
+  yield* waitUntil("perpendicular");
+  let square = drawRect(
+    field(),
+    new Vector2(15, -140),
+    30,
+    30,
+    new Color("#00000000"),
+    5,
+    2,
+    MainColors.text
+  );
+  square().zIndex(-1).end(0);
+  yield* all(square().end(0.5, 1));
+
+  yield* waitUntil("slope");
+
   yield* waitFor(20);
 });

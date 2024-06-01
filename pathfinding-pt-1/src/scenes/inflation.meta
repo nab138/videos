@@ -44,6 +44,30 @@
     {
       "name": "vertices",
       "targetTime": 42.67038170077713
+    },
+    {
+      "name": "approximate",
+      "targetTime": 52.11415167713184
+    },
+    {
+      "name": "edge",
+      "targetTime": 54.885242208950295
+    },
+    {
+      "name": "vector",
+      "targetTime": 56.95837226478913
+    },
+    {
+      "name": "direction",
+      "targetTime": 58.53055603152699
+    },
+    {
+      "name": "perpendicular",
+      "targetTime": 65.45530558426452
+    },
+    {
+      "name": "slope",
+      "targetTime": 66.45530558426452
     }
   ],
   "seed": 3780073274
