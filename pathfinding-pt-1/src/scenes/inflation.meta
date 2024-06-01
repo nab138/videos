@@ -67,7 +67,15 @@
     },
     {
       "name": "slope",
-      "targetTime": 66.10491819657128
+      "targetTime": 68.76567242186684
+    },
+    {
+      "name": "invertX",
+      "targetTime": 74.84260767360985
+    },
+    {
+      "name": "invertY",
+      "targetTime": 75.76964230236099
     }
   ],
   "seed": 3780073274

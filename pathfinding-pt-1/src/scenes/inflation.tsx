@@ -1,4 +1,12 @@
-import { Camera, Circle, Grid, Txt, makeScene2D } from "@motion-canvas/2d";
+import {
+  Camera,
+  Circle,
+  Grid,
+  Latex,
+  Layout,
+  Txt,
+  makeScene2D,
+} from "@motion-canvas/2d";
 import {
   Color,
   Direction,
@@ -6,6 +14,7 @@ import {
   all,
   chain,
   createRef,
+  createSignal,
   easeInOutQuad,
   sequence,
   slideTransition,
@@ -248,7 +257,7 @@ export default makeScene2D(function* (view) {
   yield* chain(
     all(normalVec.x(-200, 1), normalVec.y(-50, 1)),
     all(normalVec.x(100, 1), normalVec.y(-150, 1)),
-    all(normalVec.x(0, 1.5), normalVec.y(-120, 1.5))
+    all(normalVec.x(0, 1.5), normalVec.y(-fieldScale, 1.5))
   );
 
   yield* waitUntil("perpendicular");
@@ -266,6 +275,149 @@ export default makeScene2D(function* (view) {
   yield* all(square().end(0.5, 1));
 
   yield* waitUntil("slope");
+
+  let measureLine1 = drawLine(
+    field(),
+    [
+      new Vector2(-fieldScale, -fieldScale),
+      new Vector2(fieldScale, -fieldScale),
+    ],
+    5,
+    MainColors.backgroundLight
+  );
+  measureLine1().lineDash([30, 10]);
+  measureLine1().end(0);
+  let measureLine2 = drawLine(
+    field(),
+    [
+      new Vector2(-fieldScale, -3 * fieldScale),
+      new Vector2(-fieldScale, -fieldScale),
+    ],
+    5,
+    MainColors.backgroundLight
+  );
+  measureLine2().lineDash([30, 10]);
+  measureLine2().end(0);
+
+  let measureX = createRef<Txt>();
+  let xLayout = createRef<Layout>();
+  let x = createSignal(0);
+  field().add(
+    <Layout
+      ref={xLayout}
+      layout
+      direction="column"
+      alignItems="center"
+      gap={0}
+      opacity={0}
+    />
+  );
+  xLayout().add(
+    <Txt
+      ref={measureX}
+      fontFamily={Fonts.main}
+      fill={MainColors.text}
+      text={() => `${x().toFixed(0)}`}
+    />
+  );
+  xLayout().add(
+    <Txt text="Run (x)" x={0} y={0} fill={MainColors.text} fontSize={20} />
+  );
+
+  let measureY = createRef<Txt>();
+
+  let y = createSignal(0);
+  let yLayout = createRef<Layout>();
+  field().add(
+    <Layout
+      ref={yLayout}
+      layout
+      direction="column"
+      alignItems="center"
+      x={-2 * fieldScale}
+      y={-2 * fieldScale}
+      gap={0}
+      opacity={0}
+    />
+  );
+  yLayout().add(
+    <Txt
+      ref={measureY}
+      fontFamily={Fonts.main}
+      fill={MainColors.text}
+      text={() => `${y().toFixed(0)}`}
+    />
+  );
+  yLayout().add(
+    <Txt text="Rise (y)" x={0} y={0} fill={MainColors.text} fontSize={20} />
+  );
+
+  let slopeTex = createRef<Latex>();
+  field().add(
+    <Latex
+      ref={slopeTex}
+      tex={() => `
+      \\color{white}\\begin{align}\\text{Slope} = &\\frac{\\text{rise}}{\\text{run}} \\\\[0.6em]
+      \\text{Slope} = &\\frac{${y().toFixed(2)}}{${x().toFixed(2)}} \\\\[0.6em]
+      \\text{Slope} = &{${(y() / x()).toFixed(2)}}\\end{align}`}
+      x={3 * fieldScale}
+      y={-2.5 * fieldScale}
+      height={2.25 * fieldScale}
+      opacity={0}
+    />
+  );
+
+  let vecTex = createRef<Latex>();
+  field().add(
+    <Latex
+      ref={vecTex}
+      tex={() => `
+      \\color{white}\\begin{align}\\text{Vector} = &(\\text{run}, \\text{rise}) \\\\[0.6em]
+      \\text{Vector} = &(${x().toFixed(2)}, ${y().toFixed(2)})\\end{align}`}
+      x={3 * fieldScale}
+      y={0}
+      height={0.9 * fieldScale}
+      opacity={0}
+    />
+  );
+
+  yield* all(
+    square().end(0, 0.8),
+    obs().opacity(0, 0.8),
+    line().points(
+      [
+        new Vector2(-fieldScale, -3 * fieldScale),
+        new Vector2(fieldScale, -fieldScale),
+      ],
+      1.5
+    ),
+    normalVec.point().position(new Vector2(0, -2 * fieldScale), 1.5),
+    normalVec.x(fieldScale, 1.5),
+    normalVec.y(fieldScale, 1.5),
+    normalVec.point().zIndex(999999999999, 1.5),
+    normalVec.point().size(20, 1.5),
+    measureLine1().end(1, 1.5),
+    measureLine2().end(1, 1.5),
+    xLayout().opacity(1, 1),
+    yLayout().opacity(1, 1),
+    x(2, 1.5),
+    y(-2, 1.5),
+    slopeTex().opacity(1, 1),
+    vecTex().opacity(1, 1)
+  );
+
+  yield* waitUntil("invertX");
+
+  yield* all(x(-2, 0.5), normalVec.x(-fieldScale, 0.5));
+
+  yield* waitUntil("invertY");
+
+  yield* all(
+    x(2, 0.5),
+    y(2, 0.5),
+    normalVec.y(-fieldScale, 0.5),
+    normalVec.x(fieldScale, 0.5)
+  );
 
   yield* waitFor(20);
 });
