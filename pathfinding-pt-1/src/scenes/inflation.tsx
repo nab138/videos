@@ -34,6 +34,8 @@ export default makeScene2D(function* (view) {
     </Camera>
   );
 
+  camera().scene().position(view.size().div(2));
+
   yield* all(slideTransition(Direction.Bottom, 1), field().stroke("#444", 1));
   yield* waitUntil("Robot");
   let dozer = Robot.dozer(field(), new Vector2(0, 0), fieldScale * 2);
@@ -50,7 +52,7 @@ export default makeScene2D(function* (view) {
     MainColors.border,
     10
   );
-  obs().zIndex(9999999);
+  obs().zIndex(99999);
   let invisibleCircle = createRef<Circle>();
   obs().add(<Circle ref={invisibleCircle} size={353.55} />);
   yield* waitUntil("Obstacle");
@@ -131,7 +133,7 @@ export default makeScene2D(function* (view) {
       fontSize={1.1 * fieldScale}
       position={new Vector2(0, 600)}
       ref={text}
-      text="Minkowski Addition"
+      text="Minkowski Sum"
       zIndex={99999999}
     />
   );
@@ -222,16 +224,17 @@ export default makeScene2D(function* (view) {
     10,
     MainColors.path
   );
+  line().zIndex(99999999999);
   line().opacity(0).rotation(10);
-  obs().zIndex(999999999999999);
   yield* sequence(
     0.4,
     all(
-      obs().rotation(0, 0.7),
-      line().rotation(0, 0.7),
-      line().opacity(1, 0.7)
+      obs().rotation(0, 1),
+      obs().opacity(0.6, 1),
+      line().rotation(0, 1),
+      line().opacity(1, 1)
     ),
-    all(camera().centerOn([0, -130], 0.7), camera().zoom(1.75, 0.7))
+    all(camera().centerOn([0, -130], 1), camera().zoom(1.75, 1))
   );
 
   let normalVec = new VisualVector(100, -100, 10, 0);

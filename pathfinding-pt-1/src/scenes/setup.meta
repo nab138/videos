@@ -78,12 +78,20 @@
       "targetTime": 54.50075288974493
     },
     {
+      "name": "normalizeEq",
+      "targetTime": 57.52926368684031
+    },
+    {
+      "name": "eqDismiss",
+      "targetTime": 61.9932770992805
+    },
+    {
       "name": "normalize",
-      "targetTime": 61.02150536351194
+      "targetTime": 63.271238200965655
     },
     {
       "name": "obstacleTransition",
-      "targetTime": 69.12815085074287
+      "targetTime": 69.1980372417389
     }
   ],
   "seed": 2180341840

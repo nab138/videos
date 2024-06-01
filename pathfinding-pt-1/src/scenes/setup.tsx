@@ -6,9 +6,10 @@ import {
   insert,
   lines,
   useScene2D,
+  Rect,
 } from "@motion-canvas/2d";
-import { CameraView } from "@ksassnowski/motion-canvas-camera";
 import {
+  Color,
   DEFAULT,
   Direction,
   Vector2,
@@ -29,7 +30,14 @@ import {
   waitUntil,
 } from "@motion-canvas/core";
 import { Fonts, MainColors } from "../styles";
-import { Robot, VisualVector, drawCode, drawLine, drawPoint } from "../utils";
+import {
+  Robot,
+  VisualVector,
+  drawCode,
+  drawLine,
+  drawPoint,
+  drawRect,
+} from "../utils";
 import { ThreeCanvas, axisAngle } from "motion-canvas-3d";
 import * as THREE from "three";
 import {
@@ -43,14 +51,10 @@ import {
 export default makeScene2D(function* (view) {
   yield* slideTransition(Direction.Bottom, 0.5);
   let fieldScale = 90;
-
-  let camera = createRef<CameraView>();
-  view.add(<CameraView ref={camera} width={"100%"} height={"100%"} />);
-
   const { x: canvasWidth, y: canvasHeight } = useScene2D().getSize();
 
   let field = createRef<Grid>();
-  camera().add(
+  view.add(
     <Grid
       ref={field}
       width={"100%"}
@@ -76,7 +80,6 @@ export default makeScene2D(function* (view) {
       fontFamily={Fonts.main}
       fontSize={1 * fieldScale}
       opacity={0}
-      // Add outline
       stroke={MainColors.backgroundDark}
     />
   );
@@ -119,11 +122,11 @@ export default makeScene2D(function* (view) {
 
   c.threeScene.background = new THREE.Color("rgb(13, 13, 13)");
 
-  draw3DGrid(c, canvasWidth, canvasHeight, 101, 346, 0xa5a5a5, 16);
+  draw3DGrid(c, canvasWidth, canvasHeight, 101, 346, 0xa6a6a6, 15.75);
 
   let [dirLight, ambLight] = addLight(c, 0xffffff, 3);
 
-  camera().add(c);
+  field().view().add(c);
 
   let point3D = draw3DPoint(
     c,
@@ -302,16 +305,26 @@ export default makeScene2D(function* (view) {
 
   yield* waitUntil("codeBlock");
 
+  let bgRect = drawRect(
+    view,
+    new Vector2(0, 0),
+    view.width,
+    view.height,
+    new Color("#00000066")
+  );
+  bgRect().opacity(0).zIndex(99);
   let { codeBlock, codeBackground } = drawCode(
-    camera(),
+    view,
     new Vector2(0, 700),
     `class Vertex {
   
 
 }`
   );
+  codeBlock().zIndex(1000);
+  codeBackground().zIndex(999);
 
-  yield* codeBackground().y(-50, 1);
+  yield* all(codeBackground().y(-50, 1), bgRect().opacity(1, 1));
 
   yield* waitUntil("xCoord");
 
@@ -344,7 +357,7 @@ export default makeScene2D(function* (view) {
 
   yield* sequence(
     0.1,
-    codeBackground().y(700, 1),
+    all(codeBackground().y(700, 1), bgRect().opacity(0, 1)),
     all(
       dozer3D.scale([0, 0, 0], 1),
       tween(1, (tRaw) => {
@@ -387,7 +400,7 @@ export default makeScene2D(function* (view) {
   yield* waitUntil("contexts");
 
   let rust = drawCode(
-    camera(),
+    field(),
     new Vector2(-450, 750),
     `let vector = vec!["hello", "world"];`,
     "rust",
@@ -395,7 +408,7 @@ export default makeScene2D(function* (view) {
   );
 
   const tex = createRef<Latex>();
-  camera().add(
+  field().add(
     <Latex
       ref={tex}
       tex="{\color{white} \begin{bmatrix} w_1 \\ w_2 \\ \vdots \\ w_n \end{bmatrix} \;}"
@@ -412,7 +425,7 @@ export default makeScene2D(function* (view) {
   yield* all(rust.codeBackground().y(750, 1), tex().y(750, 1));
 
   let measureLine1 = drawLine(
-    camera(),
+    field(),
     [new Vector2(0, 0), new Vector2(fieldScale * 4, 0)],
     5,
     MainColors.backgroundLight
@@ -420,7 +433,7 @@ export default makeScene2D(function* (view) {
   measureLine1().lineDash([30, 10]);
   measureLine1().end(0);
   let measureLine2 = drawLine(
-    camera(),
+    field(),
     [
       new Vector2(fieldScale * 4, 0),
       new Vector2(fieldScale * 4, -fieldScale * 4),
@@ -434,7 +447,7 @@ export default makeScene2D(function* (view) {
   let measureText1 = createRef<Txt>();
 
   let x = createSignal(0);
-  camera().add(
+  field().add(
     <Txt
       ref={measureText1}
       fontFamily={Fonts.main}
@@ -449,7 +462,7 @@ export default makeScene2D(function* (view) {
   let measureText2 = createRef<Txt>();
 
   let y = createSignal(0);
-  camera().add(
+  field().add(
     <Txt
       ref={measureText2}
       fontFamily={Fonts.main}
@@ -484,16 +497,18 @@ export default makeScene2D(function* (view) {
   );
 
   const tex2 = createRef<Latex>();
-  camera().add(
+  field().add(
     <Latex
       ref={tex2}
       tex={() => `
 \\color{white}\\begin{align}\\text{mag} = &\\sqrt{x^2 + y^2} \\\\
 \\text{mag} = &\\sqrt{{${x().toFixed(2)}}^2 + {${y().toFixed(2)}}^2} \\\\
-\\text{mag} = &\\sqrt{{${(x() * x() + y() * y()).toFixed(2)}}}\\end{align}`}
-      y={-fieldScale}
+\\text{mag} = &\\sqrt{{${(x() * x() + y() * y()).toFixed(2)}}} \\\\
+\\text{mag} = &{${Math.sqrt(x() * x() + y() * y()).toFixed(3)}}\\end{align}`}
+      y={0}
       x={-fieldScale * 4}
-      width={500} // height and width can calculate based on each other
+      height={325}
+      width={500}
       opacity={0}
     />
   );
@@ -503,16 +518,17 @@ export default makeScene2D(function* (view) {
   yield* waitUntil("definition");
 
   let vectorCode = drawCode(
-    camera(),
+    view,
     new Vector2(0, 750),
     `class Vector {
   
 
 }`
   );
+  vectorCode.codeBlock().zIndex(1000);
+  vectorCode.codeBackground().zIndex(999);
 
-  yield* vectorCode.codeBackground().y(0, 1);
-
+  yield* all(vectorCode.codeBackground().y(0, 1), bgRect().opacity(1, 1));
   yield* waitUntil("xCoord2");
 
   yield* all(
@@ -535,7 +551,55 @@ export default makeScene2D(function* (view) {
 
   yield* waitUntil("vecDismiss");
 
-  yield* vectorCode.codeBackground().y(700, 1);
+  yield* all(vectorCode.codeBackground().y(700, 1), bgRect().opacity(0, 1));
+
+  yield* waitUntil("normalizeEq");
+
+  const tex3 = createRef<Latex>();
+  const texBG = createRef<Rect>();
+  view.add(
+    <Rect
+      ref={texBG}
+      x={0}
+      y={720}
+      width={10 * fieldScale}
+      height={4 * fieldScale}
+      fill={MainColors.codeBackground}
+      radius={25}
+      shadowBlur={3}
+      shadowColor={MainColors.shadow}
+      shadowOffsetX={3}
+      shadowOffsetY={3}
+      zIndex={999}
+    />
+  );
+  texBG().add(
+    <Latex
+      ref={tex3}
+      tex={() =>
+        `\\color{white}(\\frac{x}{\\sqrt{x^2 +y^2}}, \\frac{y}{\\sqrt{x^2 +y^2}})`
+      }
+      y={-50}
+      x={0}
+      width={800} // height and width can calculate based on each other
+    />
+  );
+  texBG().add(
+    <Txt
+      fill={MainColors.text}
+      fontFamily={Fonts.main}
+      fontSize={70}
+      text="Normalization"
+      zIndex={9999}
+      y={125}
+    />
+  );
+
+  yield* all(texBG().y(0, 1), bgRect().opacity(1, 1));
+
+  yield* waitUntil("eqDismiss");
+
+  yield* all(texBG().y(720, 1), bgRect().opacity(0, 1));
 
   yield* waitUntil("normalize");
 

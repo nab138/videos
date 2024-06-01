@@ -1,4 +1,3 @@
-import { CameraView } from "@ksassnowski/motion-canvas-camera";
 import { Grid, Img, Txt, lines, makeScene2D } from "@motion-canvas/2d";
 import {
   DEFAULT,
@@ -20,11 +19,8 @@ import cog from "../../resources/cog.svg";
 export default makeScene2D(function* (view) {
   let fieldScale = 90;
 
-  let camera = createRef<CameraView>();
-  view.add(<CameraView ref={camera} width={"100%"} height={"100%"} />);
-
   let field = createRef<Grid>();
-  camera().add(
+  view.add(
     <Grid
       ref={field}
       width={"100%"}
@@ -203,7 +199,7 @@ export default makeScene2D(function* (view) {
       edgeTable.codeBlock().code(
         `0, 1
 
-        `,
+`,
         0.75
       ),
       l1().end(1, 0.75),
@@ -214,7 +210,7 @@ export default makeScene2D(function* (view) {
       edgeTable.codeBlock().code(
         `0, 1
 1, 2
-        `,
+`,
         0.75
       ),
       l2().end(1, 0.75),

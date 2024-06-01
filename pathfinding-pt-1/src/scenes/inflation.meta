@@ -51,23 +51,23 @@
     },
     {
       "name": "edge",
-      "targetTime": 54.885242208950295
+      "targetTime": 54.53485482125705
     },
     {
       "name": "vector",
-      "targetTime": 56.95837226478913
+      "targetTime": 56.60798487709589
     },
     {
       "name": "direction",
-      "targetTime": 58.53055603152699
+      "targetTime": 58.180168643833746
     },
     {
       "name": "perpendicular",
-      "targetTime": 65.45530558426452
+      "targetTime": 65.10491819657128
     },
     {
       "name": "slope",
-      "targetTime": 66.45530558426452
+      "targetTime": 66.10491819657128
     }
   ],
   "seed": 3780073274

@@ -32,7 +32,24 @@ export default makeScene2D(function* (view) {
     20
   );
 
-  yield* sequence(0.2, rect().width(1500, 1), rect().height(400, 1));
+  let text = createRef<Txt>();
+  view.add(
+    <Txt
+      fill={MainColors.text}
+      fontFamily={Fonts.main}
+      fontSize={100}
+      position={new Vector2(0, -600)}
+      ref={text}
+      text="Pathing Steps"
+      zIndex={99999999}
+    />
+  );
+  yield* sequence(
+    0.2,
+    rect().width(1500, 1),
+    rect().height(400, 1),
+    text().y(-300, 1)
+  );
 
   yield* waitFor(3.5);
 
