@@ -76,6 +76,14 @@
     {
       "name": "invertY",
       "targetTime": 75.76964230236099
+    },
+    {
+      "name": "otherSlopes",
+      "targetTime": 80.23450756271022
+    },
+    {
+      "name": "switch",
+      "targetTime": 82.28234487193711
     }
   ],
   "seed": 3780073274

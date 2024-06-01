@@ -357,24 +357,30 @@ export default makeScene2D(function* (view) {
     <Latex
       ref={slopeTex}
       tex={() => `
-      \\color{white}\\begin{align}\\text{Slope} = &\\frac{\\text{rise}}{\\text{run}} \\\\[0.6em]
-      \\text{Slope} = &\\frac{${y().toFixed(2)}}{${x().toFixed(2)}} \\\\[0.6em]
-      \\text{Slope} = &{${(y() / x()).toFixed(2)}}\\end{align}`}
-      x={3 * fieldScale}
+      \\color{white}\\begin{align}&\\text{Slope} = \\frac{\\text{rise}}{\\text{run}} \\\\[0.6em]
+      &\\text{Slope} = \\frac{${y().toFixed(2)}}{${x().toFixed(2)}} \\\\[0.6em]
+      &\\text{Slope} = {${(y() / x()).toFixed(2)}}\\end{align}`}
+      x={() => slopeTex().width() / 2 + 2.25 * fieldScale}
       y={-2.5 * fieldScale}
       height={2.25 * fieldScale}
       opacity={0}
     />
   );
 
+  let xVecText = createSignal("run");
+  let yVecText = createSignal("rise");
+
   let vecTex = createRef<Latex>();
   field().add(
     <Latex
       ref={vecTex}
       tex={() => `
-      \\color{white}\\begin{align}\\text{Vector} = &(\\text{run}, \\text{rise}) \\\\[0.6em]
-      \\text{Vector} = &(${x().toFixed(2)}, ${y().toFixed(2)})\\end{align}`}
-      x={3 * fieldScale}
+      \\color{white}\\begin{align}&\\text{Vector} = (\\text{${xVecText()}}, \\text{${yVecText()}}) \\\\[0.6em]
+      &\\text{Vector} = (${((normalVec.x() * 2) / fieldScale).toFixed(2)}, ${(
+        (-normalVec.y() * 2) /
+        fieldScale
+      ).toFixed(2)})\\end{align}`}
+      x={() => vecTex().width() / 2 + 2.25 * fieldScale}
       y={0}
       height={0.9 * fieldScale}
       opacity={0}
@@ -408,15 +414,58 @@ export default makeScene2D(function* (view) {
 
   yield* waitUntil("invertX");
 
-  yield* all(x(-2, 0.5), normalVec.x(-fieldScale, 0.5));
+  yield* all(normalVec.x(-fieldScale, 0.5), xVecText("-run", 0.5));
 
   yield* waitUntil("invertY");
 
   yield* all(
-    x(2, 0.5),
-    y(2, 0.5),
     normalVec.y(-fieldScale, 0.5),
-    normalVec.x(fieldScale, 0.5)
+    normalVec.x(fieldScale, 0.5),
+    xVecText("run", 0.5),
+    yVecText("-rise", 0.5)
+  );
+
+  yield* waitUntil("otherSlopes");
+
+  yield* all(
+    line().points(
+      [
+        new Vector2(-2 * fieldScale, -2 * fieldScale),
+        new Vector2(fieldScale, -fieldScale),
+      ],
+      1
+    ),
+    measureLine1().points(
+      [
+        new Vector2(-2 * fieldScale, -fieldScale),
+        new Vector2(fieldScale, -fieldScale),
+      ],
+      1
+    ),
+    measureLine2().points(
+      [
+        new Vector2(-2 * fieldScale, -2 * fieldScale),
+        new Vector2(-2 * fieldScale, -fieldScale),
+      ],
+      1
+    ),
+    yLayout().position(new Vector2(-3 * fieldScale, -1.5 * fieldScale), 1),
+    xLayout().position(new Vector2(-0.5 * fieldScale, 0), 1),
+    normalVec
+      .point()
+      .position(new Vector2(-0.5 * fieldScale, -1.5 * fieldScale), 1),
+    x(3, 1),
+    y(-1, 1),
+    normalVec.x(1.5 * fieldScale, 1),
+    normalVec.y(-0.5 * fieldScale, 1)
+  );
+
+  yield* waitUntil("switch");
+  yield* all(
+    xVecText("-rise", 1),
+    yVecText("run", 1),
+    normalVec.y(-1.5 * fieldScale, 1),
+    normalVec.x(0.5 * fieldScale, 1)
   );
 
   yield* waitFor(20);
