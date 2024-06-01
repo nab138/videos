@@ -468,5 +468,90 @@ export default makeScene2D(function* (view) {
     normalVec.x(0.5 * fieldScale, 1)
   );
 
+  yield* waitUntil("obstacle");
+
+  obs()
+    .size(new Vector2(4 * fieldScale, 4 * fieldScale))
+    .zIndex(2);
+  yield* all(
+    xLayout().opacity(0, 1),
+    yLayout().opacity(0, 1),
+    measureLine1().end(0, 1),
+    measureLine2().end(0, 1),
+    slopeTex().opacity(0, 1),
+    vecTex().opacity(0, 1),
+    obs().opacity(0.6, 1),
+    camera().centerOn([0, 0], 1),
+    camera().zoom(1, 1),
+    line().points(
+      [
+        new Vector2(-2 * fieldScale, -2 * fieldScale),
+        new Vector2(2 * fieldScale, -2 * fieldScale),
+      ],
+      1
+    ),
+    normalVec.point().position(new Vector2(0, -2 * fieldScale), 1),
+    normalVec.x(0, 1),
+    normalVec.y(-1.5 * fieldScale, 1)
+  );
+
+  yield* waitUntil("inward");
+
+  let rightLine = drawLine(
+    field(),
+    [
+      new Vector2(2 * fieldScale, -2 * fieldScale),
+      new Vector2(2 * fieldScale, 2 * fieldScale),
+    ],
+    10,
+    MainColors.path
+  );
+  let leftLine = drawLine(
+    field(),
+    [
+      new Vector2(-2 * fieldScale, -2 * fieldScale),
+      new Vector2(-2 * fieldScale, 2 * fieldScale),
+    ],
+    10,
+    MainColors.path
+  );
+  let bottomLine = drawLine(
+    field(),
+    [
+      new Vector2(-2 * fieldScale, 2 * fieldScale),
+      new Vector2(2 * fieldScale, 2 * fieldScale),
+    ],
+    10,
+    MainColors.path
+  );
+  let lines = [rightLine, bottomLine, leftLine];
+  lines.forEach((l) => l().end(0));
+
+  let leftVec = new VisualVector(-1.5 * fieldScale, 0, 10, 20);
+  let rightVec = new VisualVector(-1.5 * fieldScale, 0, 10, 20);
+  let bottomVec = new VisualVector(0, -1.5 * fieldScale, 10, 20);
+
+  let vecs = [leftVec, rightVec, bottomVec];
+  let positions = [
+    new Vector2(-2 * fieldScale, 0),
+    new Vector2(2 * fieldScale, 0),
+    new Vector2(0, 2 * fieldScale),
+  ];
+  yield* chain(
+    all(...lines.map((l) => l().end(1, 0.75))),
+    all(
+      ...vecs.map((v, i) =>
+        v.animateIn(field(), positions[i], MainColors.path.brighten(0.5), 0.75)
+      )
+    )
+  );
+
+  yield* waitUntil("dotProduct");
+  yield* all(
+    ...[line, normalVec.point, obs, ...lines, ...vecs.map((v) => v.point)].map(
+      (v) => v().position([v().position().x - 400, v().position().y], 1)
+    )
+  );
+
   yield* waitFor(20);
 });

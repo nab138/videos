@@ -84,6 +84,18 @@
     {
       "name": "switch",
       "targetTime": 82.28234487193711
+    },
+    {
+      "name": "obstacle",
+      "targetTime": 89.42209990151895
+    },
+    {
+      "name": "inward",
+      "targetTime": 91.63315249909702
+    },
+    {
+      "name": "dotProduct",
+      "targetTime": 95.63974973594465
     }
   ],
   "seed": 3780073274
