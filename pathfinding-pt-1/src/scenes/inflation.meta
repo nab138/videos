@@ -96,6 +96,14 @@
     {
       "name": "dotProduct",
       "targetTime": 95.63974973594465
+    },
+    {
+      "name": "x",
+      "targetTime": 99.78599202531954
+    },
+    {
+      "name": "y",
+      "targetTime": 102.63570589874323
     }
   ],
   "seed": 3780073274

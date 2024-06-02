@@ -22,7 +22,14 @@ import {
   waitFor,
   waitUntil,
 } from "@motion-canvas/core";
-import { Robot, VisualVector, drawLine, drawPoint, drawRect } from "../utils";
+import {
+  Robot,
+  VisualVector,
+  drawCode,
+  drawLine,
+  drawPoint,
+  drawRect,
+} from "../utils";
 import { Fonts, MainColors } from "../styles";
 
 export default makeScene2D(function* (view) {
@@ -547,11 +554,73 @@ export default makeScene2D(function* (view) {
   );
 
   yield* waitUntil("dotProduct");
+  let dotProductText = createRef<Txt>();
+  field().add(
+    <Txt
+      ref={dotProductText}
+      fill={MainColors.text}
+      fontFamily={Fonts.main}
+      fontSize={1.1 * fieldScale}
+      position={new Vector2(4 * fieldScale, -600)}
+      text="Dot Product"
+      zIndex={99999999}
+    />
+  );
+  let dotProductTex = createRef<Latex>();
+  field().add(
+    <Latex
+      ref={dotProductTex}
+      tex={`\\color{white}\\vec{a} \\cdot \\vec{b} = a_x \\cdot b_x + a_y \\cdot b_y\\`}
+      x={() => dotProductTex().width() / 2 + 0.75 * fieldScale}
+      y={600}
+      height={1 * fieldScale}
+    />
+  );
+  let dotProduct = drawCode(
+    field(),
+    new Vector2(4 * fieldScale, 750),
+    `class Vector {
+  /* ... */
+  public double dotProduct(Vector other) {
+    return
+  }
+}`,
+    "java",
+    34
+  );
   yield* all(
     ...[line, normalVec.point, obs, ...lines, ...vecs.map((v) => v.point)].map(
-      (v) => v().position([v().position().x - 400, v().position().y], 1)
-    )
+      (v) => v().position([v().position().x - 450, v().position().y], 1)
+    ),
+    dotProductText().position(new Vector2(4 * fieldScale, -230), 1),
+    dotProduct.codeBackground().y(30, 1)
   );
 
+  yield* waitUntil("x");
+  yield* dotProduct.codeBlock().code(
+    `class Vector {
+  /* ... */
+  public double dotProduct(Vector other) {
+    return x * other.x
+  }
+}`,
+    1
+  );
+  yield* waitUntil("y");
+  yield* dotProduct.codeBlock().code(
+    `class Vector {
+  /* ... */
+  public double dotProduct(Vector other) {
+    return x * other.x + y * other.y;
+  }
+}`,
+    1
+  );
+  yield* waitFor(1);
+  yield* all(
+    dotProductText().y(-300, 1),
+    dotProduct.codeBackground().y(0, 1),
+    dotProductTex().y(300, 1)
+  );
   yield* waitFor(20);
 });
