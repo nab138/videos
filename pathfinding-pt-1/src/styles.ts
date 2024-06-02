@@ -14,6 +14,7 @@ export class MainColors {
     wheels: new Color("#2d2d2e"),
     wheels3D: new Color("#3d3d3e"),
   };
+  static blue = new Color("#363ceb");
 
   static codeBackground = new Color("#151515");
 }

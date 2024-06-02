@@ -330,6 +330,18 @@ export class VisualVector {
     this.pointThickness = pointThickness ?? thickness * 3.5;
   }
 
+  static fromSignals(
+    x: SimpleSignal<number>,
+    y: SimpleSignal<number>,
+    thickness: number = 6,
+    pointThickness: number = 3
+  ) {
+    let vec = new VisualVector(0, 0, thickness, pointThickness);
+    vec.x = x;
+    vec.y = y;
+    return vec;
+  }
+
   draw(view: Node, position: Vector2, color: SignalValue<PossibleCanvasStyle>) {
     this.point = drawPoint(view, position, this.pointThickness, color);
     this.line = createRef<Line>();

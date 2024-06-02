@@ -1,6 +1,7 @@
 import {
   Camera,
   Circle,
+  CubicBezier,
   Grid,
   Latex,
   Layout,
@@ -15,7 +16,11 @@ import {
   chain,
   createRef,
   createSignal,
+  easeInCubic,
+  easeInOutCubic,
   easeInOutQuad,
+  easeOutCubic,
+  linear,
   sequence,
   slideTransition,
   tween,
@@ -570,10 +575,10 @@ export default makeScene2D(function* (view) {
   field().add(
     <Latex
       ref={dotProductTex}
-      tex={`\\color{white}\\vec{a} \\cdot \\vec{b} = a_x \\cdot b_x + a_y \\cdot b_y\\`}
-      x={() => dotProductTex().width() / 2 + 0.75 * fieldScale}
+      tex={`\\color{white}\\begin{align}\\color{white}&\\vec{a} \\cdot \\vec{b} = a_x \\cdot b_x + a_y \\cdot b_y\\end{align}`}
+      x={() => dotProductTex().width() / 2 + 0 * fieldScale}
       y={600}
-      height={1 * fieldScale}
+      fontSize={50}
     />
   );
   let dotProduct = drawCode(
@@ -590,7 +595,7 @@ export default makeScene2D(function* (view) {
   );
   yield* all(
     ...[line, normalVec.point, obs, ...lines, ...vecs.map((v) => v.point)].map(
-      (v) => v().position([v().position().x - 450, v().position().y], 1)
+      (v) => v().x(v().x() - 450, 1)
     ),
     dotProductText().position(new Vector2(4 * fieldScale, -230), 1),
     dotProduct.codeBackground().y(30, 1)
@@ -622,5 +627,85 @@ export default makeScene2D(function* (view) {
     dotProduct.codeBackground().y(0, 1),
     dotProductTex().y(300, 1)
   );
+  let dotX1 = createSignal(2);
+  let dotY1 = createSignal(-2);
+  let rotationAngle = createSignal(Math.PI / 4); // New signal for the rotation angle
+
+  let dotX2Raw = createSignal(() => -Math.cos(rotationAngle()));
+  let dotY2Raw = createSignal(() => Math.sin(rotationAngle()));
+  let mag = createSignal(() => Math.sqrt(dotX2Raw() ** 2 + dotY2Raw() ** 2));
+  let dotX2 = createSignal(() => (dotX2Raw() / mag()) * 2.12132034356);
+  let dotY2 = createSignal(() => (dotY2Raw() / mag()) * 2.12132034356);
+  let dotProductSolutionTex = createRef<Latex>();
+  let dotVec1 = VisualVector.fromSignals(
+    createSignal(() => dotX1() * fieldScale),
+    createSignal(() => -dotY1() * fieldScale),
+    15,
+    30
+  );
+  let dotVec2 = VisualVector.fromSignals(
+    createSignal(() => dotX2() * fieldScale),
+    createSignal(() => -dotY2() * fieldScale),
+    15,
+    30
+  );
+
+  let lRed = MainColors.path.brighten(0.5).hex();
+  let lBlue = MainColors.blue.brighten(0.5).hex();
+  field().add(
+    <Latex
+      ref={dotProductSolutionTex}
+      tex={() => `
+      \\color{${lRed}}\\begin{align}&\\vec{a} \\color{white}\\cdot \\color{${lBlue}}\\vec{b}  \\color{white}= \\color{${lRed}}${dotX1().toFixed(
+        2
+      )}  \\color{white}\\cdot \\color{${lBlue}}${dotX2().toFixed(
+        2
+      )}  \\color{white}+ \\color{${lRed}}${dotY1().toFixed(
+        2
+      )} \\color{white}\\cdot \\color{${lBlue}}${dotY2().toFixed(2)} \\\\[0.6em]
+      &\\color{${lRed}}\\vec{a}  \\color{white}\\cdot \\color{${lBlue}}\\vec{b}  \\color{white}= ${(
+        dotX1() * dotX2() +
+        dotY1() * dotY2()
+      ).toFixed(2)}\\end{align}`}
+      x={() => dotProductSolutionTex().width() / 2 + 0 * fieldScale}
+      y={650}
+      fontSize={50}
+    />
+  );
+  yield* waitUntil("unique");
+  yield* all(
+    dotProduct.codeBackground().x(1400, 1),
+    ...[line, normalVec.point, obs, ...lines, ...vecs.map((v) => v.point)].map(
+      (v) => v().x(v().x() - 800, 1)
+    ),
+    dotProductTex().y(-100, 1),
+    dotProductSolutionTex().y(100, 1),
+    dotVec1.animateIn(
+      field(),
+      new Vector2(-fieldScale * 6, 0),
+      MainColors.path.brighten(0.5),
+      1
+    ),
+    dotVec2.animateIn(
+      field(),
+      new Vector2(-fieldScale * 6, 0),
+      MainColors.blue.brighten(0.5),
+      1
+    )
+  );
+  yield* waitUntil("more");
+
+  yield* chain(
+    rotationAngle((2 * Math.PI) / 3, 1),
+    rotationAngle((-1 * Math.PI) / 5, 1)
+  );
+
+  yield* waitUntil("less");
+
+  yield* chain(
+    rotationAngle(-2 * Math.PI + (4 * Math.PI) / 5, 1.5),
+    rotationAngle((-2 * Math.PI) / 5, 1.5)
+  );
+
   yield* waitFor(20);
 });
