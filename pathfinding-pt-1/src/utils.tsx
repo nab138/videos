@@ -364,10 +364,11 @@ export class VisualVector {
     position: Vector2,
     color: SignalValue<PossibleCanvasStyle>,
     duration: number = 1,
-    timingFunction: TimingFunction = easeInOutCubic
+    timingFunction: TimingFunction = easeInOutCubic,
+    zIndex: number = 0
   ) {
     this.draw(view, position, color);
-    this.point().size(0);
+    this.point().size(0).zIndex(zIndex);
     this.line().end(0);
     return all(
       this.point().size(this.pointThickness, duration, timingFunction),

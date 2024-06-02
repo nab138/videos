@@ -544,16 +544,25 @@ export default makeScene2D(function* (view) {
   let bottomVec = new VisualVector(0, -1.5 * fieldScale, 10, 20);
 
   let vecs = [leftVec, rightVec, bottomVec];
+
   let positions = [
     new Vector2(-2 * fieldScale, 0),
     new Vector2(2 * fieldScale, 0),
     new Vector2(0, 2 * fieldScale),
   ];
+  obs().zIndex(0);
   yield* chain(
     all(...lines.map((l) => l().end(1, 0.75))),
     all(
       ...vecs.map((v, i) =>
-        v.animateIn(field(), positions[i], MainColors.path.brighten(0.5), 0.75)
+        v.animateIn(
+          field(),
+          positions[i],
+          MainColors.path.brighten(0.5),
+          0.75,
+          easeInOutCubic,
+          999
+        )
       )
     )
   );
@@ -706,6 +715,98 @@ export default makeScene2D(function* (view) {
     rotationAngle(-2 * Math.PI + (4 * Math.PI) / 5, 1.5),
     rotationAngle((-2 * Math.PI) / 5, 1.5)
   );
+
+  yield* waitUntil("normal");
+
+  yield* sequence(
+    0.3,
+    all(
+      dotVec1.animateOut(1),
+      dotVec2.animateOut(1),
+      dotProductTex().y(600, 1),
+      dotProductSolutionTex().y(650, 1),
+      dotProductText().y(-600, 1)
+    ),
+    all(
+      ...[
+        line,
+        normalVec.point,
+        obs,
+        ...lines,
+        ...vecs.map((v) => v.point),
+      ].map((v) => v().x(v().x() + 1250, 1.5))
+    )
+  );
+
+  let centerVecs = [];
+  for (let i = 0; i < 4; i++) {
+    centerVecs.push(new VisualVector(0, 0, 10, 25));
+  }
+  yield* waitUntil("centa");
+  let edgePositions = [new Vector2(0, -2 * fieldScale), ...positions];
+  let cornerPositions = [
+    new Vector2(-2 * fieldScale, -2 * fieldScale),
+    new Vector2(2 * fieldScale, -2 * fieldScale),
+    new Vector2(2 * fieldScale, 2 * fieldScale),
+    new Vector2(-2 * fieldScale, 2 * fieldScale),
+  ];
+  line().zIndex(997);
+  yield* chain(
+    all(
+      ...centerVecs.map((c, i) =>
+        c.animateIn(
+          field(),
+          cornerPositions[i],
+          MainColors.blue.brighten(0.5),
+          1,
+          easeInOutCubic,
+          998
+        )
+      )
+    ),
+    all(...centerVecs.map((c) => c.point().position([0, 0], 1, easeInOutCubic)))
+  );
+
+  yield* waitUntil("vertex");
+  yield* centerVecs.map((c, i) =>
+    all(c.x(edgePositions[i].x, 1), c.y(edgePositions[i].y, 1))
+  );
+  yield* waitUntil("dot");
+  let dotTexts = [];
+  for (let i = 0; i < 4; i++) {
+    let ref = createRef<Txt>();
+    let horizontal = i == 0 || i == 3;
+    let corVec = i === 0 ? normalVec : vecs[i - 1];
+    field().add(
+      <Txt
+        ref={ref}
+        fill={MainColors.text}
+        fontFamily={Fonts.main}
+        fontSize={0.5 * fieldScale}
+        position={edgePositions[i]
+          .mul(horizontal ? 1.35 : 1.75)
+          .add(horizontal ? [135, 0] : [0, 70])}
+        text={() =>
+          "Dot = " +
+          (
+            (edgePositions[i].x / fieldScale) * (corVec.x() / fieldScale) +
+            (edgePositions[i].y / fieldScale) * (corVec.y() / fieldScale)
+          ).toFixed(1)
+        }
+        opacity={0}
+      />
+    );
+    dotTexts.push(ref);
+  }
+
+  yield* chain(
+    all(...centerVecs.map((c, i) => c.point().position(edgePositions[i], 1))),
+    all(...dotTexts.map((d) => d().opacity(1, 1)))
+  );
+
+  yield* waitUntil("flip");
+
+  yield* all(vecs[2].y(1.5 * fieldScale, 1), vecs[1].x(1.5 * fieldScale, 1));
 
   yield* waitFor(20);
 });

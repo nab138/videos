@@ -116,6 +116,26 @@
     {
       "name": "less",
       "targetTime": 114.98787865333045
+    },
+    {
+      "name": "normal",
+      "targetTime": 119.39903159455821
+    },
+    {
+      "name": "centa",
+      "targetTime": 121.82545893662233
+    },
+    {
+      "name": "vertex",
+      "targetTime": 123.82545893662233
+    },
+    {
+      "name": "dot",
+      "targetTime": 125.45041495861791
+    },
+    {
+      "name": "flip",
+      "targetTime": 130.2067685542748
     }
   ],
   "seed": 3780073274
