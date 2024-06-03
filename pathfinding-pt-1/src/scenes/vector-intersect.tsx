@@ -1,8 +1,9 @@
-import { Camera, Grid, makeScene2D } from "@motion-canvas/2d";
+import { Camera, Grid, Latex, Rect, makeScene2D } from "@motion-canvas/2d";
 import {
   Direction,
   Vector2,
   all,
+  chain,
   createRef,
   sequence,
   slideTransition,
@@ -118,7 +119,65 @@ export default makeScene2D(function* (view) {
   yield* waitUntil("normalize");
   yield* all(
     leftVec.normalize(fieldScale, 1),
-    rightVec.normalize(fieldScale, 1)
+    rightVec.normalize(fieldScale, 1),
+    leftVec.line().arrowSize(30, 1),
+    rightVec.line().arrowSize(30, 1)
+  );
+  let rayTex = createRef<Latex>();
+  field().add(
+    <Latex
+      ref={rayTex}
+      fill={MainColors.text}
+      fontFamily="Poppins"
+      fontSize={50}
+      position={new Vector2(6 * fieldScale, 600)}
+      // ((p1 - p2) x v2) / v1 x v2
+      tex={`r = \\mathbf{P} + s(\\vec{\\mathbf{v}})`}
+    />
+  );
+  yield* waitUntil("this");
+  yield* all(rayTex().y(0, 1));
+  yield* waitUntil("points");
+  leftVec.pointOnTop(field());
+  rightVec.pointOnTop(field());
+  yield* sequence(
+    1.25,
+    all(
+      leftVec.point().fill(MainColors.blue.brighten(1.5), 0.75),
+      rightVec.point().fill(MainColors.blue.brighten(1.5), 0.75)
+    ),
+    all(
+      leftVec.point().fill(MainColors.blue, 0.75),
+      rightVec.point().fill(MainColors.blue, 0.75)
+    )
+  );
+  leftVec.lineOnTop(field());
+  rightVec.lineOnTop(field());
+  yield* waitUntil("directionVector");
+  yield* sequence(
+    1.25,
+    all(
+      leftVec.line().stroke(MainColors.blue.brighten(1.5), 0.75),
+      rightVec.line().stroke(MainColors.blue.brighten(1.5), 0.75)
+    ),
+    all(
+      leftVec.line().stroke(MainColors.blue, 0.75),
+      rightVec.line().stroke(MainColors.blue, 0.75)
+    )
+  );
+  yield* waitUntil("pointAlong");
+
+  let intersectTex = createRef<Latex>();
+  field().add(
+    <Latex
+      ref={intersectTex}
+      fill={MainColors.text}
+      fontFamily="Poppins"
+      fontSize={50}
+      position={new Vector2(6 * fieldScale, 620)}
+      // ((p1 - p2) x v2) / v1 x v2
+      tex={`s = \\frac{(\\mathbf{P} - \\mathbf{Q}) \\times \\vec{\\mathbf{v}}_2}{\\vec{\\mathbf{v}}_1 \\times \\vec{\\mathbf{v}}_2}`}
+    />
   );
   yield* waitFor(25);
 });

@@ -374,6 +374,22 @@ export class VisualVector {
     this.line().arrowSize(3 * this.thickness);
   }
 
+  pointOnTop(view: Node) {
+    this.point().removeChildren();
+    this.line().add(this.point());
+    this.line().position(this.point().position());
+    this.point().position(new Vector2(0, 0));
+    view.add(this.line());
+  }
+
+  lineOnTop(view: Node) {
+    this.line().removeChildren();
+    this.point().add(this.line());
+    this.point().position(this.line().position());
+    this.line().position(new Vector2(0, 0));
+    view.add(this.point());
+  }
+
   animateIn(
     view: Node,
     position: Vector2,

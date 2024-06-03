@@ -16,6 +16,22 @@
     {
       "name": "normalize",
       "targetTime": 12.620120666640863
+    },
+    {
+      "name": "this",
+      "targetTime": 15.779714993298958
+    },
+    {
+      "name": "points",
+      "targetTime": 17.932190811852077
+    },
+    {
+      "name": "directionVector",
+      "targetTime": 20.432190811852077
+    },
+    {
+      "name": "pointAlong",
+      "targetTime": 22.932190811852077
     }
   ],
   "seed": 1141913736
