@@ -11,6 +11,7 @@ import {
 import {
   Color,
   Direction,
+  PossibleVector2,
   Vector2,
   all,
   chain,
@@ -212,8 +213,6 @@ export default makeScene2D(function* (view) {
     obsOutline().position([0, 0], 1.5),
     dozer.animateOut(1)
   );
-  dozer.body().remove();
-  circumcircle().remove();
 
   let points = [];
   let lastUnrotatedPos = obsOutline().getPointAtPercentage(0).position;
@@ -808,5 +807,156 @@ export default makeScene2D(function* (view) {
 
   yield* all(vecs[2].y(1.5 * fieldScale, 1), vecs[1].x(1.5 * fieldScale, 1));
 
-  yield* waitFor(20);
+  // TODO: Normalize
+  yield* waitUntil("normalize");
+  yield* all(
+    ...[normalVec, ...vecs].map((v) => {
+      let mag = Math.sqrt(v.x() ** 2 + v.y() ** 2);
+      return all(
+        v.x((v.x() / mag) * fieldScale, 1),
+        v.y((v.y() / mag) * fieldScale, 1)
+      );
+    })
+  );
+  yield* waitUntil("vecsDissapear");
+  yield* all(
+    ...centerVecs.map((c) => c.animateOut(1)),
+    ...dotTexts.map((d) => d().opacity(0, 1))
+  );
+  yield* waitUntil("scale");
+  yield* all(
+    ...[normalVec, ...vecs].map((v) => {
+      let mag = Math.sqrt(v.x() ** 2 + v.y() ** 2);
+      return all(
+        v.x((v.x() / mag) * fieldScale * 1.75, 1),
+        v.y((v.y() / mag) * fieldScale * 1.75, 1)
+      );
+    })
+  );
+  yield* all(
+    ...[normalVec, ...vecs].map((v) => {
+      let mag = Math.sqrt(v.x() ** 2 + v.y() ** 2);
+      return all(
+        v.x((v.x() / mag) * fieldScale * 0.75, 1),
+        v.y((v.y() / mag) * fieldScale * 0.75, 1)
+      );
+    })
+  );
+  yield* waitUntil("robot");
+  dozer.body().position([-7 * fieldScale, 0]);
+  circumcircle()
+    .size(258.38)
+    .end(0)
+    .position([-7 * fieldScale, -15]);
+  let radius = drawLine(
+    field(),
+    [
+      new Vector2(-7 * fieldScale, -15),
+      new Vector2(-7 * fieldScale, -15 - 258.38 / 2),
+    ],
+    10,
+    MainColors.obstacles.brighten(0.75)
+  );
+  radius().end(0).zIndex(999999999999);
+  yield* sequence(
+    0.25,
+    dozer.animateIn(1),
+    circumcircle().end(1, 1),
+    radius().end(1, 1)
+  );
+  yield* waitUntil("scaleByRadius");
+  yield* sequence(
+    0.5,
+    radius().points(
+      [
+        [0, -2 * fieldScale],
+        [0, -2 * fieldScale - 258.38 / 2],
+      ],
+      1
+    ),
+    all(
+      ...[normalVec, ...vecs].map((v) => {
+        let mag = Math.sqrt(v.x() ** 2 + v.y() ** 2);
+        return all(
+          v.x((v.x() / mag) * (258.38 / 2), 1),
+          v.y((v.y() / mag) * (258.38 / 2), 1)
+        );
+      })
+    )
+  );
+  yield* waitUntil("robotDismiss");
+  yield* all(dozer.animateOut(1), circumcircle().end(0, 1), radius().end(0, 1));
+  dozer.body().remove();
+  circumcircle().remove();
+  radius().remove();
+  yield* waitUntil("translate");
+  yield* line().position([0, -258.38 / 2], 1);
+  yield* waitUntil("allTranslate");
+  yield* all(
+    ...lines.map((e, i) => {
+      let horiz = i === 1;
+      let negative = horiz
+        ? e().getPointAtPercentage(0).position.y < 0
+        : e().getPointAtPercentage(0).position.x < 0;
+      let sign = negative ? -1 : 1;
+      let pos = (
+        horiz ? [0, sign * (258.38 / 2)] : [sign * (258.38 / 2), 0]
+      ) as PossibleVector2;
+      return e().position(pos, 1);
+    })
+  );
+
+  yield* waitUntil("extend");
+  yield* sequence(
+    0.25,
+    all(...[normalVec, ...vecs].map((v) => v.animateOut(1))),
+    all(
+      ...[line, ...lines].map((e) => {
+        let p1 = e().getPointAtPercentage(0).position;
+        let p2 = e().getPointAtPercentage(1).position;
+        let horz = p1.y === p2.y;
+        if (horz) {
+          return e().points([p1.addX(-800), p2.addX(800)], 1);
+        } else {
+          return e().points([p1.addY(-360), p2.addY(360)], 1);
+        }
+      })
+    )
+  );
+  yield* waitUntil("cutOff");
+  let corners = [];
+  for (let i = 0; i < 4; i++) {
+    corners.push(
+      drawPoint(
+        field(),
+        cornerPositions[i].normalized.mul(2 * fieldScale + 258.38),
+        0,
+        MainColors.blue
+      )
+    );
+    corners[i]().zIndex(999999999999);
+  }
+  yield* sequence(
+    0.5,
+    all(
+      ...[line, ...lines].map((e) => {
+        let p1 = e().getPointAtPercentage(0).position;
+        let p2 = e().getPointAtPercentage(1).position;
+        let horz = p1.y === p2.y;
+        if (horz) {
+          return e().points(
+            [p1.addX(800 - 258.38 / 2), p2.addX(-800 + 258.38 / 2)],
+            1
+          );
+        } else {
+          return e().points(
+            [p1.addY(360 - 258.38 / 2), p2.addY(-360 + 258.38 / 2)],
+            1
+          );
+        }
+      })
+    ),
+    all(...corners.map((c) => c().size(25, 0.5)))
+  );
+  yield* waitUntil("twoLines");
 });

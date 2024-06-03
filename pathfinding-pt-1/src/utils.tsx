@@ -217,6 +217,13 @@ export class Robot {
   wheels: Reference<Shape>[];
   body: Reference<Shape>;
   attatchment: Reference<Shape> | null = null;
+  private bodyWidth: number;
+  private bodyHeight: number;
+  private attatchmentWidth: number;
+  private attatchmentHeight: number;
+  private wheelWidth: number;
+  private wheelHeight: number;
+  private dimensionsSaved: boolean = false;
 
   constructor(wheels: Reference<Shape>[], body: Reference<Shape>) {
     this.wheels = wheels;
@@ -227,28 +234,36 @@ export class Robot {
     this.attatchment = attatchment;
   }
 
-  animateIn(duration: number, timingFunction: TimingFunction = easeInOutCubic) {
-    let bodyWidth = this.body().width();
-    let bodyHeight = this.body().height();
-    let attatchmentWidth = this.attatchment().width();
-    let attatchmentHeight = this.attatchment().height();
-    let wheelWidth = this.wheels[0]().width();
-    let wheelHeight = this.wheels[0]().height();
+  saveDimensions() {
+    this.bodyWidth = this.body().width();
+    this.bodyHeight = this.body().height();
+    this.attatchmentWidth = this.attatchment().width();
+    this.attatchmentHeight = this.attatchment().height();
+    this.wheelWidth = this.wheels[0]().width();
+    this.wheelHeight = this.wheels[0]().height();
+    this.dimensionsSaved = true;
+  }
 
+  animateIn(duration: number, timingFunction: TimingFunction = easeInOutCubic) {
+    if (!this.dimensionsSaved) this.saveDimensions();
     this.body().width(0).height(0);
     this.attatchment().width(0).height(0);
     this.wheels.forEach((wheel) => wheel().width(0).height(0));
 
     return all(
-      this.body().width(bodyWidth, duration, timingFunction),
-      this.body().height(bodyHeight, duration, timingFunction),
-      this.attatchment().width(attatchmentWidth, duration, timingFunction),
-      this.attatchment().height(attatchmentHeight, duration, timingFunction),
-      ...this.wheels.map((wheel) =>
-        wheel().width(wheelWidth, duration, timingFunction)
+      this.body().width(this.bodyWidth, duration, timingFunction),
+      this.body().height(this.bodyHeight, duration, timingFunction),
+      this.attatchment().width(this.attatchmentWidth, duration, timingFunction),
+      this.attatchment().height(
+        this.attatchmentHeight,
+        duration,
+        timingFunction
       ),
       ...this.wheels.map((wheel) =>
-        wheel().height(wheelHeight, duration, timingFunction)
+        wheel().width(this.wheelWidth, duration, timingFunction)
+      ),
+      ...this.wheels.map((wheel) =>
+        wheel().height(this.wheelHeight, duration, timingFunction)
       )
     );
   }
@@ -383,6 +398,20 @@ export class VisualVector {
     return all(
       this.point().size(0, duration, timingFunction),
       this.line().end(0, duration, timingFunction)
+    );
+  }
+
+  normalize(
+    fieldScale: number,
+    duration: number = 1,
+    timingFunction: TimingFunction = easeInOutCubic
+  ) {
+    let x = this.x();
+    let y = this.y();
+    let magnitude = Math.sqrt(x ** 2 + y ** 2);
+    return all(
+      this.x((x / magnitude) * fieldScale, duration, timingFunction),
+      this.y((y / magnitude) * fieldScale, duration, timingFunction)
     );
   }
 }

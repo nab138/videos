@@ -13,7 +13,9 @@ import obstacles from "./scenes/obstacles?scene";
 // import compactLogo from "./assets/compactLogo?scene";
 import inflation from "./scenes/inflation?scene";
 
+import vectorIntersect from "./scenes/vector-intersect?scene";
+
 export default makeProject({
-  scenes: [intro, overview, setup, obstacles, inflation],
+  scenes: [intro, overview, setup, obstacles, inflation, vectorIntersect],
   audio: voiceover,
 });

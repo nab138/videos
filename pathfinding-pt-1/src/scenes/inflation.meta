@@ -136,6 +136,50 @@
     {
       "name": "flip",
       "targetTime": 130.2067685542748
+    },
+    {
+      "name": "normalize",
+      "targetTime": 133.32407870667672
+    },
+    {
+      "name": "vecsDissapear",
+      "targetTime": 135.03473705417855
+    },
+    {
+      "name": "scale",
+      "targetTime": 140.76672113209236
+    },
+    {
+      "name": "robot",
+      "targetTime": 144.47290309956185
+    },
+    {
+      "name": "scaleByRadius",
+      "targetTime": 145.97290309956185
+    },
+    {
+      "name": "robotDismiss",
+      "targetTime": 148.22670645993193
+    },
+    {
+      "name": "translate",
+      "targetTime": 149.22670645993193
+    },
+    {
+      "name": "allTranslate",
+      "targetTime": 153.1449892235393
+    },
+    {
+      "name": "extend",
+      "targetTime": 157.83416810549778
+    },
+    {
+      "name": "cutOff",
+      "targetTime": 159.64593452373097
+    },
+    {
+      "name": "twoLines",
+      "targetTime": 164.61689511238225
     }
   ],
   "seed": 3780073274

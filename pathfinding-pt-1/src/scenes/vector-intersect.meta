@@ -1,0 +1,22 @@
+{
+  "version": 0,
+  "timeEvents": [
+    {
+      "name": "rays",
+      "targetTime": 5.099056091511007
+    },
+    {
+      "name": "adjacent",
+      "targetTime": 9.53372572353986
+    },
+    {
+      "name": "toThePoint",
+      "targetTime": 10.729190704573528
+    },
+    {
+      "name": "normalize",
+      "targetTime": 12.620120666640863
+    }
+  ],
+  "seed": 1141913736
+}
