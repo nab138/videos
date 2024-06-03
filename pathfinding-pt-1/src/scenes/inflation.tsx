@@ -374,7 +374,7 @@ export default makeScene2D(function* (view) {
       &\\text{Slope} = {${(y() / x()).toFixed(2)}}\\end{align}`}
       x={() => slopeTex().width() / 2 + 2.25 * fieldScale}
       y={-2.5 * fieldScale}
-      height={2.25 * fieldScale}
+      fontSize={25}
       opacity={0}
     />
   );
@@ -387,14 +387,14 @@ export default makeScene2D(function* (view) {
     <Latex
       ref={vecTex}
       tex={() => `
-      \\color{white}\\begin{align}&\\text{Vector} = (\\text{${xVecText()}}, \\text{${yVecText()}}) \\\\[0.6em]
-      &\\text{Vector} = (${((normalVec.x() * 2) / fieldScale).toFixed(2)}, ${(
+      \\color{white}\\begin{align}&\\vec{v} = \\langle\\text{${xVecText()}}, \\text{${yVecText()}} \\rangle	\\\\[0.6em]
+      &\\vec{v} = \\langle${((normalVec.x() * 2) / fieldScale).toFixed(2)}, ${(
         (-normalVec.y() * 2) /
         fieldScale
-      ).toFixed(2)})\\end{align}`}
+      ).toFixed(2)}\\rangle	\\end{align}`}
       x={() => vecTex().width() / 2 + 2.25 * fieldScale}
       y={0}
-      height={0.9 * fieldScale}
+      fontSize={25}
       opacity={0}
     />
   );
@@ -512,7 +512,7 @@ export default makeScene2D(function* (view) {
   let rightLine = drawLine(
     field(),
     [
-      new Vector2(2 * fieldScale, -2 * fieldScale),
+      new Vector2(2 * fieldScale, -2 * fieldScale - 5),
       new Vector2(2 * fieldScale, 2 * fieldScale),
     ],
     10,
@@ -521,7 +521,7 @@ export default makeScene2D(function* (view) {
   let leftLine = drawLine(
     field(),
     [
-      new Vector2(-2 * fieldScale, -2 * fieldScale),
+      new Vector2(-2 * fieldScale, -2 * fieldScale - 5),
       new Vector2(-2 * fieldScale, 2 * fieldScale),
     ],
     10,
@@ -530,8 +530,8 @@ export default makeScene2D(function* (view) {
   let bottomLine = drawLine(
     field(),
     [
-      new Vector2(-2 * fieldScale, 2 * fieldScale),
-      new Vector2(2 * fieldScale, 2 * fieldScale),
+      new Vector2(-2 * fieldScale - 5, 2 * fieldScale),
+      new Vector2(2 * fieldScale + 5, 2 * fieldScale),
     ],
     10,
     MainColors.path
