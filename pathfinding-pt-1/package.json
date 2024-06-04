@@ -15,7 +15,7 @@
     "@lezer/java": "^1.1.1",
     "@lezer/javascript": "^1.4.14",
     "@lezer/rust": "^1.0.2",
-    "@motion-canvas/2d": "file:../../motion-canvas/packages/2d",
+    "@motion-canvas/2d": "https://gitpkg.now.sh/nab138/motion-canvas/packages/2d?main",
     "@motion-canvas/core": "^3.16.0",
     "@motion-canvas/ffmpeg": "^1.1.1",
     "motion-canvas-3d": "github:nab138/motion-canvas-3d",
