@@ -1,10 +1,18 @@
-import { Camera, Grid, Latex, Rect, makeScene2D } from "@motion-canvas/2d";
+import {
+  Camera,
+  Grid,
+  Latex,
+  Layout,
+  Rect,
+  makeScene2D,
+} from "@motion-canvas/2d";
 import {
   Direction,
   Vector2,
   all,
   chain,
   createRef,
+  easeInOutQuad,
   sequence,
   slideTransition,
   waitFor,
@@ -165,7 +173,64 @@ export default makeScene2D(function* (view) {
       rightVec.line().stroke(MainColors.blue, 0.75)
     )
   );
-  yield* waitUntil("pointAlong");
+
+  let p1 = drawPoint(
+    field(),
+    new Vector2(2 * fieldScale, -2 * fieldScale),
+    0,
+    MainColors.path.darken(0.5)
+  );
+  let p2 = drawPoint(
+    field(),
+    new Vector2(-2 * fieldScale, 2 * fieldScale),
+    0,
+    MainColors.path.darken(0.5)
+  );
+  yield* waitUntil("pointAway");
+  yield* all(p1().size(20, 0.5), p2().size(20, 0.5));
+
+  // Add a layout with centered text on top and a line from the left to right edge of the dynamicly resizing rect
+  let sRec = createRef<Layout>();
+  field().add(
+    <Rect
+      opacity={0}
+      height={100}
+      layout
+      justifyContent={"center"}
+      alignItems={"center"}
+      ref={sRec}
+      direction={"column"}
+      bottomRight={rightVec.point().top}
+    >
+      <Latex
+        fill={MainColors.text}
+        fontFamily="Poppins"
+        fontSize={50}
+        tex={"s"}
+      />
+    </Rect>
+  );
+  let measureRect = createRef<Rect>();
+  sRec().add(
+    <Rect
+      ref={measureRect}
+      height={10}
+      fill={MainColors.text}
+      marginTop={10}
+      left={sRec().left}
+      right={sRec().right}
+      width={0}
+    />
+  );
+  yield* waitUntil("s");
+
+  yield* sRec().opacity(1, 0.75);
+  yield* all(
+    p1().x(-5 * fieldScale, 2),
+    p2().y(-5 * fieldScale, 2),
+    sRec().width(7 * fieldScale, 2),
+    measureRect().width(7 * fieldScale, 2)
+  );
 
   let intersectTex = createRef<Latex>();
   field().add(

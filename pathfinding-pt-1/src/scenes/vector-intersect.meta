@@ -30,8 +30,12 @@
       "targetTime": 20.432190811852077
     },
     {
-      "name": "pointAlong",
+      "name": "pointAway",
       "targetTime": 22.932190811852077
+    },
+    {
+      "name": "s",
+      "targetTime": 25.278187085284525
     }
   ],
   "seed": 1141913736
