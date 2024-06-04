@@ -139,47 +139,47 @@
     },
     {
       "name": "normalize",
-      "targetTime": 133.32407870667672
+      "targetTime": 135.45252503823878
     },
     {
       "name": "vecsDissapear",
-      "targetTime": 135.03473705417855
+      "targetTime": 139.7173189836151
     },
     {
       "name": "scale",
-      "targetTime": 140.76672113209236
+      "targetTime": 145.4493030615289
     },
     {
       "name": "robot",
-      "targetTime": 144.47290309956185
+      "targetTime": 149.15548502899838
     },
     {
       "name": "scaleByRadius",
-      "targetTime": 145.97290309956185
+      "targetTime": 150.65548502899838
     },
     {
       "name": "robotDismiss",
-      "targetTime": 148.22670645993193
+      "targetTime": 152.90928838936847
     },
     {
       "name": "translate",
-      "targetTime": 149.22670645993193
+      "targetTime": 153.90928838936847
     },
     {
       "name": "allTranslate",
-      "targetTime": 153.1449892235393
+      "targetTime": 157.82757115297585
     },
     {
       "name": "extend",
-      "targetTime": 157.83416810549778
+      "targetTime": 162.51675003493432
     },
     {
       "name": "cutOff",
-      "targetTime": 159.64593452373097
+      "targetTime": 164.3285164531675
     },
     {
       "name": "twoLines",
-      "targetTime": 164.61689511238225
+      "targetTime": 169.2994770418188
     }
   ],
   "seed": 3780073274
