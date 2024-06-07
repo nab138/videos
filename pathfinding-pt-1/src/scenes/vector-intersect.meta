@@ -3,39 +3,95 @@
   "timeEvents": [
     {
       "name": "rays",
-      "targetTime": 5.099056091511007
+      "targetTime": 4.476803187377902
     },
     {
       "name": "adjacent",
-      "targetTime": 9.53372572353986
+      "targetTime": 8.911472819406756
     },
     {
       "name": "toThePoint",
-      "targetTime": 10.729190704573528
+      "targetTime": 10.106937800440424
     },
     {
       "name": "normalize",
-      "targetTime": 12.620120666640863
+      "targetTime": 11.99786776250776
     },
     {
       "name": "this",
-      "targetTime": 15.779714993298958
+      "targetTime": 15.157462089165854
     },
     {
       "name": "points",
-      "targetTime": 17.932190811852077
+      "targetTime": 17.30993790771897
     },
     {
       "name": "directionVector",
-      "targetTime": 20.432190811852077
+      "targetTime": 19.80993790771897
     },
     {
       "name": "pointAway",
-      "targetTime": 22.932190811852077
+      "targetTime": 22.30993790771897
     },
     {
       "name": "s",
-      "targetTime": 25.278187085284525
+      "targetTime": 24.65593418115142
+    },
+    {
+      "name": "fade",
+      "targetTime": 28.108514373449907
+    },
+    {
+      "name": "two rays",
+      "targetTime": 29.434100316222377
+    },
+    {
+      "name": "separate",
+      "targetTime": 33.672823641695885
+    },
+    {
+      "name": "xEqual",
+      "targetTime": 41.92139489394611
+    },
+    {
+      "name": "yEqual",
+      "targetTime": 43.17139489394611
+    },
+    {
+      "name": "soe",
+      "targetTime": 47.297418594748564
+    },
+    {
+      "name": "soeDismiss",
+      "targetTime": 49.65445213928297
+    },
+    {
+      "name": "answer",
+      "targetTime": 61.45658730778728
+    },
+    {
+      "name": "defined",
+      "targetTime": 72.10421287520307
+    },
+    {
+      "name": "valueOfS",
+      "targetTime": 84.57327186940275
+    },
+    {
+      "name": "scale",
+      "targetTime": 85.94484057802526
+    },
+    {
+      "name": "translate",
+      "targetTime": 88.92384783047126
+    },
+    {
+      "name": "mathDismiss",
+      "targetTime": 94.87581007411084
+    },
+    {
+      "name": "connect",
+      "targetTime": 97.97581007411084
     }
   ],
   "seed": 1141913736

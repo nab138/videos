@@ -7,19 +7,27 @@ import {
   makeScene2D,
 } from "@motion-canvas/2d";
 import {
+  Color,
   Direction,
   Vector2,
   all,
   chain,
   createRef,
   easeInOutQuad,
+  linear,
   sequence,
   slideTransition,
   waitFor,
   waitUntil,
 } from "@motion-canvas/core";
 import { MainColors } from "../styles";
-import { VisualVector, drawLine, drawPoint, drawRect } from "../utils";
+import {
+  VisualVector,
+  drawDefinition,
+  drawLine,
+  drawPoint,
+  drawRect,
+} from "../utils";
 
 export default makeScene2D(function* (view) {
   let fieldScale = 90;
@@ -54,7 +62,7 @@ export default makeScene2D(function* (view) {
   );
   obs().opacity(0.9);
   let leftLine = drawLine(
-    field(),
+    obs(),
     [
       new Vector2(-2 * fieldScale - inflationDist, -2 * fieldScale),
       new Vector2(-2 * fieldScale - inflationDist, 2 * fieldScale),
@@ -63,7 +71,7 @@ export default makeScene2D(function* (view) {
     MainColors.path
   );
   let topLine = drawLine(
-    field(),
+    obs(),
     [
       new Vector2(-2 * fieldScale, -2 * fieldScale - inflationDist),
       new Vector2(2 * fieldScale, -2 * fieldScale - inflationDist),
@@ -107,13 +115,13 @@ export default makeScene2D(function* (view) {
   yield* waitUntil("adjacent");
   yield* all(
     leftVec.animateIn(
-      field(),
+      obs(),
       new Vector2(-2 * fieldScale, 2 * fieldScale),
       MainColors.blue,
       0.75
     ),
     rightVec.animateIn(
-      field(),
+      obs(),
       new Vector2(2 * fieldScale, -2 * fieldScale),
       MainColors.blue,
       0.75
@@ -135,19 +143,17 @@ export default makeScene2D(function* (view) {
   field().add(
     <Latex
       ref={rayTex}
-      fill={MainColors.text}
-      fontFamily="Poppins"
-      fontSize={50}
       position={new Vector2(6 * fieldScale, 600)}
       // ((p1 - p2) x v2) / v1 x v2
-      tex={`r = \\mathbf{P} + s(\\vec{\\mathbf{v}})`}
+      tex={`\\color{white}r = \\mathbf{P} + s(\\vec{\\mathbf{v}})`}
+      height={70}
     />
   );
   yield* waitUntil("this");
   yield* all(rayTex().y(0, 1));
   yield* waitUntil("points");
-  leftVec.pointOnTop(field());
-  rightVec.pointOnTop(field());
+  leftVec.pointOnTop(obs());
+  rightVec.pointOnTop(obs());
   yield* sequence(
     1.25,
     all(
@@ -159,8 +165,8 @@ export default makeScene2D(function* (view) {
       rightVec.point().fill(MainColors.blue, 0.75)
     )
   );
-  leftVec.lineOnTop(field());
-  rightVec.lineOnTop(field());
+  leftVec.lineOnTop(obs());
+  rightVec.lineOnTop(obs());
   yield* waitUntil("directionVector");
   yield* sequence(
     1.25,
@@ -202,12 +208,7 @@ export default makeScene2D(function* (view) {
       direction={"column"}
       bottomRight={rightVec.point().top}
     >
-      <Latex
-        fill={MainColors.text}
-        fontFamily="Poppins"
-        fontSize={50}
-        tex={"s"}
-      />
+      <Latex height={35} tex={"\\color{white}s"} />
     </Rect>
   );
   let measureRect = createRef<Rect>();
@@ -232,17 +233,305 @@ export default makeScene2D(function* (view) {
     measureRect().width(7 * fieldScale, 2)
   );
 
+  yield* waitUntil("fade");
+
+  yield* all(sRec().opacity(0, 1), p1().opacity(0, 1), p2().opacity(0, 1));
+
+  yield* waitUntil("two rays");
+
+  let twoRayTex = createRef<Latex>();
+  field().add(
+    <Latex
+      ref={twoRayTex}
+      position={new Vector2(4 * fieldScale, 600)}
+      tex={`\\color{white}\\begin{align}&r_{\\scriptsize 1} = \\mathbf{P_{\\scriptsize 1}} + s(\\vec{\\mathbf{v_{\\scriptsize 1}}}) \\\\
+      &r_{\\scriptsize 2} = \\mathbf{P_{\\scriptsize 2}} + t(\\vec{\\mathbf{v_{\\scriptsize 2}}})\\end{align}`}
+      height={160}
+    />
+  );
+  let p1labelTex = createRef<Latex>();
+  field().add(
+    <Latex
+      ref={p1labelTex}
+      position={new Vector2(-1.4 * fieldScale, -2 * fieldScale - inflationDist)}
+      tex={`\\color{white}\\mathbf{P_{\\scriptsize 1}}`}
+      width={65}
+      opacity={0}
+    />
+  );
+  let v1labelTex = createRef<Latex>();
+  field().add(
+    <Latex
+      ref={v1labelTex}
+      position={new Vector2(-2.35 * fieldScale, -2.75 * fieldScale)}
+      tex={`\\color{white}\\vec{\\mathbf{v_{\\scriptsize 1}}}`}
+      width={65}
+      opacity={0}
+    />
+  );
+  let p2labelTex = createRef<Latex>();
+  field().add(
+    <Latex
+      ref={p2labelTex}
+      position={new Vector2(-6 * fieldScale - inflationDist, 2.6 * fieldScale)}
+      tex={`\\color{white}\\mathbf{P_{\\scriptsize 2}}`}
+      width={65}
+      opacity={0}
+    />
+  );
+  let v2labelTex = createRef<Latex>();
+  field().add(
+    <Latex
+      ref={v2labelTex}
+      position={new Vector2(-6.6 * fieldScale, 1.65 * fieldScale)}
+      tex={`\\color{white}\\vec{\\mathbf{v_{\\scriptsize 2}}}`}
+      width={65}
+      opacity={0}
+    />
+  );
+
+  let ep1 = drawPoint(
+    obs(),
+    new Vector2(2 * fieldScale, -2 * fieldScale - inflationDist),
+    0,
+    MainColors.path.darken(0.5)
+  );
+  let ep2 = drawPoint(
+    obs(),
+    new Vector2(-2 * fieldScale - inflationDist, 2 * fieldScale),
+    0,
+    MainColors.path.darken(0.5)
+  );
+
+  yield* all(
+    rayTex().x(1200, 1),
+    twoRayTex().y(0, 1),
+    obs().x(-4 * fieldScale, 1)
+  );
+  yield all(
+    v1labelTex().opacity(1, 1),
+    p1labelTex().opacity(1, 1),
+    v2labelTex().opacity(1, 1),
+    p2labelTex().opacity(1, 1),
+    ep1().size(25, 1),
+    ep2().size(25, 1)
+  );
+
+  yield* waitUntil("separate");
+  let r1x = createRef<Latex>();
+  field().add(
+    <Latex
+      ref={r1x}
+      position={new Vector2(4 * fieldScale, -700)}
+      tex={`\\color{white}r_{{\\small 1}_x} = \\mathbf{P_{{\\small 1}_x}} + s(\\mathbf{v_{{\\small 1}_x}})`}
+      width={550}
+    />
+  );
+  let r1y = createRef<Latex>();
+  field().add(
+    <Latex
+      ref={r1y}
+      position={new Vector2(4 * fieldScale, -600)}
+      tex={`\\color{white}r_{{\\small 1}_y} = \\mathbf{P_{{\\small 1}_y}} + s(\\mathbf{v_{{\\small 1}_y}})`}
+      width={550}
+    />
+  );
+  let r2x = createRef<Latex>();
+  field().add(
+    <Latex
+      ref={r2x}
+      position={new Vector2(4 * fieldScale, 600)}
+      tex={`\\color{white}r_{{\\small 2}_x} = \\mathbf{P_{{\\small 2}_x}} + t(\\mathbf{v_{{\\small 2}_x}})`}
+      width={550}
+    />
+  );
+  let r2y = createRef<Latex>();
+  field().add(
+    <Latex
+      ref={r2y}
+      position={new Vector2(4 * fieldScale, 700)}
+      tex={`\\color{white}r_{{\\small 2}_y} = \\mathbf{P_{{\\small 2}_y}} + t(\\mathbf{v_{{\\small 2}_y}})`}
+      width={550}
+    />
+  );
+  yield* all(
+    twoRayTex().x(1200, 1),
+    r1x().y(-250, 1),
+    r1y().y(-150, 1),
+    r2x().y(150, 1),
+    r2y().y(250, 1)
+  );
+
+  yield* waitUntil("xEqual");
+  let xEqualTex = createRef<Latex>();
+  field().add(
+    <Latex
+      ref={xEqualTex}
+      position={new Vector2(15 * fieldScale, 0)}
+      tex={`\\\color{white}\\mathbf{P_{{\\small 1}_x}} + s(\\mathbf{v_{{\\small 1}_x}}) = \\mathbf{P_{{\\small 2}_x}} + t(\\mathbf{v_{{\\small 2}_x}})`}
+      width={780}
+    />
+  );
+  yield* sequence(
+    0.25,
+    all(
+      r1x().x(15 * fieldScale, 1),
+      r2x().x(15 * fieldScale, 1),
+      xEqualTex().x(4 * fieldScale, 1)
+    ),
+    r1y().y(-250, 1)
+  );
+
+  yield* waitUntil("yEqual");
+  let yEqualTex = createRef<Latex>();
+  field().add(
+    <Latex
+      ref={yEqualTex}
+      position={new Vector2(15 * fieldScale, 100)}
+      tex={`\\\color{white}\\mathbf{P_{{\\small 1}_y}} + s(\\mathbf{v_{{\\small 1}_y}}) = \\mathbf{P_{{\\small 2}_y}} + t(\\mathbf{v_{{\\small 2}_y}})`}
+      width={780}
+    />
+  );
+  yield* all(
+    r1y().x(15 * fieldScale, 1),
+    r2y().x(15 * fieldScale, 1),
+    yEqualTex().x(4 * fieldScale, 1),
+    xEqualTex().y(-100, 1)
+  );
+
+  let bg = createRef<Rect>();
+  field().add(
+    <Rect
+      ref={bg}
+      fill={"#000"}
+      opacity={0}
+      width={field().width()}
+      height={field().height()}
+    />
+  );
+  let definition = drawDefinition(
+    field(),
+    new Vector2(0, 650),
+    "System of Equations",
+    '"Two or more equations that share variables"'
+  );
+  yield* waitUntil("soe");
+  yield* all(bg().opacity(0.6, 1), definition.bg().y(0, 1));
+  yield* waitUntil("soeDismiss");
+  yield* all(bg().opacity(0, 1), definition.bg().y(650, 1));
+
+  yield* waitUntil("answer");
+
   let intersectTex = createRef<Latex>();
   field().add(
     <Latex
       ref={intersectTex}
-      fill={MainColors.text}
-      fontFamily="Poppins"
-      fontSize={50}
-      position={new Vector2(6 * fieldScale, 620)}
+      position={new Vector2(15 * fieldScale, 0)}
+      height={170}
       // ((p1 - p2) x v2) / v1 x v2
-      tex={`s = \\frac{(\\mathbf{P} - \\mathbf{Q}) \\times \\vec{\\mathbf{v}}_2}{\\vec{\\mathbf{v}}_1 \\times \\vec{\\mathbf{v}}_2}`}
+      tex={`\\color{white}s = \\frac{(\\mathbf{P_{\\scriptsize 1}} - \\mathbf{P_{\\scriptsize 2}}) \\times \\vec{\\mathbf{v}}_{\\scriptsize 2}}{\\vec{\\mathbf{v}}_{\\scriptsize 1} \\times \\vec{\\mathbf{v}}_{\\scriptsize 2}}`}
     />
   );
-  yield* waitFor(25);
+
+  let crossProductTex = createRef<Latex>();
+  field().add(
+    <Latex
+      ref={crossProductTex}
+      position={new Vector2(4 * fieldScale, 600)}
+      height={85}
+      // ((p1 - p2) x v2) / v1 x v2
+      tex={`\\color{white}\\vec{a} \\times \\vec{b} = a_{\\scriptsize x}b_{\\scriptsize y} - a_{\\scriptsize y}b_{\\scriptsize x}`}
+    />
+  );
+  yield* all(
+    yEqualTex().y(1000, 1),
+    xEqualTex().y(-1000, 1),
+    intersectTex().x(4 * fieldScale, 1)
+  );
+  yield* waitUntil("defined");
+  yield* all(intersectTex().y(-150, 1), crossProductTex().y(150, 1));
+  yield* waitUntil("valueOfS");
+  let sValueTex = createRef<Latex>();
+  field().add(
+    <Latex
+      ref={sValueTex}
+      position={new Vector2(4 * fieldScale, 600)}
+      tex={
+        `\\color{white}s = ` +
+        ((4 * fieldScale + inflationDist) / fieldScale).toFixed(2)
+      }
+      height={55}
+    />
+  );
+  yield* all(crossProductTex().x(15 * fieldScale, 1), sValueTex().y(150, 1));
+  yield* waitUntil("scale");
+  yield* rightVec.x(-4 * fieldScale - inflationDist, 1);
+  yield* waitUntil("translate");
+  yield* ep1().x(-2 * fieldScale - inflationDist, 1);
+  yield* waitUntil("mathDismiss");
+  let finalBtRPt = drawPoint(
+    field(),
+    new Vector2(
+      2 * fieldScale + inflationDist,
+      -2 * fieldScale - inflationDist
+    ),
+    0,
+    MainColors.path.darken(0.5)
+  );
+  let finalBtLPt = drawPoint(
+    field(),
+    new Vector2(
+      -2 * fieldScale - inflationDist,
+      2 * fieldScale + inflationDist
+    ),
+    0,
+    MainColors.path.darken(0.5)
+  );
+  let finalTRPt = drawPoint(
+    field(),
+    new Vector2(2 * fieldScale + inflationDist, 2 * fieldScale + inflationDist),
+    0,
+    MainColors.path.darken(0.5)
+  );
+  yield* sequence(
+    0.6,
+    all(
+      p1labelTex().opacity(0, 1),
+      p2labelTex().opacity(0, 1),
+      v1labelTex().opacity(0, 1),
+      v2labelTex().opacity(0, 1)
+    ),
+    all(
+      sValueTex().x(15 * fieldScale, 1),
+      intersectTex().x(15 * fieldScale, 1),
+      obs().x(0, 1)
+    ),
+    all(
+      leftVec.animateOut(1),
+      rightVec.animateOut(1),
+      leftLine().end(0, 1),
+      topLine().end(0, 1),
+      ep2().size(0, 1)
+    ),
+    sequence(
+      0.15,
+      finalBtLPt().size(25, 1),
+      finalBtRPt().size(25, 1),
+      finalTRPt().size(25, 1)
+    )
+  );
+  yield* waitUntil("connect");
+  let inflatedObs = drawRect(
+    field(),
+    new Vector2(0, 0),
+    4 * fieldScale + 2 * inflationDist,
+    4 * fieldScale + 2 * inflationDist,
+    new Color("#00000000"),
+    10,
+    2,
+    MainColors.path.desaturate(1).darken(1)
+  );
+  inflatedObs().zIndex(-1).end(0);
+  yield* inflatedObs().end(1, 2, easeInOutQuad);
+  yield* waitFor(3);
 });

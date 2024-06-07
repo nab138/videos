@@ -424,6 +424,8 @@ export default makeScene2D(function* (view) {
 
   yield* all(rust.codeBackground().y(750, 1), tex().y(750, 1));
 
+  tex().opacity(0);
+
   let measureLine1 = drawLine(
     field(),
     [new Vector2(0, 0), new Vector2(fieldScale * 4, 0)],

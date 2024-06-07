@@ -373,7 +373,7 @@ export default makeScene2D(function* (view) {
       &\\text{Slope} = {${(y() / x()).toFixed(2)}}\\end{align}`}
       x={() => slopeTex().width() / 2 + 2.25 * fieldScale}
       y={-2.5 * fieldScale}
-      fontSize={25}
+      width={200}
       opacity={0}
     />
   );
@@ -393,7 +393,7 @@ export default makeScene2D(function* (view) {
       ).toFixed(2)}\\rangle	\\end{align}`}
       x={() => vecTex().width() / 2 + 2.25 * fieldScale}
       y={0}
-      fontSize={25}
+      height={100}
       opacity={0}
     />
   );
@@ -584,9 +584,9 @@ export default makeScene2D(function* (view) {
     <Latex
       ref={dotProductTex}
       tex={`\\color{white}\\begin{align}\\color{white}&\\vec{a} \\cdot \\vec{b} = a_x \\cdot b_x + a_y \\cdot b_y\\end{align}`}
-      x={() => dotProductTex().width() / 2 + 0 * fieldScale}
+      x={() => 4 * fieldScale}
       y={600}
-      fontSize={50}
+      height={100}
     />
   );
   let dotProduct = drawCode(
@@ -675,9 +675,9 @@ export default makeScene2D(function* (view) {
         dotX1() * dotX2() +
         dotY1() * dotY2()
       ).toFixed(2)}\\end{align}`}
-      x={() => dotProductSolutionTex().width() / 2 + 0 * fieldScale}
+      x={() => dotProductSolutionTex().width() / 2 - 100}
+      height={240}
       y={650}
-      fontSize={50}
     />
   );
   yield* waitUntil("unique");
@@ -687,6 +687,7 @@ export default makeScene2D(function* (view) {
       (v) => v().x(v().x() - 800, 1)
     ),
     dotProductTex().y(-100, 1),
+    dotProductTex().x(240, 1),
     dotProductSolutionTex().y(100, 1),
     dotVec1.animateIn(
       field(),
