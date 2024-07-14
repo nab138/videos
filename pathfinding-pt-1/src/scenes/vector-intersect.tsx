@@ -457,7 +457,7 @@ export default makeScene2D(function* (view) {
       ref={sValueTex}
       position={new Vector2(4 * fieldScale, 600)}
       tex={
-        `\\color{white}s = ` +
+        `\\color{white}s \\approx ` +
         ((4 * fieldScale + inflationDist) / fieldScale).toFixed(2)
       }
       height={55}

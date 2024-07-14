@@ -503,11 +503,13 @@ export default makeScene2D(function* (view) {
     <Latex
       ref={tex2}
       tex={() => `
-\\color{white}\\begin{align}\\text{mag} = &\\sqrt{x^2 + y^2} \\\\
-\\text{mag} = &\\sqrt{{${x().toFixed(2)}}^2 + {${y().toFixed(2)}}^2} \\\\
-\\text{mag} = &\\sqrt{{${(x() * x() + y() * y()).toFixed(2)}}} \\\\
-\\text{mag} = &{${Math.sqrt(x() * x() + y() * y()).toFixed(3)}}\\end{align}`}
-      y={0}
+\\color{white}\\begin{align}\\text{mag} = \\;&\\sqrt{x^2 + y^2} \\\\
+\\text{mag} = \\;&\\sqrt{{${x().toFixed(2)}}^2 + {${y().toFixed(2)}}^2} \\\\
+\\text{mag} = \\;&\\sqrt{{${(x() * x() + y() * y()).toFixed(2)}}} \\\\
+\\text{mag} \\approx  \\; &{${Math.sqrt(x() * x() + y() * y()).toFixed(
+        3
+      )}}\\end{align}`}
+      y={-1 * fieldScale}
       x={-fieldScale * 4}
       height={325}
       width={500}

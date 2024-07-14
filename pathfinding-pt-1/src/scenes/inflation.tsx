@@ -667,14 +667,14 @@ export default makeScene2D(function* (view) {
     <Latex
       ref={dotProductSolutionTex}
       tex={() => `
-      \\color{${lRed}}\\begin{align}&\\vec{a} \\color{white}\\cdot \\color{${lBlue}}\\vec{b}  \\color{white}= \\color{${lRed}}${dotX1().toFixed(
+      \\color{${lRed}}\\begin{align}&\\vec{a} \\color{white}\\cdot \\color{${lBlue}}\\vec{b}  \\color{white}\\,\\approx\\, \\color{${lRed}}${dotX1().toFixed(
         2
       )}  \\color{white}\\cdot \\color{${lBlue}}${dotX2().toFixed(
         2
       )}  \\color{white}+ \\color{${lRed}}${dotY1().toFixed(
         2
       )} \\color{white}\\cdot \\color{${lBlue}}${dotY2().toFixed(2)} \\\\[0.6em]
-      &\\color{${lRed}}\\vec{a}  \\color{white}\\cdot \\color{${lBlue}}\\vec{b}  \\color{white}= ${(
+      &\\color{${lRed}}\\vec{a}  \\color{white}\\cdot \\color{${lBlue}}\\vec{b}  \\color{white}\\,\\approx\\, ${(
         dotX1() * dotX2() +
         dotY1() * dotY2()
       ).toFixed(2)}\\end{align}`}
