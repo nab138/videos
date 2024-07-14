@@ -531,5 +531,9 @@ export default makeScene2D(function* (view) {
   );
   inflatedObs().zIndex(-1).end(0);
   yield* inflatedObs().end(1, 2, easeInOutQuad);
-  yield* waitFor(3);
+  twoRayTex().remove();
+  intersectTex().remove();
+  yEqualTex().remove();
+  xEqualTex().remove();
+  yield* waitFor(2);
 });

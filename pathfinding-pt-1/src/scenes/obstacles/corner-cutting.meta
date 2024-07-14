@@ -1,5 +1,26 @@
 {
   "version": 0,
-  "timeEvents": [],
+  "timeEvents": [
+    {
+      "name": "step 1",
+      "targetTime": 2.484567188549783
+    },
+    {
+      "name": "square",
+      "targetTime": 5.025046308662263
+    },
+    {
+      "name": "Right",
+      "targetTime": 8.018768759273375
+    },
+    {
+      "name": "however",
+      "targetTime": 9.268768759273375
+    },
+    {
+      "name": "triangle",
+      "targetTime": 10.768768759273375
+    }
+  ],
   "seed": 1772955580
 }

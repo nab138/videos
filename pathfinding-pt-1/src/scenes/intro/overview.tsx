@@ -1,4 +1,4 @@
-import { Circle, Img, Layout, Rect, Txt, makeScene2D } from "@motion-canvas/2d";
+import { Circle, Img, Layout, Txt, makeScene2D } from "@motion-canvas/2d";
 import {
   Direction,
   Vector2,
