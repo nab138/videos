@@ -1,5 +1,5 @@
 import { makeScene2D } from "@motion-canvas/2d";
-import { Robot, drawPoint, drawRect, drawSpline } from "../utils";
+import { Robot, drawPoint, drawRect, drawSpline } from "../../utils";
 import {
   Vector2,
   all,
@@ -10,7 +10,7 @@ import {
   easeInElastic,
   waitUntil,
 } from "@motion-canvas/core";
-import { MainColors } from "../styles";
+import { MainColors } from "../../styles";
 
 export default makeScene2D(function* (view) {
   let fieldScale = 85;

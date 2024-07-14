@@ -35,8 +35,8 @@ import {
   drawLine,
   drawPoint,
   drawRect,
-} from "../utils";
-import { Fonts, MainColors } from "../styles";
+} from "../../utils";
+import { Fonts, MainColors } from "../../styles";
 
 export default makeScene2D(function* (view) {
   let fieldScale = 90;

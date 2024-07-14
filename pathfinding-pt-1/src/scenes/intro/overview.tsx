@@ -12,10 +12,10 @@ import {
   waitUntil,
 } from "@motion-canvas/core";
 
-import trafficCone from "../../resources/traffic-cone.svg";
+import trafficCone from "../../../resources/traffic-cone.svg";
 
-import { drawLine, drawLines, drawPoints, drawRect } from "../utils";
-import { Fonts, MainColors } from "../styles";
+import { drawLine, drawLines, drawPoints, drawRect } from "../../utils";
+import { Fonts, MainColors } from "../../styles";
 
 export default makeScene2D(function* (view) {
   yield* slideTransition(Direction.Right, 1);

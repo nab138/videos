@@ -11,23 +11,21 @@ import {
   Direction,
   Vector2,
   all,
-  chain,
   createRef,
   easeInOutQuad,
-  linear,
   sequence,
   slideTransition,
   waitFor,
   waitUntil,
 } from "@motion-canvas/core";
-import { MainColors } from "../styles";
+import { MainColors } from "../../styles";
 import {
   VisualVector,
   drawDefinition,
   drawLine,
   drawPoint,
   drawRect,
-} from "../utils";
+} from "../../utils";
 
 export default makeScene2D(function* (view) {
   let fieldScale = 90;

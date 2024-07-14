@@ -29,7 +29,7 @@ import {
   waitFor,
   waitUntil,
 } from "@motion-canvas/core";
-import { Fonts, MainColors } from "../styles";
+import { Fonts, MainColors } from "../../styles";
 import {
   Robot,
   VisualVector,
@@ -37,7 +37,7 @@ import {
   drawLine,
   drawPoint,
   drawRect,
-} from "../utils";
+} from "../../utils";
 import { ThreeCanvas, axisAngle } from "motion-canvas-3d";
 import * as THREE from "three";
 import {
@@ -46,7 +46,7 @@ import {
   draw3DGrid,
   draw3DPoint,
   drawVector,
-} from "../3dutils";
+} from "../../3dutils";
 
 export default makeScene2D(function* (view) {
   yield* slideTransition(Direction.Bottom, 0.5);

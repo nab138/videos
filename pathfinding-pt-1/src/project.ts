@@ -1,21 +1,25 @@
 import { makeProject } from "@motion-canvas/core";
-
-import intro from "./scenes/intro?scene";
-import overview from "./scenes/overview?scene";
-import setup from "./scenes/setup?scene";
-
 import voiceover from "../resources/voiceover.wav";
-
 import "./font.css";
-import obstacles from "./scenes/obstacles?scene";
-// import logo from "./assets/logo?scene";
-// import icon from "./assets/icon?scene";
-// import compactLogo from "./assets/compactLogo?scene";
-import inflation from "./scenes/inflation?scene";
 
-import vectorIntersect from "./scenes/vector-intersect?scene";
+import intro from "./scenes/intro/intro?scene";
+import overview from "./scenes/intro/overview?scene";
+import setup from "./scenes/intro/setup?scene";
+
+import obstacles from "./scenes/obstacles/obstacles?scene";
+import inflation from "./scenes/obstacles/inflation?scene";
+import vectorIntersect from "./scenes/obstacles/vector-intersect?scene";
+import cornerCutting from "./scenes/obstacles/corner-cutting?scene";
 
 export default makeProject({
-  scenes: [intro, overview, setup, obstacles, inflation, vectorIntersect],
+  scenes: [
+    intro,
+    overview,
+    setup,
+    obstacles,
+    inflation,
+    vectorIntersect,
+    cornerCutting,
+  ],
   audio: voiceover,
 });

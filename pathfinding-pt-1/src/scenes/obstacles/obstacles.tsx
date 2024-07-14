@@ -12,9 +12,9 @@ import {
   slideTransition,
   waitUntil,
 } from "@motion-canvas/core";
-import { Fonts, MainColors } from "../styles";
-import { drawCode, drawPoint, drawLine } from "../utils";
-import cog from "../../resources/cog.svg";
+import { Fonts, MainColors } from "../../styles";
+import { drawCode, drawPoint, drawLine } from "../../utils";
+import cog from "../../../resources/cog.svg";
 
 export default makeScene2D(function* (view) {
   let fieldScale = 90;
