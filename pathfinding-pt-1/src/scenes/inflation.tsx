@@ -141,12 +141,15 @@ export default makeScene2D(function* (view) {
     })
   );
   yield* waitUntil("Said");
+  yield obsOutline().lineWidth(0, 1.5);
   yield* all(
     obsOutline().size(new Vector2(250, 250), 1),
     center().size(0, 1),
     obs().position([250, 0], 1),
+
     dozer.body().position([-250, 0], 1)
   );
+  yield obsOutline().lineWidth(0, 0.5);
   let text = createRef<Txt>();
   field().add(
     <Txt

@@ -3,6 +3,8 @@ import { Color } from "@motion-canvas/core";
 export class MainColors {
   static backgroundLight = new Color(new Color("#e0e0e0"));
   static backgroundDark = new Color("#0d0d0d");
+  static backgroundDarkSecondary = this.backgroundDark.brighten(0.8);
+  static backgroundDarkTertiary = this.backgroundDark.brighten(1.5);
   static interactionArea = new Color("#525252");
   static obstacles = new Color("#f7ba4f");
   static path = new Color("#f55b53");

@@ -15,171 +15,171 @@
     },
     {
       "name": "Bigger",
-      "targetTime": 11.736752852407502
+      "targetTime": 14.152699420739406
     },
     {
       "name": "Said",
-      "targetTime": 21.968732303167926
+      "targetTime": 22.204433363706293
     },
     {
       "name": "Minkowski",
-      "targetTime": 27.43649120546011
+      "targetTime": 27.3775646357141
     },
     {
       "name": "Circumcircle",
-      "targetTime": 31.008050108523637
+      "targetTime": 30.949123538777627
     },
     {
       "name": "Moving",
-      "targetTime": 32.00805010852363
+      "targetTime": 31.949123538777627
     },
     {
       "name": "center",
-      "targetTime": 34.46798982850424
+      "targetTime": 34.40906325875823
     },
     {
       "name": "Overkill",
-      "targetTime": 38.54914491298723
+      "targetTime": 38.490218343241224
     },
     {
       "name": "vertices",
-      "targetTime": 42.67038170077713
+      "targetTime": 42.61145513103112
     },
     {
       "name": "approximate",
-      "targetTime": 52.11415167713184
+      "targetTime": 52.05522510738583
     },
     {
       "name": "edge",
-      "targetTime": 54.53485482125705
+      "targetTime": 54.47592825151104
     },
     {
       "name": "vector",
-      "targetTime": 56.60798487709589
+      "targetTime": 56.54905830734988
     },
     {
       "name": "direction",
-      "targetTime": 58.180168643833746
+      "targetTime": 58.12124207408774
     },
     {
       "name": "perpendicular",
-      "targetTime": 65.10491819657128
+      "targetTime": 65.04599162682527
     },
     {
       "name": "slope",
-      "targetTime": 68.76567242186684
+      "targetTime": 68.70674585212083
     },
     {
       "name": "invertX",
-      "targetTime": 74.84260767360985
+      "targetTime": 74.78368110386384
     },
     {
       "name": "invertY",
-      "targetTime": 75.76964230236099
+      "targetTime": 75.71071573261499
     },
     {
       "name": "otherSlopes",
-      "targetTime": 80.23450756271022
+      "targetTime": 80.17558099296421
     },
     {
       "name": "switch",
-      "targetTime": 82.28234487193711
+      "targetTime": 82.2234183021911
     },
     {
       "name": "obstacle",
-      "targetTime": 89.42209990151895
+      "targetTime": 89.36317333177294
     },
     {
       "name": "inward",
-      "targetTime": 91.63315249909702
+      "targetTime": 91.57422592935102
     },
     {
       "name": "dotProduct",
-      "targetTime": 95.63974973594465
+      "targetTime": 95.58082316619864
     },
     {
       "name": "x",
-      "targetTime": 99.78599202531954
+      "targetTime": 99.72706545557354
     },
     {
       "name": "y",
-      "targetTime": 102.63570589874323
+      "targetTime": 102.57677932899722
     },
     {
       "name": "unique",
-      "targetTime": 108.27670266430042
+      "targetTime": 108.21777609455441
     },
     {
       "name": "more",
-      "targetTime": 109.87607400766146
+      "targetTime": 109.81714743791545
     },
     {
       "name": "less",
-      "targetTime": 114.98787865333045
+      "targetTime": 114.92895208358445
     },
     {
       "name": "normal",
-      "targetTime": 119.39903159455821
+      "targetTime": 119.3401050248122
     },
     {
       "name": "centa",
-      "targetTime": 121.82545893662233
+      "targetTime": 121.76653236687632
     },
     {
       "name": "vertex",
-      "targetTime": 123.82545893662233
+      "targetTime": 123.76653236687632
     },
     {
       "name": "dot",
-      "targetTime": 125.45041495861791
+      "targetTime": 125.3914883888719
     },
     {
       "name": "flip",
-      "targetTime": 130.2067685542748
+      "targetTime": 130.14784198452878
     },
     {
       "name": "normalize",
-      "targetTime": 135.45252503823878
+      "targetTime": 135.39359846849277
     },
     {
       "name": "vecsDissapear",
-      "targetTime": 139.7173189836151
+      "targetTime": 139.65839241386908
     },
     {
       "name": "scale",
-      "targetTime": 145.4493030615289
+      "targetTime": 145.3903764917829
     },
     {
       "name": "robot",
-      "targetTime": 149.15548502899838
+      "targetTime": 149.09655845925238
     },
     {
       "name": "scaleByRadius",
-      "targetTime": 150.65548502899838
+      "targetTime": 150.59655845925238
     },
     {
       "name": "robotDismiss",
-      "targetTime": 152.90928838936847
+      "targetTime": 152.85036181962246
     },
     {
       "name": "translate",
-      "targetTime": 153.90928838936847
+      "targetTime": 153.85036181962246
     },
     {
       "name": "allTranslate",
-      "targetTime": 157.82757115297585
+      "targetTime": 157.76864458322984
     },
     {
       "name": "extend",
-      "targetTime": 162.51675003493432
+      "targetTime": 162.4578234651883
     },
     {
       "name": "cutOff",
-      "targetTime": 164.3285164531675
+      "targetTime": 164.2695898834215
     },
     {
       "name": "twoLines",
-      "targetTime": 169.2994770418188
+      "targetTime": 169.24055047207278
     }
   ],
   "seed": 3780073274
