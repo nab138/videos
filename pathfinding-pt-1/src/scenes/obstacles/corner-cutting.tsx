@@ -12,7 +12,10 @@ import {
   all,
   chain,
   createRef,
+  createRefMap,
   Direction,
+  easeInCubic,
+  easeOutCubic,
   sequence,
   slideTransition,
   Vector2,
@@ -21,11 +24,13 @@ import {
 } from "@motion-canvas/core";
 import { Fonts, MainColors } from "../../styles";
 import Overview from "../../../resources/overview.png";
+import { drawPoint, Robot } from "../../utils";
 
 export default makeScene2D(function* (view) {
   let fieldScale = 90;
   let inflationDist = 258.38;
   let camera = createRef<Camera>();
+  let text = createRefMap<Txt>();
 
   view.add(<Camera ref={camera}></Camera>);
 
@@ -110,13 +115,12 @@ export default makeScene2D(function* (view) {
       zIndex={-1}
       x={-squareInflated().width() / 2 + 40}
       y={squareInflated().height() / 2 - 40}
+      lineDash={[25, 10]}
     />
   );
-  let worksFor = createRef<Txt>();
-  let squareAngleTxt = createRef<Txt>();
   square().add(
     <Txt
-      ref={squareAngleTxt}
+      ref={text.squareAngleTxt}
       fill={MainColors.text}
       fontFamily={Fonts.main}
       fontSize={80}
@@ -125,7 +129,7 @@ export default makeScene2D(function* (view) {
   );
   square().add(
     <Txt
-      ref={worksFor}
+      ref={text.worksFor}
       fill={MainColors.text}
       fontFamily={Fonts.main}
       fontSize={80}
@@ -136,8 +140,8 @@ export default makeScene2D(function* (view) {
   yield* waitUntil("Right");
   yield* sequence(
     0.25,
-    worksFor().text("Works for", 1),
-    squareAngleTxt().text("≥ 90°", 1),
+    text.worksFor().text("Good enough", 1),
+    text.squareAngleTxt().text("≥ 90°", 1),
     rightAngle().end(0.5, 0.75)
   );
   yield* waitUntil("however");
@@ -160,7 +164,7 @@ export default makeScene2D(function* (view) {
   let triPoints = [
     new Vector2(0, 0),
     new Vector2(0, 3 * fieldScale),
-    new Vector2(5 * fieldScale, 3 * fieldScale),
+    new Vector2(-5 * fieldScale, 3 * fieldScale),
   ];
   let triangle = createRef<Line>();
   let triangleInflated = createRef<Line>();
@@ -173,14 +177,144 @@ export default makeScene2D(function* (view) {
       closed
       radius={10}
       end={0}
-      x={view.width() / 4 - 2.5 * fieldScale}
-      y={-1.5 * fieldScale}
+      x={view.width() / 4 + 3.4 * fieldScale}
+      y={-1.5 * fieldScale * 0.8}
+      scale={0.8}
     />
   );
+  let inflatedTriPoints = [
+    new Vector2(1.435444444 * fieldScale, -2.53526816656 * fieldScale),
+    new Vector2(1.435444444 * fieldScale, 4.435444443999999 * fieldScale),
+    new Vector2(
+      -10.182409906933334 * fieldScale,
+      4.435444443999999 * fieldScale
+    ),
+  ];
+  triangle().add(
+    <Line
+      ref={triangleInflated}
+      stroke={MainColors.path}
+      lineWidth={10}
+      points={inflatedTriPoints}
+      closed
+      radius={2}
+      end={0}
+    />
+  );
+  view.add(
+    <Txt
+      ref={text.triangleAngleTxt}
+      fill={MainColors.text}
+      fontFamily={Fonts.main}
+      fontSize={80}
+      x={view.width() / 4}
+      y={squareInflated().height() / 2 + 90}
+    />
+  );
+  view.add(
+    <Txt
+      ref={text.noWorksFor}
+      fill={MainColors.text}
+      fontFamily={Fonts.main}
+      fontSize={80}
+      x={view.width() / 4}
+      y={-squareInflated().height() / 2 - 90}
+    />
+  );
+  let angleCircle = createRef<Circle>();
+  triangle().add(
+    <Circle
+      zIndex={-1}
+      ref={angleCircle}
+      size={250 / 0.8}
+      stroke={MainColors.text}
+      lineWidth={8 / 0.8}
+      start={0.91}
+      end={0.91}
+      x={-10.182409906933334 * fieldScale}
+      y={4.435444443999999 * fieldScale}
+      lineDash={[25 / 0.8, 10 / 0.8]}
+    />
+  );
+
   yield* sequence(
     1.5,
     chain(triangle().end(1, 1), triangle().fill(MainColors.obstacles, 1)),
-    all(triangle().lineWidth(2, 1), triangle().stroke(MainColors.border, 1))
+    sequence(
+      0.25,
+      all(triangle().lineWidth(2, 1), triangle().stroke(MainColors.border, 1)),
+      chain(triangleInflated().end(1, 1), angleCircle().end(1, 1)),
+      text.triangleAngleTxt().text("< 90°", 1),
+      text.noWorksFor().text("Not good enough", 1)
+    )
+  );
+  yield* waitUntil("robot");
+  let robot = Robot.dozer(
+    view,
+    new Vector2(3.25 * fieldScale, -2 * fieldScale),
+    fieldScale * 1.75
+  );
+  let ghostRobot = Robot.dozer(
+    view,
+    new Vector2(3.25 * fieldScale, -2 * fieldScale),
+    fieldScale * 1.75
+  );
+  ghostRobot.body().opacity(0.6);
+  robot.body().zIndex(9999);
+  robot.body().rotation(180);
+  ghostRobot.body().rotation(180);
+  let circumcircle = createRef<Circle>();
+  robot
+    .body()
+    .add(
+      <Circle
+        ref={circumcircle}
+        size={258.38}
+        position={[0, 0]}
+        end={0}
+        stroke={MainColors.obstacles}
+        lineWidth={10}
+      />
+    );
+
+  let circleCenter = drawPoint(
+    circumcircle(),
+    new Vector2(0, 0),
+    0,
+    MainColors.obstacles
+  );
+
+  yield* chain(
+    all(ghostRobot.animateIn(1), robot.animateIn(1)),
+    all(circumcircle().end(1, 0.6), circleCenter().size(25, 0.6))
+  );
+  yield* waitUntil("drive");
+  yield* all(
+    robot.body().y(0.55 * fieldScale, 1, easeInCubic),
+    chain(
+      ghostRobot.body().y(0.55 * fieldScale, 1, easeInCubic),
+      ghostRobot.body().y(3 * fieldScale, 1, easeOutCubic)
+    )
+  );
+  yield* waitUntil("minkow");
+  yield* all(
+    chain(
+      ghostRobot.body().y(0.55 * fieldScale, 0.5),
+      all(
+        ghostRobot.animateOut(1),
+        robot.animateOut(1),
+        circumcircle().end(0, 1),
+        circleCenter().size(0, 1),
+        angleCircle().end(0.91, 0.5),
+        rightAngle().end(0, 0.5)
+      ),
+      all(
+        triangleInflated().radius(125, 1),
+        squareInflated().radius(125, 1),
+        triangle().x(view.width() / 4 + 2 * fieldScale, 1),
+        text.noWorksFor().text("Good enough", 1)
+      )
+    )
   );
   yield* waitFor(10);
 });

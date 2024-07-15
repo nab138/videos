@@ -20,6 +20,18 @@
     {
       "name": "triangle",
       "targetTime": 10.768768759273375
+    },
+    {
+      "name": "robot",
+      "targetTime": 14.53961463613964
+    },
+    {
+      "name": "drive",
+      "targetTime": 16.13961463613964
+    },
+    {
+      "name": "minkow",
+      "targetTime": 18.13961463613964
     }
   ],
   "seed": 1772955580
