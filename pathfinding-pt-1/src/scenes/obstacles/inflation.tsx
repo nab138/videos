@@ -178,9 +178,12 @@ export default makeScene2D(function* (view) {
 
   yield* waitUntil("Circumcircle");
   yield* all(text().position(new Vector2(0, 600), 1), circumcircle().end(1, 1));
-  obsOutline().end(0);
-  obsOutline().size([518.38, 518.38]);
-  obsOutline().radius(150);
+  obsOutline()
+    .radius(150)
+    .lineWidth(6)
+    .size([518.38, 518.38])
+    .end(0)
+    .zIndex(-999999);
   yield* waitUntil("Moving");
   let unRotatedPos2 = obsOutline().getPointAtPercentage(0).position;
   // Need to rotate the position around the center of the circle
@@ -228,7 +231,9 @@ export default makeScene2D(function* (view) {
       continue;
     lastUnrotatedPos = unRotatedPos;
     let rotatedPos = unRotatedPos.rotate(10, [0, 0]);
-    points.push(drawPoint(field(), rotatedPos, 0, MainColors.path));
+    let pt = drawPoint(field(), rotatedPos, 0, MainColors.path);
+    pt().zIndex(999999999999);
+    points.push(pt);
   }
   yield* waitUntil("vertices");
   yield* sequence(0.02, ...points.map((p) => p().size(15, 0.5)));
