@@ -32,6 +32,18 @@
     {
       "name": "minkow",
       "targetTime": 18.13961463613964
+    },
+    {
+      "name": "different",
+      "targetTime": 23.911710490751524
+    },
+    {
+      "name": "cornercutting",
+      "targetTime": 25.102623484758237
+    },
+    {
+      "name": "before",
+      "targetTime": 27.653584674846645
     }
   ],
   "seed": 1772955580

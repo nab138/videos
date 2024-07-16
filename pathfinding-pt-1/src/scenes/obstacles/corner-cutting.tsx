@@ -316,5 +316,34 @@ export default makeScene2D(function* (view) {
       )
     )
   );
+  yield* waitUntil("different");
+  yield* all(
+    square().x(-view.width(), 1),
+    divider().end(0, 1),
+    triangle().x(view.width(), 1),
+    text.triangleAngleTxt().x(view.width(), 1),
+    text.noWorksFor().x(view.width(), 1)
+  );
+  yield* waitUntil("cornercutting");
+  view.add(
+    <Txt
+      text={"Corner Cutting"}
+      ref={text.cornerCutting}
+      fontSize={50}
+      y={600}
+      fill={MainColors.text}
+      fontFamily={Fonts.main}
+    />
+  );
+  yield* all(
+    text.cornerCutting().y(0, 1),
+    text.cornerCutting().fontSize(120, 1)
+  );
+  yield* waitUntil("before");
+  yield* all(
+    text.cornerCutting().fontSize(80, 1),
+    text.cornerCutting().y(-425, 1)
+  );
+
   yield* waitFor(10);
 });
