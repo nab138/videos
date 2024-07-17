@@ -344,6 +344,20 @@ export default makeScene2D(function* (view) {
     text.cornerCutting().fontSize(80, 1),
     text.cornerCutting().y(-425, 1)
   );
+  let obs = createRef<Rect>();
+  view.add(
+    <Rect
+      ref={obs}
+      fill={MainColors.obstacles}
+      radius={15}
+      stroke={MainColors.border}
+      lineWidth={2}
+    />
+  );
+  yield* all(
+    obs().width(4 * fieldScale, 0.75),
+    obs().height(4 * fieldScale, 0.75)
+  );
 
   yield* waitFor(10);
 });
