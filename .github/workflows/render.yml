@@ -1,4 +1,4 @@
-name: Run index.js with Node.js
+name: Build video
 
 on:
   push:
