@@ -518,3 +518,80 @@ export function drawCode(
 
   return { codeBlock, codeBackground };
 }
+
+export function inflateShape(points: Vector2[], clearance: number): Vector2[] {
+  let inflatedPoints = [];
+  let avgX = 0;
+  let avgY = 0;
+  for (let point of points) {
+    avgX += point.x;
+    avgY += point.y;
+  }
+  avgX /= points.length;
+  avgY /= points.length;
+  let center = new Vector2(avgX, avgY);
+  for (let i in points) {
+    let point = points[i];
+    let prev = points[i == "0" ? points.length - 1 : parseInt(i) - 1];
+    let next =
+      points[i == (points.length - 1).toString() ? 0 : parseInt(i) + 1];
+
+    let normal1 = calculateNormalWithRespectToShape(
+      center,
+      point,
+      prev
+    ).normalized.scale(clearance);
+    let normal2 = calculateNormalWithRespectToShape(
+      center,
+      point,
+      next
+    ).normalized.scale(clearance);
+
+    let conn1Inflated = prev.add(normal1);
+    let curInflated1 = point.add(normal1);
+    let inflatedEdge1 = curInflated1.sub(conn1Inflated).normalized;
+
+    let conn2Inflated = next.add(normal2);
+    let curInflated2 = point.add(normal2);
+    let inflatedEdge2 = curInflated2.sub(conn2Inflated).normalized;
+
+    let intersection = rayIntersection(
+      conn1Inflated,
+      inflatedEdge1,
+      conn2Inflated,
+      inflatedEdge2
+    );
+
+    if (intersection) {
+      inflatedPoints.push(intersection);
+    } else {
+      inflatedPoints.push(curInflated1);
+    }
+  }
+  return inflatedPoints;
+}
+
+function calculateNormalWithRespectToShape(
+  center: Vector2,
+  v1: Vector2,
+  v2: Vector2
+): Vector2 {
+  let vertexToCenter = v1.sub(center);
+  let normal = v1.sub(v2).perpendicular;
+  if (vertexToCenter.dot(normal) < 0) {
+    return normal.flipped;
+  }
+  return normal;
+}
+
+function rayIntersection(
+  p1: Vector2,
+  v1: Vector2,
+  p2: Vector2,
+  v2: Vector2
+): Vector2 {
+  let denom = v1.cross(v2);
+  if (denom == 0) return null;
+  let t = p2.sub(p1).cross(v2) / denom;
+  return p1.add(v1.scale(t));
+}

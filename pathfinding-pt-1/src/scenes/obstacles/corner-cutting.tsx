@@ -1,11 +1,16 @@
 import {
   Camera,
   Circle,
+  Code,
+  CODE,
   Grid,
   Img,
+  insert,
   Line,
   makeScene2D,
   Rect,
+  remove,
+  replace,
   Txt,
 } from "@motion-canvas/2d";
 import {
@@ -24,7 +29,8 @@ import {
 } from "@motion-canvas/core";
 import { Fonts, MainColors } from "../../styles";
 import Overview from "../../../resources/overview.png";
-import { drawPoint, Robot } from "../../utils";
+import { drawPoint, inflateShape, Robot } from "../../utils";
+import { CodeBlock } from "../../components/CodeBlock";
 
 export default makeScene2D(function* (view) {
   let fieldScale = 90;
@@ -33,6 +39,19 @@ export default makeScene2D(function* (view) {
   let text = createRefMap<Txt>();
 
   view.add(<Camera ref={camera}></Camera>);
+  let field = createRef<Grid>();
+  view.add(
+    <Grid
+      ref={field}
+      width={"100%"}
+      height={"100%"}
+      stroke={"#666"}
+      lineWidth={3}
+      spacing={fieldScale}
+      zIndex={-99}
+      end={0}
+    />
+  );
 
   camera().scene().position(view.size().div(2));
 
@@ -340,24 +359,221 @@ export default makeScene2D(function* (view) {
     text.cornerCutting().fontSize(120, 1)
   );
   yield* waitUntil("before");
-  yield* all(
+  yield all(
     text.cornerCutting().fontSize(80, 1),
-    text.cornerCutting().y(-425, 1)
+    text.cornerCutting().y(-425, 1),
+    field().end(1, 1)
   );
-  let obs = createRef<Rect>();
+  yield* waitFor(0.5);
+  let vertices = [
+    new Vector2(-3, -3).scale(fieldScale),
+    new Vector2(3, 3).scale(fieldScale),
+    new Vector2(-3, 3).scale(fieldScale),
+  ];
+
+  let dupedVertices = [];
+  for (let v of vertices) {
+    dupedVertices.push(new Vector2(v.x, v.y));
+    dupedVertices.push(new Vector2(v.x, v.y));
+  }
+  let obs = createRef<Line>();
   view.add(
-    <Rect
+    <Line
       ref={obs}
       fill={MainColors.obstacles}
-      radius={15}
+      radius={10}
       stroke={MainColors.border}
       lineWidth={2}
+      points={dupedVertices}
+      closed
+      scale={0}
+    />
+  );
+
+  let vertexTable = createRef<CodeBlock>();
+  view.add(
+    <CodeBlock
+      ref={vertexTable}
+      code={`Vertex[] vertexTable = {
+  new Vertex(-3.00, 3.00),
+  new Vertex(3.00, -3.00),
+  new Vertex(-3.00, -3.00)
+};`}
+      fontSize={36}
+      language="java"
+      x={-1350}
+    />
+  );
+  let edgeTable = createRef<CodeBlock>();
+  view.add(
+    <CodeBlock
+      ref={edgeTable}
+      code={`Edge[] edgeTable = {
+  new Edge(0, 1),
+  new Edge(1, 2),
+  new Edge(2, 0)
+};`}
+      fontSize={36}
+      language="java"
+      x={1350}
     />
   );
   yield* all(
-    obs().width(4 * fieldScale, 0.75),
-    obs().height(4 * fieldScale, 0.75)
+    obs().scale(1, 1),
+    vertexTable().x(-7 * fieldScale, 1),
+    edgeTable().x(7 * fieldScale, 1)
   );
 
-  yield* waitFor(10);
+  let vertexCircles = vertices.map((v) =>
+    drawPoint(obs(), v, 0, MainColors.path)
+  );
+
+  yield* all(...vertexCircles.map((v) => v().size(25, 1)));
+
+  yield* waitUntil("Two Copies");
+
+  yield* vertexTable().codeBlock().code.edit(1)`Vertex[] vertexTable = {
+  new Vertex(-3.00, 3.00),${insert(`
+  new Vertex(-3.00, 3.00),
+  new Vertex(-3.00, 3.00),`)}
+  new Vertex(3.00, -3.00),${insert(`
+  new Vertex(3.00, -3.00),
+  new Vertex(3.00, -3.00),`)}
+  new Vertex(-3.00, -3.00)${insert(`,
+  new Vertex(-3.00, -3.00),
+  new Vertex(-3.00, -3.00)`)}
+};`;
+
+  yield* waitUntil("smalldist");
+  let vCopiesOne = vertices.map((v) => {
+    let p = drawPoint(obs(), v, 20, MainColors.blue);
+    p().zIndex(-1);
+    return p;
+  });
+  let vectorsOne = vertices.map((v, i) =>
+    new Vector2(vertices[(i + 1) % vertices.length])
+      .sub(v)
+      .normalized.scale(0.35 * fieldScale)
+  );
+  let vCopiesTwo = vertices.map((v) => {
+    let p = drawPoint(obs(), v, 20, MainColors.blue);
+    p().zIndex(-1);
+    return p;
+  });
+  let vectorsTwo = vertices.map((v, i) =>
+    new Vector2(vertices[(i + 2) % vertices.length])
+      .sub(v)
+      .normalized.scale(0.35 * fieldScale)
+  );
+
+  let vSignalsOneX = vCopiesOne.map((v) =>
+    Code.createSignal(() => (v().x() / fieldScale).toFixed(2))
+  );
+  let vSignalsOneY = vCopiesOne.map((v) =>
+    Code.createSignal(() => (-v().y() / fieldScale).toFixed(2))
+  );
+  let vSignalsTwoX = vCopiesTwo.map((v) =>
+    Code.createSignal(() => (v().x() / fieldScale).toFixed(2))
+  );
+  let vSignalsTwoY = vCopiesTwo.map((v) =>
+    Code.createSignal(() => (-v().y() / fieldScale).toFixed(2))
+  );
+
+  vertexTable().codeBlock().code(CODE`Vertex[] vertexTable = {
+  new Vertex(-3.00, 3.00),
+  new Vertex(${vSignalsOneX[0]}, ${vSignalsOneY[0]}),
+  new Vertex(${vSignalsTwoX[0]}, ${vSignalsTwoY[0]}),
+  new Vertex(3.00, -3.00),
+  new Vertex(${vSignalsOneX[1]}, ${vSignalsOneY[1]}),
+  new Vertex(${vSignalsTwoX[1]}, ${vSignalsTwoY[1]}),
+  new Vertex(-3.00, -3.00),
+  new Vertex(${vSignalsOneX[2]}, ${vSignalsOneY[2]}),
+  new Vertex(${vSignalsTwoX[2]}, ${vSignalsTwoY[2]}),
+};`);
+
+  let notice = createRef<Txt>();
+  view.add(
+    <Txt
+      ref={notice}
+      text={
+        "This distance is actually something like 0.0000001m, but it's shown larger here to make things clearer."
+      }
+      fontSize={36}
+      fill={MainColors.text}
+      fontFamily={Fonts.main}
+      y={650}
+    />
+  );
+  yield* all(
+    ...vCopiesOne.map((v, i) =>
+      v().position(vertices[i].add(vectorsOne[i]), 1)
+    ),
+    ...vCopiesTwo.map((v, i) => v().position(vertices[i].add(vectorsTwo[i]), 1))
+  );
+  yield* notice().y(450, 1);
+  let newVertices: Vector2[] = [];
+  for (let i = 0; i < vertices.length; i++) {
+    console.log("loopin");
+    let v1 = vCopiesTwo[i]().position();
+    let v2 = vCopiesOne[i]().position();
+    newVertices.push(v1, v2);
+  }
+  yield* waitUntil("RemoveOriginal");
+
+  yield* all(
+    ...vertexCircles.map((v) => v().size(0, 1)),
+    obs().points(newVertices, 1),
+    vertexTable().codeBlock().code.edit(1)`Vertex[] vertexTable = {${remove(`
+  new Vertex(-3.00, 3.00),`)}
+  new Vertex(${vSignalsOneX[0]}, ${vSignalsOneY[0]}),
+  new Vertex(${vSignalsTwoX[0]}, ${vSignalsTwoY[0]}),${remove(`
+  new Vertex(3.00, -3.00),`)}
+  new Vertex(${vSignalsOneX[1]}, ${vSignalsOneY[1]}),
+  new Vertex(${vSignalsTwoX[1]}, ${vSignalsTwoY[1]}),${remove(`
+  new Vertex(-3.00, -3.00),`)}
+  new Vertex(${vSignalsOneX[2]}, ${vSignalsOneY[2]}),
+  new Vertex(${vSignalsTwoX[2]}, ${vSignalsTwoY[2]}),
+};`
+  );
+
+  yield* waitUntil("edgeTable");
+  yield* edgeTable().codeBlock().code.edit(1)`Edge[] edgeTable = {
+  new Edge(0, 1),
+  new Edge(1, 2),
+  new Edge(2, 3),
+  new Edge(3, ${replace("0", "4")})${insert(`,
+  new Edge(4, 5),
+  new Edge(5, 6),
+  new Edge(6, 7),
+  new Edge(7, 0),`)}
+};`;
+  yield* waitUntil("after");
+  yield* all(
+    notice().y(650, 1),
+    vertexTable().x(-1350, 1),
+    edgeTable().x(1350, 1),
+    text.cornerCutting().y(-600, 1)
+  );
+  notice().remove();
+  vertexTable().remove();
+  edgeTable().remove();
+
+  let inflatedVertices = inflateShape(newVertices, inflationDist / 2);
+
+  let obsDup = createRef<Line>();
+  view.add(
+    <Line
+      ref={obsDup}
+      radius={10}
+      stroke={MainColors.path}
+      opacity={0}
+      lineWidth={10}
+      points={newVertices}
+      closed
+    />
+  );
+  yield* waitUntil("inflation");
+  yield* all(obsDup().points(inflatedVertices, 1), obsDup().opacity(1, 1));
+
+  yield* waitFor(30);
 });

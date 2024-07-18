@@ -44,6 +44,30 @@
     {
       "name": "before",
       "targetTime": 27.653584674846645
+    },
+    {
+      "name": "Two Copies",
+      "targetTime": 30.153584674846645
+    },
+    {
+      "name": "smalldist",
+      "targetTime": 32.88354006902485
+    },
+    {
+      "name": "RemoveOriginal",
+      "targetTime": 37.91801768664337
+    },
+    {
+      "name": "edgeTable",
+      "targetTime": 40.062247618868284
+    },
+    {
+      "name": "after",
+      "targetTime": 43.174284366014724
+    },
+    {
+      "name": "inflation",
+      "targetTime": 44.174284366014724
     }
   ],
   "seed": 1772955580
