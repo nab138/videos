@@ -66,6 +66,7 @@ async function renderVideo(videoPath) {
     path.resolve(__dirname, `../pathfindingpt1.mp4`)
   );
   browser.close();
+  process.exit();
 }
 
 function delay(time) {
