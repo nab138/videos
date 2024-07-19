@@ -32,6 +32,7 @@ videos.forEach((videoPath) => {
         await renderVideo(fullPath);
         // kill npm start process
         npmStart.kill();
+        process.exit();
       }
     });
 
@@ -66,7 +67,6 @@ async function renderVideo(videoPath) {
     path.resolve(__dirname, `../pathfindingpt1.mp4`)
   );
   browser.close();
-  process.exit();
 }
 
 function delay(time) {
@@ -75,20 +75,15 @@ function delay(time) {
   });
 }
 
-/**
- *
- * @param {String} filePath
- * @param {Number} timeout
- * @returns {Promise<Boolean>}
- */
-const holdBeforeFileExists = async (filePath, timeout) => {
-  timeout = timeout < 1000 ? 1000 : timeout;
+const fileInterval = 500;
+
+async function holdBeforeFileExists(filePath, timeout) {
   try {
-    let nom = 0;
+    let time = 0;
     return new Promise((resolve) => {
       const inter = setInterval(() => {
-        nom = nom + 500;
-        if (nom >= timeout) {
+        time += fileInterval;
+        if (time >= timeout) {
           clearInterval(inter);
           resolve(false);
         }
@@ -97,33 +92,34 @@ const holdBeforeFileExists = async (filePath, timeout) => {
           clearInterval(inter);
           resolve(true);
         }
-      }, 500);
+      }, fileInterval);
     });
   } catch (error) {
     return false;
   }
-};
+}
 
-const holdUnitlFolderStopsBeingChanged = async (folderPath, timeout) => {
-  // Use fs.watch, when there are no changes for 5 seconds, resolve
+async function holdUnitlFolderStopsBeingChanged(folderPath, timeout) {
   return new Promise((resolve) => {
     let lastChange = Date.now();
-    fs.watch(folderPath, { recursive: true }, (eventType, filename) => {
+    let watcher = fs.watch(folderPath, { recursive: true }, (_, _) => {
       console.log("Change detected, still rendering...");
       lastChange = Date.now();
     });
 
-    let nom = 0;
+    let time = 0;
     const interval = setInterval(() => {
-      nom = nom + 500;
-      if (nom >= timeout) {
+      time += fileInterval;
+      if (time >= timeout) {
         clearInterval(interval);
+        watcher.close();
         resolve(false);
       }
       if (Date.now() - lastChange > 45000) {
         clearInterval(interval);
+        watcher.close();
         resolve(true);
       }
-    }, 500);
+    }, fileInterval);
   });
-};
+}
