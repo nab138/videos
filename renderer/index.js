@@ -54,13 +54,13 @@ async function renderVideo(videoPath) {
     path.resolve(videoPath, "output/project.mp4"),
     20000
   );
-  console.log("File exists, waiting for it to stop being changed...");
+  console.log("Render started, waiting to complete...");
 
   await holdUnitlFolderStopsBeingChanged(
     path.resolve(videoPath, "output"),
     7200000
   );
-  console.log("RENDER COMPLETE");
+  console.log("RENDER COMPLETE!");
   fs.renameSync(
     path.resolve(videoPath, "output/project.mp4"),
     path.resolve(__dirname, `../pathfindingpt1.mp4`)
@@ -109,7 +109,6 @@ const holdUnitlFolderStopsBeingChanged = async (folderPath, timeout) => {
     let lastChange = Date.now();
     fs.watch(folderPath, { recursive: true }, (eventType, filename) => {
       console.log("Change detected, still rendering...");
-      console.log("changes were a " + eventType + " in " + filename);
       lastChange = Date.now();
     });
 
