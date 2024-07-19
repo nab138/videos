@@ -6,7 +6,7 @@ import fs from "fs";
 
 const videos = ["pathfinding-pt-1"];
 
-const browser = await puppeteer.launch({ headless: false });
+const browser = await puppeteer.launch();
 const __filename = fileURLToPath(import.meta.url); // get the resolved path to the file
 const __dirname = path.dirname(__filename);
 
