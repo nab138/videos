@@ -102,7 +102,7 @@ async function holdBeforeFileExists(filePath, timeout) {
 async function holdUnitlFolderStopsBeingChanged(folderPath, timeout) {
   return new Promise((resolve) => {
     let lastChange = Date.now();
-    let watcher = fs.watch(folderPath, { recursive: true }, (_, _) => {
+    let watcher = fs.watch(folderPath, { recursive: true }, (_e, _f) => {
       console.log("Change detected, still rendering...");
       lastChange = Date.now();
     });
