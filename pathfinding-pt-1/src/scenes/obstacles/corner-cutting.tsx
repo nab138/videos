@@ -446,24 +446,24 @@ export default makeScene2D(function* (view) {
 
   yield* waitUntil("smalldist");
   let vCopiesOne = vertices.map((v) => {
-    let p = drawPoint(obs(), v, 20, MainColors.blue);
+    let p = drawPoint(obs(), v, 17, MainColors.blue);
     p().zIndex(-1);
     return p;
   });
   let vectorsOne = vertices.map((v, i) =>
     new Vector2(vertices[(i + 1) % vertices.length])
       .sub(v)
-      .normalized.scale(0.35 * fieldScale)
+      .normalized.scale(0.25 * fieldScale)
   );
   let vCopiesTwo = vertices.map((v) => {
-    let p = drawPoint(obs(), v, 20, MainColors.blue);
+    let p = drawPoint(obs(), v, 17, MainColors.blue);
     p().zIndex(-1);
     return p;
   });
   let vectorsTwo = vertices.map((v, i) =>
     new Vector2(vertices[(i + 2) % vertices.length])
       .sub(v)
-      .normalized.scale(0.35 * fieldScale)
+      .normalized.scale(0.25 * fieldScale)
   );
 
   let vSignalsOneX = vCopiesOne.map((v) =>
@@ -513,7 +513,6 @@ export default makeScene2D(function* (view) {
   yield* notice().y(450, 1);
   let newVertices: Vector2[] = [];
   for (let i = 0; i < vertices.length; i++) {
-    console.log("loopin");
     let v1 = vCopiesTwo[i]().position();
     let v2 = vCopiesOne[i]().position();
     newVertices.push(v1, v2);
@@ -575,36 +574,179 @@ export default makeScene2D(function* (view) {
   yield* waitUntil("inflation");
   yield* all(obsDup().points(inflatedVertices, 1), obsDup().opacity(1, 1));
   yield* waitUntil("complicated");
-  yield* all(obs().points(dupedVertices, 1), obsDup().points(dupedVertices, 1), obsDup().opacity(0, 1), ...vCopiesOne.map((v, i) => v().position(vertices[i], 1)), ...vCopiesTwo.map((v, i) => v().position(vertices[i], 1)));
-  robot.body().rotation(0).position(new Vector2(-7 * fieldScale, 0));
-  
+  yield* all(
+    obs().points(dupedVertices, 1),
+    obsDup().points(dupedVertices, 1),
+    obsDup().opacity(0, 1),
+    ...vCopiesOne.map((v, i) => v().position(vertices[i], 1)),
+    ...vCopiesTwo.map((v, i) => v().position(vertices[i], 1))
+  );
+  robot
+    .body()
+    .rotation(0)
+    .position(new Vector2(-7 * fieldScale, 0));
 
   circumcircle().stroke(MainColors.blue);
   circleCenter().fill(MainColors.path);
-  
-  yield* sequence(0.5, robot.animateIn(1), circumcircle().end(1, 1), circleCenter().size(25, 1));
+
+  yield* sequence(
+    0.5,
+    robot.animateIn(1),
+    circumcircle().end(1, 1),
+    circleCenter().size(25, 1)
+  );
   let circumcircles = vertices.map(() => {
     let circumcircle = createRef<Circle>();
-    view
-      .add(
-        <Circle
-          ref={circumcircle}
-          size={258.38}
-          position={robot.body().position()}
-          stroke={MainColors.blue}
-          lineWidth={10}
-        />
-      );
-      drawPoint(
-        circumcircle(),
-        new Vector2(0, 0),
-        25,
-        MainColors.path
-      );
+    view.add(
+      <Circle
+        ref={circumcircle}
+        size={258.38}
+        position={robot.body().position()}
+        stroke={MainColors.blue}
+        lineWidth={10}
+      />
+    );
+    drawPoint(circumcircle(), new Vector2(0, 0), 25, MainColors.path);
     return circumcircle;
   });
   yield* waitUntil("originalVertex");
-  yield* sequence(0.25, ...circumcircles.map((c, i) => c().position(vertices[i], 1)));
-  yield* all(robot.animateOut(1), circumcircle().end(0, 1), circleCenter().size(0, 1));
+  yield* sequence(
+    0.25,
+    ...circumcircles.map((c, i) => c().position(vertices[i], 1))
+  );
+  yield* all(
+    robot.animateOut(1),
+    circumcircle().end(0, 1),
+    circleCenter().size(0, 1)
+  );
+  yield* waitUntil("translateEdges");
+  let edgesPoints = vertices.map((v, i) => [
+    v,
+    vertices[(i + 1) % vertices.length],
+  ]);
+  let edges = edgesPoints.map((e) => {
+    let edge = createRef<Line>();
+    view.add(
+      <Line ref={edge} points={e} stroke={MainColors.path} lineWidth={0} />
+    );
+    return edge;
+  });
+  let normals = vectorsOne.map((v) =>
+    v.normalized.perpendicular.scale(inflationDist / 2)
+  );
+  yield* all(
+    ...edges.map((e) => e().lineWidth(10, 1)),
+    ...edges.map((e, i) => {
+      let points = edgesPoints[i];
+      let normal = normals[i];
+      let newPoints = points.map((p) => p.add(normal));
+
+      return e().points(newPoints, 1);
+    })
+  );
+  yield* waitUntil("back");
+  yield* all(
+    ...edges.map((e) => e().lineWidth(0, 1)),
+    ...edges.map((e, i) => e().points(edgesPoints[i], 1))
+  );
+
+  let cornerCutEdgePoints = newVertices.map((v, i) => [
+    v,
+    newVertices[(i + 1) % newVertices.length],
+  ]);
+
+  let cornerCutEdges = cornerCutEdgePoints.map((e) => {
+    let edge = createRef<Line>();
+    view.add(
+      <Line ref={edge} points={e} stroke={MainColors.path} lineWidth={0} />
+    );
+    return edge;
+  });
+
+  let cornerCutNormals = cornerCutEdgePoints.map((v) => {
+    let normal = v[1]
+      .sub(v[0])
+      .normalized.perpendicular.scale(inflationDist / 2);
+    return normal;
+  });
+  yield* waitUntil("cornerCutting");
+
+  yield* chain(
+    all(
+      obs().points(newVertices, 1),
+      ...vCopiesOne.map((v, i) =>
+        v().position(vertices[i].add(vectorsOne[i]), 1)
+      ),
+      ...vCopiesTwo.map((v, i) =>
+        v().position(vertices[i].add(vectorsTwo[i]), 1)
+      )
+    ),
+    all(
+      ...cornerCutEdges.map((e) => e().lineWidth(10, 1)),
+      ...cornerCutEdges.map((e, i) => {
+        let points = cornerCutEdgePoints[i];
+        let normal = cornerCutNormals[i];
+        let newPoints = points.map((p) => p.add(normal));
+
+        return e().points(newPoints, 1);
+      })
+    )
+  );
+
+  yield* waitUntil("extremelySmall");
+  vectorsOne = vertices.map((v, i) =>
+    new Vector2(vertices[(i + 1) % vertices.length])
+      .sub(v)
+      .normalized.scale(0.05 * fieldScale)
+  );
+  vectorsTwo = vertices.map((v, i) =>
+    new Vector2(vertices[(i + 2) % vertices.length])
+      .sub(v)
+      .normalized.scale(0.05 * fieldScale)
+  );
+  newVertices = [];
+  for (let i = 0; i < vertices.length; i++) {
+    let v1 = vertices[i].add(vectorsTwo[i]);
+    let v2 = vertices[i].add(vectorsOne[i]);
+    newVertices.push(v1, v2);
+  }
+  cornerCutEdgePoints = newVertices.map((v, i) => [
+    v,
+    newVertices[(i + 1) % newVertices.length],
+  ]);
+
+  cornerCutNormals = cornerCutEdgePoints.map((v) => {
+    let normal = v[1]
+      .sub(v[0])
+      .normalized.perpendicular.scale(inflationDist / 2);
+    return normal;
+  });
+  yield* all(
+    ...vCopiesOne.map((v, i) =>
+      v().position(vertices[i].add(vectorsOne[i]), 1)
+    ),
+    ...vCopiesTwo.map((v, i) =>
+      v().position(vertices[i].add(vectorsTwo[i]), 1)
+    ),
+    obs().points(newVertices, 1),
+    ...cornerCutEdges.map((e, i) => {
+      let points = cornerCutEdgePoints[i];
+      let normal = cornerCutNormals[i];
+      let newPoints = points.map((p) => p.add(normal));
+
+      return e().points(newPoints, 1);
+    })
+  );
+
+  yield* waitUntil("behavior");
+  inflatedVertices = inflateShape(newVertices, inflationDist / 2);
+
+  obsDup().zIndex(99);
+  yield* all(
+    ...cornerCutEdges.map((e) => e().lineWidth(0, 1)),
+    obsDup().opacity(1, 1),
+    obsDup().points(inflatedVertices, 1)
+  );
+
   yield* waitFor(30);
 });

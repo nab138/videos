@@ -76,6 +76,26 @@
     {
       "name": "originalVertex",
       "targetTime": 55.89485741120037
+    },
+    {
+      "name": "translateEdges",
+      "targetTime": 59.01761220100513
+    },
+    {
+      "name": "back",
+      "targetTime": 66.63043795449022
+    },
+    {
+      "name": "cornerCutting",
+      "targetTime": 68.55892882452163
+    },
+    {
+      "name": "extremelySmall",
+      "targetTime": 80.7204005690356
+    },
+    {
+      "name": "behavior",
+      "targetTime": 87.33372605851753
     }
   ],
   "seed": 1772955580
