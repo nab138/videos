@@ -574,6 +574,37 @@ export default makeScene2D(function* (view) {
   );
   yield* waitUntil("inflation");
   yield* all(obsDup().points(inflatedVertices, 1), obsDup().opacity(1, 1));
+  yield* waitUntil("complicated");
+  yield* all(obs().points(dupedVertices, 1), obsDup().points(dupedVertices, 1), obsDup().opacity(0, 1), ...vCopiesOne.map((v, i) => v().position(vertices[i], 1)), ...vCopiesTwo.map((v, i) => v().position(vertices[i], 1)));
+  robot.body().rotation(0).position(new Vector2(-7 * fieldScale, 0));
+  
 
+  circumcircle().stroke(MainColors.blue);
+  circleCenter().fill(MainColors.path);
+  
+  yield* sequence(0.5, robot.animateIn(1), circumcircle().end(1, 1), circleCenter().size(25, 1));
+  let circumcircles = vertices.map(() => {
+    let circumcircle = createRef<Circle>();
+    view
+      .add(
+        <Circle
+          ref={circumcircle}
+          size={258.38}
+          position={robot.body().position()}
+          stroke={MainColors.blue}
+          lineWidth={10}
+        />
+      );
+      drawPoint(
+        circumcircle(),
+        new Vector2(0, 0),
+        25,
+        MainColors.path
+      );
+    return circumcircle;
+  });
+  yield* waitUntil("originalVertex");
+  yield* sequence(0.25, ...circumcircles.map((c, i) => c().position(vertices[i], 1)));
+  yield* all(robot.animateOut(1), circumcircle().end(0, 1), circleCenter().size(0, 1));
   yield* waitFor(30);
 });

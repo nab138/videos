@@ -68,6 +68,14 @@
     {
       "name": "inflation",
       "targetTime": 44.174284366014724
+    },
+    {
+      "name": "complicated",
+      "targetTime": 52.46987173898832
+    },
+    {
+      "name": "originalVertex",
+      "targetTime": 55.89485741120037
     }
   ],
   "seed": 1772955580
