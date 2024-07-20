@@ -31,7 +31,6 @@ import {
 } from "@motion-canvas/core";
 import { Fonts, MainColors } from "../../styles";
 import {
-  Robot,
   VisualVector,
   drawCode,
   drawLine,
