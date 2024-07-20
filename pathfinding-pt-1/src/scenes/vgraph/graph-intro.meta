@@ -12,6 +12,22 @@
     {
       "name": "overviewDismiss",
       "targetTime": 6.196400689812112
+    },
+    {
+      "name": "visibilityGraph",
+      "targetTime": 7.461724856999616
+    },
+    {
+      "name": "graph",
+      "targetTime": 10.100217959631223
+    },
+    {
+      "name": "graphDismiss",
+      "targetTime": 19.298080219206895
+    },
+    {
+      "name": "obstacles",
+      "targetTime": 20.298080219206895
     }
   ],
   "seed": 1333645112
