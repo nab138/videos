@@ -33,6 +33,8 @@ import BrokenComputer from "../../../resources/brokencomputer.jpg";
 import { drawPoint, inflateShape, Robot } from "../../utils";
 import { CodeBlock } from "../../components/CodeBlock";
 import { ImageFeature } from "../../components/ImageFeature";
+import MinkowskiWebpage from "../../../resources/minkowski.mp4";
+import { VideoFeature } from "../../components/VideoFeature";
 
 export default makeScene2D(function* (view) {
   let fieldScale = 90;
@@ -769,5 +771,29 @@ export default makeScene2D(function* (view) {
   yield* waitUntil("hackDismiss");
   yield* image().slideOutVertical(1000, 1);
 
-  yield* waitFor(30);
+  let video = createRef<VideoFeature>();
+  view.add(
+    <VideoFeature
+      videoSource={MinkowskiWebpage}
+      ref={video}
+      text={
+        "Webpage ⋅ Minkowski sum of convex polygons\nhttps://cp-algorithms.com/geometry/minkowski.html"
+      }
+      videoWidth={1080}
+      videoHeight={608}
+      featureY={1000}
+      width={view.width()}
+      height={view.height()}
+      zIndex={999999999}
+    />
+  );
+
+  yield* waitUntil("real");
+
+  video().play();
+  yield* video().slideInVertical(1.25);
+  yield* waitUntil("realDismiss");
+  yield* video().slideOutVertical(1000, 1);
+
+  yield* waitUntil("step");
 });
