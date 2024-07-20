@@ -31,4 +31,5 @@ export class TeamColors {
 export class Fonts {
   static main = "Poppins";
   static team = "Audiowide";
+  static code = "Source Code Pro";
 }

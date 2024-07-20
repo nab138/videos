@@ -29,8 +29,10 @@ import {
 } from "@motion-canvas/core";
 import { Fonts, MainColors } from "../../styles";
 import Overview from "../../../resources/overview.png";
+import BrokenComputer from "../../../resources/brokencomputer.jpg";
 import { drawPoint, inflateShape, Robot } from "../../utils";
 import { CodeBlock } from "../../components/CodeBlock";
+import { ImageFeature } from "../../components/ImageFeature";
 
 export default makeScene2D(function* (view) {
   let fieldScale = 90;
@@ -747,6 +749,25 @@ export default makeScene2D(function* (view) {
     obsDup().opacity(1, 1),
     obsDup().points(inflatedVertices, 1)
   );
+
+  yield* waitUntil("hack");
+
+  let image = createRef<ImageFeature>();
+  view.add(
+    <ImageFeature
+      ref={image}
+      name={"ThisAlgorithm.png"}
+      image={BrokenComputer}
+      featureWidth={view.height() / 1.5}
+      width={view.width()}
+      height={view.height()}
+      zIndex={99999}
+      featureY={1000}
+    />
+  );
+  yield* image().slideInVertical(1);
+  yield* waitUntil("hackDismiss");
+  yield* image().slideOutVertical(1000, 1);
 
   yield* waitFor(30);
 });
