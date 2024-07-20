@@ -347,6 +347,10 @@ export default makeScene2D(function* (view) {
     text.triangleAngleTxt().x(view.width(), 1),
     text.noWorksFor().x(view.width(), 1)
   );
+  triangle().remove();
+  square().remove();
+  text.noWorksFor().remove();
+  text.triangleAngleTxt().remove();
   yield* waitUntil("cornercutting");
   view.add(
     <Txt

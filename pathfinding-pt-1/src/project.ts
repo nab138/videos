@@ -11,6 +11,8 @@ import inflation from "./scenes/obstacles/inflation?scene";
 import vectorIntersect from "./scenes/obstacles/vector-intersect?scene";
 import cornerCutting from "./scenes/obstacles/corner-cutting?scene";
 
+import graphIntro from "./scenes/vgraph/graph-intro?scene";
+
 export default makeProject({
   scenes: [
     intro,
@@ -20,6 +22,7 @@ export default makeProject({
     inflation,
     vectorIntersect,
     cornerCutting,
+    graphIntro,
   ],
   audio: voiceover,
 });

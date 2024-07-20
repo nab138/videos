@@ -1,0 +1,18 @@
+{
+  "version": 0,
+  "timeEvents": [
+    {
+      "name": "Overview",
+      "targetTime": 1.878063870015824
+    },
+    {
+      "name": "SecondStep",
+      "targetTime": 4.658586569427419
+    },
+    {
+      "name": "overviewDismiss",
+      "targetTime": 6.196400689812112
+    }
+  ],
+  "seed": 1333645112
+}
