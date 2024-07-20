@@ -19,13 +19,8 @@ import {
   waitUntil,
 } from "@motion-canvas/core";
 import { MainColors } from "../../styles";
-import {
-  VisualVector,
-  drawDefinition,
-  drawLine,
-  drawPoint,
-  drawRect,
-} from "../../utils";
+import { VisualVector, drawLine, drawPoint, drawRect } from "../../utils";
+import { DefinitionFeature } from "../../components/DefinitionFeature";
 
 export default makeScene2D(function* (view) {
   let fieldScale = 90;
@@ -397,26 +392,24 @@ export default makeScene2D(function* (view) {
     xEqualTex().y(-100, 1)
   );
 
-  let bg = createRef<Rect>();
+  let definition = createRef<DefinitionFeature>();
+
   field().add(
-    <Rect
-      ref={bg}
-      fill={"#000"}
-      opacity={0}
-      width={field().width()}
-      height={field().height()}
+    <DefinitionFeature
+      ref={definition}
+      word={"System of Equations"}
+      definition={"Two or more equations that share variables"}
+      featureWidth={view.height() / 1.5}
+      width={view.width()}
+      height={view.height()}
+      featureY={1000}
+      pads={25}
     />
   );
-  let definition = drawDefinition(
-    field(),
-    new Vector2(0, 650),
-    "System of Equations",
-    '"Two or more equations that share variables"'
-  );
   yield* waitUntil("soe");
-  yield* all(bg().opacity(0.6, 1), definition.bg().y(0, 1));
+  yield* definition().slideInVertical(1);
   yield* waitUntil("soeDismiss");
-  yield* all(bg().opacity(0, 1), definition.bg().y(650, 1));
+  yield* definition().slideOutVertical(1000, 1);
 
   yield* waitUntil("answer");
 

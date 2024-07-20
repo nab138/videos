@@ -75,7 +75,6 @@ export abstract class Feature extends Rect {
         direction={"column"}
         gap={this.pads() / 2}
         padding={this.pads()}
-        height={this.featureWidth() + this.txtSize() + this.pads()}
         width={this.featureWidth()}
         x={this.featureX}
         y={this.featureY}
@@ -86,7 +85,7 @@ export abstract class Feature extends Rect {
       <Txt
         ref={this.txt}
         fontFamily={Fonts.code}
-        fill={MainColors.text}
+        fill={MainColors.textSecondary}
         fontSize={this.txtSize}
         textAlign={"left"}
       />

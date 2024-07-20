@@ -9,6 +9,7 @@ export class MainColors {
   static obstacles = new Color("#f7ba4f");
   static path = new Color("#f55b53");
   static text = new Color("#fafafa");
+  static textSecondary = this.text.darken(1);
   static border = new Color("#454545");
   static shadow = new Color("#2e2e2e");
   static dozer = {

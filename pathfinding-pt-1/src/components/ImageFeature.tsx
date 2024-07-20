@@ -19,6 +19,7 @@ export class ImageFeature extends Feature {
   public constructor(props: ImageFeatureProps) {
     super(props);
 
+    this.feature().height(this.featureWidth() + this.txtSize() + this.pads());
     this.txt().text("Image ⋅ " + this.name());
     let dim;
     let width = this.featureWidth() - this.pads();

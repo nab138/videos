@@ -433,57 +433,6 @@ export class VisualVector {
   }
 }
 
-export function drawDefinition(
-  view: Node,
-  position: Vector2,
-  title: SignalValue<string>,
-  description: SignalValue<string>,
-  titleFontSize: number = 60,
-  descriptionFontSize: number = 36
-) {
-  let bg = createRef<Rect>();
-  let titleText = createRef<Txt>();
-  let descriptionText = createRef<Txt>();
-  view.add(
-    <Rect
-      layout
-      ref={bg}
-      x={position.x}
-      y={position.y}
-      fill={MainColors.codeBackground}
-      radius={15}
-      shadowBlur={3}
-      shadowColor={MainColors.shadow}
-      shadowOffsetX={3}
-      shadowOffsetY={3}
-      direction={"column"}
-      padding={40}
-      gap={45}
-    />
-  );
-  bg().add(
-    <Txt
-      ref={titleText}
-      x={25}
-      y={25}
-      text={title}
-      fontSize={titleFontSize}
-      fill={MainColors.text}
-    />
-  );
-  bg().add(
-    <Txt
-      ref={descriptionText}
-      x={25}
-      y={() => titleText().height() + 25}
-      text={description}
-      fontSize={descriptionFontSize}
-      fill={MainColors.text.darken(1.5)}
-    />
-  );
-  return { bg, titleText, descriptionText };
-}
-
 export function drawCode(
   view: Node,
   position: Vector2,
