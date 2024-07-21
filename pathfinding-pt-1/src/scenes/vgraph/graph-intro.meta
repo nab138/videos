@@ -23,11 +23,27 @@
     },
     {
       "name": "graphDismiss",
-      "targetTime": 19.298080219206895
+      "targetTime": 19.32989783960364
     },
     {
       "name": "obstacles",
-      "targetTime": 20.298080219206895
+      "targetTime": 21.568777014444663
+    },
+    {
+      "name": "visGraph",
+      "targetTime": 25.830123246743778
+    },
+    {
+      "name": "graph2",
+      "targetTime": 26.830123246743778
+    },
+    {
+      "name": "vertices",
+      "targetTime": 29.90195979134144
+    },
+    {
+      "name": "edges",
+      "targetTime": 33.081645788333184
     }
   ],
   "seed": 1333645112

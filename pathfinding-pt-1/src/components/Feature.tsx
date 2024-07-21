@@ -17,7 +17,7 @@ export interface FeatureProps extends RectProps {
   txtSize?: SignalValue<number>;
 }
 
-export abstract class Feature extends Rect {
+export class Feature extends Rect {
   @initial(15)
   @signal()
   public declare readonly pads: SimpleSignal<number, this>;
