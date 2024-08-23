@@ -3,30 +3,30 @@
   "private": true,
   "version": "0.0.0",
   "scripts": {
-    "start": "vite",
+    "start": "VITE_CJS_IGNORE_WARNING=true vite",
     "serve": "vite",
     "build": "tsc && vite build"
   },
   "dependencies": {
-    "@codemirror/language": "^6.10.1",
-    "@hhenrichsen/canvas-commons": "^0.4.0",
+    "@codemirror/language": "^6.10.2",
+    "@hhenrichsen/canvas-commons": "^0.9.0",
     "@ksassnowski/motion-canvas-camera": "^0.5.0",
-    "@lezer/highlight": "^1.2.0",
-    "@lezer/java": "^1.1.1",
-    "@lezer/javascript": "^1.4.14",
+    "@lezer/highlight": "^1.2.1",
+    "@lezer/java": "^1.1.2",
+    "@lezer/javascript": "^1.4.17",
     "@lezer/rust": "^1.0.2",
-    "@motion-canvas/2d": "3.16.0",
-    "@motion-canvas/core": "^3.16.0",
-    "@motion-canvas/ffmpeg": "^1.1.1",
+    "@motion-canvas/2d": "3.17.1",
+    "@motion-canvas/core": "^3.17.0",
+    "@motion-canvas/ffmpeg": "^3.17.0",
     "motion-canvas-3d": "github:nab138/motion-canvas-3d",
-    "three": "^0.163.0",
+    "three": "^0.167.1",
     "three.meshline": "^1.4.0"
   },
   "devDependencies": {
-    "@motion-canvas/ui": "^3.16.0",
-    "@motion-canvas/vite-plugin": "^3.15.1",
-    "@types/three": "^0.163.0",
-    "typescript": "^5.2.2",
-    "vite": "^4.0.0"
+    "@motion-canvas/ui": "^3.17.0",
+    "@motion-canvas/vite-plugin": "^3.17.0",
+    "@types/three": "^0.167.2",
+    "typescript": "^5.5.4",
+    "vite": "^5.4.2"
   }
 }

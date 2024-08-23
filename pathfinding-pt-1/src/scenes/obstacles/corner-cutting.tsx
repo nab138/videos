@@ -547,12 +547,10 @@ export default makeScene2D(function* (view) {
   yield* edgeTable().codeBlock().code.edit(1)`Edge[] edgeTable = {
   new Edge(0, 1),
   new Edge(1, 2),
-  new Edge(2, 3),
-  new Edge(3, ${replace("0", "4")})${insert(`,
+  new Edge(2, ${replace("0", "3")})${insert(`,
+  new Edge(3, 4),
   new Edge(4, 5),
-  new Edge(5, 6),
-  new Edge(6, 7),
-  new Edge(7, 0),`)}
+  new Edge(5, 0)`)}
 };`;
   yield* waitUntil("after");
   yield* all(

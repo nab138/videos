@@ -371,13 +371,14 @@ export default makeScene2D(function* (view) {
   field().add(
     <Latex
       ref={slopeTex}
+      fill={MainColors.text}
       tex={() => `
-      \\color{white}\\begin{align}&\\text{Slope} = \\frac{\\text{rise}}{\\text{run}} \\\\[0.6em]
+      \\begin{align}&\\text{Slope} = \\frac{\\text{rise}}{\\text{run}} \\\\[0.6em]
       &\\text{Slope} = \\frac{${y().toFixed(2)}}{${x().toFixed(2)}} \\\\[0.6em]
       &\\text{Slope} = {${(y() / x()).toFixed(2)}}\\end{align}`}
       x={() => slopeTex().width() / 2 + 2.25 * fieldScale}
       y={-2.5 * fieldScale}
-      width={200}
+      fontSize={25}
       opacity={0}
     />
   );
@@ -389,15 +390,16 @@ export default makeScene2D(function* (view) {
   field().add(
     <Latex
       ref={vecTex}
+      fill={MainColors.text}
       tex={() => `
-      \\color{white}\\begin{align}&\\vec{v} = \\langle\\text{${xVecText()}}, \\text{${yVecText()}} \\rangle	\\\\[0.6em]
+      \\begin{align}&\\vec{v} = \\langle\\text{${xVecText()}}, \\text{${yVecText()}} \\rangle	\\\\[0.6em]
       &\\vec{v} = \\langle${((normalVec.x() * 2) / fieldScale).toFixed(2)}, ${(
         (-normalVec.y() * 2) /
         fieldScale
       ).toFixed(2)}\\rangle	\\end{align}`}
       x={() => vecTex().width() / 2 + 2.25 * fieldScale}
       y={0}
-      height={100}
+      fontSize={25}
       opacity={0}
     />
   );
@@ -587,10 +589,11 @@ export default makeScene2D(function* (view) {
   field().add(
     <Latex
       ref={dotProductTex}
-      tex={`\\color{white}\\begin{align}\\color{white}&\\vec{a} \\cdot \\vec{b} = a_x \\cdot b_x + a_y \\cdot b_y\\end{align}`}
+      fill={MainColors.text}
+      tex={`\\begin{align}&\\vec{a} \\cdot \\vec{b} = a_x \\cdot b_x + a_y \\cdot b_y\\end{align}`}
       x={() => 4 * fieldScale}
       y={600}
-      height={100}
+      fontSize={55}
     />
   );
   let dotProduct = drawCode(
@@ -680,7 +683,7 @@ export default makeScene2D(function* (view) {
         dotY1() * dotY2()
       ).toFixed(2)}\\end{align}`}
       x={() => dotProductSolutionTex().width() / 2 - 100}
-      height={240}
+      fontSize={55}
       y={650}
     />
   );
@@ -691,7 +694,7 @@ export default makeScene2D(function* (view) {
       (v) => v().x(v().x() - 800, 1)
     ),
     dotProductTex().y(-100, 1),
-    dotProductTex().x(240, 1),
+    dotProductTex().x(212, 1),
     dotProductSolutionTex().y(100, 1),
     dotVec1.animateIn(
       field(),

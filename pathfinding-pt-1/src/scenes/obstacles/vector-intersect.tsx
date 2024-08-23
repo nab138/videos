@@ -137,9 +137,9 @@ export default makeScene2D(function* (view) {
     <Latex
       ref={rayTex}
       position={new Vector2(6 * fieldScale, 600)}
-      // ((p1 - p2) x v2) / v1 x v2
-      tex={`\\color{white}r = \\mathbf{P} + s(\\vec{\\mathbf{v}})`}
-      height={70}
+      fill={MainColors.text}
+      tex={`r = \\mathbf{P} + s(\\vec{\\mathbf{v}})`}
+      fontSize={55}
     />
   );
   yield* waitUntil("this");
@@ -201,7 +201,7 @@ export default makeScene2D(function* (view) {
       direction={"column"}
       bottomRight={rightVec.point().top}
     >
-      <Latex height={35} tex={"\\color{white}s"} />
+      <Latex fontSize={55} fill={MainColors.text} tex={"s"} />
     </Rect>
   );
   let measureRect = createRef<Rect>();
@@ -237,9 +237,10 @@ export default makeScene2D(function* (view) {
     <Latex
       ref={twoRayTex}
       position={new Vector2(4 * fieldScale, 600)}
-      tex={`\\color{white}\\begin{align}&r_{\\scriptsize 1} = \\mathbf{P_{\\scriptsize 1}} + s(\\vec{\\mathbf{v_{\\scriptsize 1}}}) \\\\
+      fill={MainColors.text}
+      tex={`\\begin{align}&r_{\\scriptsize 1} = \\mathbf{P_{\\scriptsize 1}} + s(\\vec{\\mathbf{v_{\\scriptsize 1}}}) \\\\
       &r_{\\scriptsize 2} = \\mathbf{P_{\\scriptsize 2}} + t(\\vec{\\mathbf{v_{\\scriptsize 2}}})\\end{align}`}
-      height={160}
+      fontSize={55}
     />
   );
   let p1labelTex = createRef<Latex>();
@@ -247,8 +248,9 @@ export default makeScene2D(function* (view) {
     <Latex
       ref={p1labelTex}
       position={new Vector2(-1.4 * fieldScale, -2 * fieldScale - inflationDist)}
-      tex={`\\color{white}\\mathbf{P_{\\scriptsize 1}}`}
-      width={65}
+      fill={MainColors.text}
+      tex={`\\mathbf{P_{\\scriptsize 1}}`}
+      fontSize={50}
       opacity={0}
     />
   );
@@ -257,8 +259,9 @@ export default makeScene2D(function* (view) {
     <Latex
       ref={v1labelTex}
       position={new Vector2(-2.35 * fieldScale, -2.75 * fieldScale)}
-      tex={`\\color{white}\\vec{\\mathbf{v_{\\scriptsize 1}}}`}
-      width={65}
+      fill={MainColors.text}
+      tex={`\\vec{\\mathbf{v_{\\scriptsize 1}}}`}
+      fontSize={50}
       opacity={0}
     />
   );
@@ -267,8 +270,9 @@ export default makeScene2D(function* (view) {
     <Latex
       ref={p2labelTex}
       position={new Vector2(-6 * fieldScale - inflationDist, 2.6 * fieldScale)}
-      tex={`\\color{white}\\mathbf{P_{\\scriptsize 2}}`}
-      width={65}
+      fill={MainColors.text}
+      tex={`\\mathbf{P_{\\scriptsize 2}}`}
+      fontSize={50}
       opacity={0}
     />
   );
@@ -276,9 +280,10 @@ export default makeScene2D(function* (view) {
   field().add(
     <Latex
       ref={v2labelTex}
+      fill={MainColors.text}
       position={new Vector2(-6.6 * fieldScale, 1.65 * fieldScale)}
-      tex={`\\color{white}\\vec{\\mathbf{v_{\\scriptsize 2}}}`}
-      width={65}
+      tex={`\\vec{\\mathbf{v_{\\scriptsize 2}}}`}
+      fontSize={50}
       opacity={0}
     />
   );
@@ -316,8 +321,9 @@ export default makeScene2D(function* (view) {
     <Latex
       ref={r1x}
       position={new Vector2(4 * fieldScale, -700)}
-      tex={`\\color{white}r_{{\\small 1}_x} = \\mathbf{P_{{\\small 1}_x}} + s(\\mathbf{v_{{\\small 1}_x}})`}
-      width={550}
+      fill={MainColors.text}
+      tex={`r_{ {\\small 1}_x} = \\mathbf{P_{ {\\small 1}_x}} + s(\\mathbf{v_{ {\\small 1}_x}})`}
+      fontSize={55}
     />
   );
   let r1y = createRef<Latex>();
@@ -325,8 +331,9 @@ export default makeScene2D(function* (view) {
     <Latex
       ref={r1y}
       position={new Vector2(4 * fieldScale, -600)}
-      tex={`\\color{white}r_{{\\small 1}_y} = \\mathbf{P_{{\\small 1}_y}} + s(\\mathbf{v_{{\\small 1}_y}})`}
-      width={550}
+      fill={MainColors.text}
+      tex={`r_{ {\\small 1}_y} = \\mathbf{P_{ {\\small 1}_y}} + s(\\mathbf{v_{ {\\small 1}_y}})`}
+      fontSize={55}
     />
   );
   let r2x = createRef<Latex>();
@@ -334,8 +341,9 @@ export default makeScene2D(function* (view) {
     <Latex
       ref={r2x}
       position={new Vector2(4 * fieldScale, 600)}
-      tex={`\\color{white}r_{{\\small 2}_x} = \\mathbf{P_{{\\small 2}_x}} + t(\\mathbf{v_{{\\small 2}_x}})`}
-      width={550}
+      fill={MainColors.text}
+      tex={`r_{ {\\small 2}_x} = \\mathbf{P_{ {\\small 2}_x}} + t(\\mathbf{v_{ {\\small 2}_x}})`}
+      fontSize={55}
     />
   );
   let r2y = createRef<Latex>();
@@ -343,8 +351,9 @@ export default makeScene2D(function* (view) {
     <Latex
       ref={r2y}
       position={new Vector2(4 * fieldScale, 700)}
-      tex={`\\color{white}r_{{\\small 2}_y} = \\mathbf{P_{{\\small 2}_y}} + t(\\mathbf{v_{{\\small 2}_y}})`}
-      width={550}
+      fill={MainColors.text}
+      tex={`r_{ {\\small 2}_y} = \\mathbf{P_{ {\\small 2}_y}} + t(\\mathbf{v_{ {\\small 2}_y}})`}
+      fontSize={55}
     />
   );
   yield* all(
@@ -361,8 +370,9 @@ export default makeScene2D(function* (view) {
     <Latex
       ref={xEqualTex}
       position={new Vector2(15 * fieldScale, 0)}
-      tex={`\\\color{white}\\mathbf{P_{{\\small 1}_x}} + s(\\mathbf{v_{{\\small 1}_x}}) = \\mathbf{P_{{\\small 2}_x}} + t(\\mathbf{v_{{\\small 2}_x}})`}
-      width={780}
+      fill={MainColors.text}
+      tex={`\\mathbf{P_{ {\\small 1}_x}} + s(\\mathbf{v_{ {\\small 1}_x}}) = \\mathbf{P_{ {\\small 2}_x}} + t(\\mathbf{v_{ {\\small 2}_x}})`}
+      fontSize={55}
     />
   );
   yield* sequence(
@@ -381,8 +391,9 @@ export default makeScene2D(function* (view) {
     <Latex
       ref={yEqualTex}
       position={new Vector2(15 * fieldScale, 100)}
-      tex={`\\\color{white}\\mathbf{P_{{\\small 1}_y}} + s(\\mathbf{v_{{\\small 1}_y}}) = \\mathbf{P_{{\\small 2}_y}} + t(\\mathbf{v_{{\\small 2}_y}})`}
-      width={780}
+      fill={MainColors.text}
+      tex={`\\mathbf{P_{ {\\small 1}_y}} + s(\\mathbf{v_{ {\\small 1}_y}}) = \\mathbf{P_{ {\\small 2}_y}} + t(\\mathbf{v_{ {\\small 2}_y}})`}
+      fontSize={55}
     />
   );
   yield* all(
@@ -418,9 +429,9 @@ export default makeScene2D(function* (view) {
     <Latex
       ref={intersectTex}
       position={new Vector2(15 * fieldScale, 0)}
-      height={170}
-      // ((p1 - p2) x v2) / v1 x v2
-      tex={`\\color{white}s = \\frac{(\\mathbf{P_{\\scriptsize 1}} - \\mathbf{P_{\\scriptsize 2}}) \\times \\vec{\\mathbf{v}}_{\\scriptsize 2}}{\\vec{\\mathbf{v}}_{\\scriptsize 1} \\times \\vec{\\mathbf{v}}_{\\scriptsize 2}}`}
+      fontSize={55}
+      fill={MainColors.text}
+      tex={`s = \\frac{(\\mathbf{P_{\\scriptsize 1}} - \\mathbf{P_{\\scriptsize 2}}) \\times \\vec{\\mathbf{v}}_{\\scriptsize 2}}{\\vec{\\mathbf{v}}_{\\scriptsize 1} \\times \\vec{\\mathbf{v}}_{\\scriptsize 2}}`}
     />
   );
 
@@ -429,9 +440,9 @@ export default makeScene2D(function* (view) {
     <Latex
       ref={crossProductTex}
       position={new Vector2(4 * fieldScale, 600)}
-      height={85}
-      // ((p1 - p2) x v2) / v1 x v2
-      tex={`\\color{white}\\vec{a} \\times \\vec{b} = a_{\\scriptsize x}b_{\\scriptsize y} - a_{\\scriptsize y}b_{\\scriptsize x}`}
+      fontSize={55}
+      fill={MainColors.text}
+      tex={`\\vec{a} \\times \\vec{b} = a_{\\scriptsize x}b_{\\scriptsize y} - a_{\\scriptsize y}b_{\\scriptsize x}`}
     />
   );
   yield* all(
@@ -447,11 +458,12 @@ export default makeScene2D(function* (view) {
     <Latex
       ref={sValueTex}
       position={new Vector2(4 * fieldScale, 600)}
+      fill={MainColors.text}
       tex={
-        `\\color{white}s \\approx ` +
+        `s \\approx ` +
         ((4 * fieldScale + inflationDist) / fieldScale).toFixed(2)
       }
-      height={55}
+      fontSize={55}
     />
   );
   yield* all(crossProductTex().x(15 * fieldScale, 1), sValueTex().y(150, 1));

@@ -501,17 +501,17 @@ export default makeScene2D(function* (view) {
   field().add(
     <Latex
       ref={tex2}
+      fill={MainColors.text}
       tex={() => `
-\\color{white}\\begin{align}\\text{mag} = \\;&\\sqrt{x^2 + y^2} \\\\
-\\text{mag} = \\;&\\sqrt{{${x().toFixed(2)}}^2 + {${y().toFixed(2)}}^2} \\\\
-\\text{mag} = \\;&\\sqrt{{${(x() * x() + y() * y()).toFixed(2)}}} \\\\
+\\begin{align}\\text{mag} = \\;&\\sqrt{x^2 + y^2} \\\\
+\\text{mag} = \\;&\\sqrt{${x().toFixed(2)}^2 + ${y().toFixed(2)}^2} \\\\
+\\text{mag} = \\;&\\sqrt{${(x() * x() + y() * y()).toFixed(2)}} \\\\
 \\text{mag} \\approx  \\; &{${Math.sqrt(x() * x() + y() * y()).toFixed(
         3
       )}}\\end{align}`}
       y={-1 * fieldScale}
       x={-fieldScale * 4}
-      height={325}
-      width={500}
+      fontSize={40}
       opacity={0}
     />
   );
@@ -579,9 +579,8 @@ export default makeScene2D(function* (view) {
   texBG().add(
     <Latex
       ref={tex3}
-      tex={() =>
-        `\\color{white}(\\frac{x}{\\sqrt{x^2 +y^2}}, \\frac{y}{\\sqrt{x^2 +y^2}})`
-      }
+      fill={MainColors.text}
+      tex={() => `(\\frac{x}{\\sqrt{x^2 +y^2}}, \\frac{y}{\\sqrt{x^2 +y^2}})`}
       y={-50}
       x={0}
       width={800} // height and width can calculate based on each other
