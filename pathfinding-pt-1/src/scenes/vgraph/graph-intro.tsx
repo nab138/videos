@@ -1,4 +1,14 @@
-import { Circle, Img, Line, makeScene2D, Rect, Txt } from "@motion-canvas/2d";
+import {
+  Camera,
+  Circle,
+  CODE,
+  Grid,
+  Img,
+  Line,
+  makeScene2D,
+  Rect,
+  Txt,
+} from "@motion-canvas/2d";
 import {
   all,
   chain,
@@ -20,6 +30,45 @@ import { CodeBlock } from "../../components/CodeBlock";
 export default makeScene2D(function* (view) {
   yield* slideTransition(Direction.Right, 1);
   const fieldScale = 90;
+
+  let camera = createRef<Camera>();
+  let field = createRef<Grid>();
+  view.add(
+    <Camera ref={camera}>
+      <Grid
+        ref={field}
+        width={"100%"}
+        height={"100%"}
+        stroke={"#666"}
+        lineWidth={3}
+        end={0}
+        spacing={fieldScale}
+      />
+    </Camera>
+  );
+
+  let centerLineY = createRef<Line>();
+  field().add(
+    <Line
+      ref={centerLineY}
+      stroke={"white"}
+      lineWidth={5}
+      points={[new Vector2(0, view.height()), new Vector2(0, -view.height())]}
+      end={0}
+    />
+  );
+  let centerLineX = createRef<Line>();
+  field().add(
+    <Line
+      ref={centerLineX}
+      stroke={"white"}
+      lineWidth={5}
+      points={[new Vector2(view.width(), 0), new Vector2(-view.width(), 0)]}
+      end={0}
+    />
+  );
+
+  camera().scene().position(view.size().div(2));
 
   let overview = createRef<Img>();
   view.add(
@@ -207,7 +256,7 @@ export default makeScene2D(function* (view) {
   );
 
   let obs = createRef<Rect>();
-  view.add(
+  field().add(
     <Rect
       ref={obs}
       width={0}
@@ -269,7 +318,7 @@ export default makeScene2D(function* (view) {
   yield* sequence(0.15, ...edgeObjs.map((e) => e().end(1, 1)));
   yield* waitUntil("obstacleas");
   let obs2 = createRef<Rect>();
-  view.add(
+  field().add(
     <Rect
       ref={obs2}
       width={0}
@@ -301,11 +350,11 @@ export default makeScene2D(function* (view) {
       new Vector2(fieldScale, fieldScale * 2).add(obs().position()),
       new Vector2(-fieldScale, fieldScale * 2).add(obs().position()),
     ],
-    50
+    90
   );
 
   let inflatedObs1Points = inflatedObs1Coords.map((v) =>
-    drawPoint(view, v, 0, MainColors.path)
+    drawPoint(field(), v, 0, MainColors.path)
   );
 
   let inflatedObs2Coords = inflateShape(
@@ -323,17 +372,104 @@ export default makeScene2D(function* (view) {
         .rotate(obs2().rotation())
         .add(obs2().position()),
     ],
-    50
+    90
   );
 
   let inflatedObs2Points = inflatedObs2Coords.map((v) =>
-    drawPoint(view, v, 0, MainColors.path)
+    drawPoint(field(), v, 0, MainColors.path)
   );
 
+  let occludeBlock = createRef<Rect>();
+  view.add(
+    <Rect
+      ref={occludeBlock}
+      width={0}
+      height={view.height()}
+      x={-view.width() / 2}
+      offset={[-1, 0]}
+      fill={"#0d0d0d"}
+      opacity={1}
+      stroke={"#666"}
+      lineWidth={3}
+    />
+  );
+
+  let vertexTable = createRef<CodeBlock>();
+  view.add(
+    <CodeBlock
+      ref={vertexTable}
+      code={
+        `Vertex[] vertexTable = {
+` +
+        [...inflatedObs1Coords, ...inflatedObs2Coords]
+          .map(
+            (v) =>
+              `  new Vertex(${(v.x / fieldScale).toFixed(2)}, ${(
+                v.y / fieldScale
+              ).toFixed(2)}),`
+          )
+          .join("\n") +
+        `
+};`
+      }
+      fontSize={36}
+      language="java"
+      y={-1050}
+      offset={[-1, -1]}
+      x={() => -view.width() / 2 + 50}
+    />
+  );
+
+  let area = view.width() - vertexTable().width() - 100;
   yield* sequence(
     0.25,
-    all(...inflatedObs1Points.map((p) => p().size(25, 1))),
-    all(...inflatedObs2Points.map((p) => p().size(25, 1)))
+    all(
+      field().end(1, 1),
+      camera().position(
+        [view.width() / 2 - area / 2 - vertexTable().width() - 100, 0],
+        1
+      ),
+      occludeBlock().width(view.width() - area, 1),
+      centerLineX().end(1, 1),
+      centerLineY().end(1, 1)
+    ),
+    all(
+      ...inflatedObs1Points.map((p) => p().size(25, 1)),
+      ...inflatedObs2Points.map((p) => p().size(25, 1))
+    )
   );
+
+  yield* waitUntil("vertexTable");
+  yield* vertexTable().y(() => -view.height() / 2 + 50, 1);
+
+  let edgeTable = createRef<CodeBlock>();
+  view.add(
+    <CodeBlock
+      ref={edgeTable}
+      code={`Edge[] edgeTable = {
+
+};`}
+      fontSize={36}
+      language="java"
+      y={600}
+      offset={[-1, -1]}
+      x={() => -view.width() / 2 + 50}
+    />
+  );
+  yield* waitUntil("edgeTable");
+  yield* edgeTable().y(
+    () => -view.height() / 2 + 100 + vertexTable().height(),
+    1
+  );
+  yield* waitUntil("scratch");
+  yield* edgeTable().codeBlock().code.insert([1, 0], `  // ???`, 0.5);
+  yield* waitUntil("reset");
+  yield* all(
+    camera().position([0, 0], 1),
+    occludeBlock().width(0, 1),
+    vertexTable().x(-1600, 1),
+    edgeTable().x(-1600, 1)
+  );
+  yield* waitUntil("visgraph");
   yield* waitFor(10);
 });

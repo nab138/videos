@@ -48,6 +48,26 @@
     {
       "name": "obstacleas",
       "targetTime": 37.07873104826443
+    },
+    {
+      "name": "vertexTable",
+      "targetTime": 39.91152106930135
+    },
+    {
+      "name": "edgeTable",
+      "targetTime": 42.40890795171441
+    },
+    {
+      "name": "scratch",
+      "targetTime": 44.38787656927557
+    },
+    {
+      "name": "reset",
+      "targetTime": 47.249832598946945
+    },
+    {
+      "name": "visgraph",
+      "targetTime": 48.249832598946945
     }
   ],
   "seed": 1333645112
