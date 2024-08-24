@@ -44,6 +44,10 @@
     {
       "name": "edges",
       "targetTime": 33.081645788333184
+    },
+    {
+      "name": "obstacleas",
+      "targetTime": 37.07873104826443
     }
   ],
   "seed": 1333645112

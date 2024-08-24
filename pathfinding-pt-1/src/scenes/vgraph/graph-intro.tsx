@@ -14,7 +14,8 @@ import {
 import Overview from "../../../resources/overview.png";
 import { Fonts, MainColors } from "../../styles";
 import { DefinitionFeature } from "../../components/DefinitionFeature";
-import { drawPoint } from "../../utils";
+import { drawPoint, inflateShape } from "../../utils";
+import { CodeBlock } from "../../components/CodeBlock";
 
 export default makeScene2D(function* (view) {
   yield* slideTransition(Direction.Right, 1);
@@ -266,5 +267,73 @@ export default makeScene2D(function* (view) {
   yield* all(...vertexObjs.map((v) => v.size(35, 1)));
   yield* waitUntil("edges");
   yield* sequence(0.15, ...edgeObjs.map((e) => e().end(1, 1)));
-  yield* waitFor(1.5);
+  yield* waitUntil("obstacleas");
+  let obs2 = createRef<Rect>();
+  view.add(
+    <Rect
+      ref={obs2}
+      width={0}
+      height={0}
+      fill={MainColors.obstacles}
+      radius={15}
+      stroke={MainColors.border}
+      lineWidth={2}
+      x={3 * fieldScale}
+      y={-2 * fieldScale}
+      rotation={-35}
+    />
+  );
+  yield* all(
+    visibilityGraphTxt().text("", 1),
+    ...vertexObjs.map((p) => p.size(0, 1)),
+    ...edgeObjs.map((e) => e().end(0, 1)),
+    obs().width(fieldScale * 2, 1),
+    obs().height(fieldScale * 4, 1),
+    obs().x(-fieldScale * 3, 1),
+    obs().y(fieldScale * 1, 1),
+    obs2().width(fieldScale * 2, 1),
+    obs2().height(fieldScale * 2, 1)
+  );
+  let inflatedObs1Coords = inflateShape(
+    [
+      new Vector2(-fieldScale, -fieldScale * 2).add(obs().position()),
+      new Vector2(fieldScale, -fieldScale * 2).add(obs().position()),
+      new Vector2(fieldScale, fieldScale * 2).add(obs().position()),
+      new Vector2(-fieldScale, fieldScale * 2).add(obs().position()),
+    ],
+    50
+  );
+
+  let inflatedObs1Points = inflatedObs1Coords.map((v) =>
+    drawPoint(view, v, 0, MainColors.path)
+  );
+
+  let inflatedObs2Coords = inflateShape(
+    [
+      new Vector2(-fieldScale, -fieldScale)
+        .rotate(obs2().rotation())
+        .add(obs2().position()),
+      new Vector2(fieldScale, -fieldScale)
+        .rotate(obs2().rotation())
+        .add(obs2().position()),
+      new Vector2(fieldScale, fieldScale)
+        .rotate(obs2().rotation())
+        .add(obs2().position()),
+      new Vector2(-fieldScale, fieldScale)
+        .rotate(obs2().rotation())
+        .add(obs2().position()),
+    ],
+    50
+  );
+
+  let inflatedObs2Points = inflatedObs2Coords.map((v) =>
+    drawPoint(view, v, 0, MainColors.path)
+  );
+
+  yield* sequence(
+    0.25,
+    all(...inflatedObs1Points.map((p) => p().size(25, 1))),
+    all(...inflatedObs2Points.map((p) => p().size(25, 1)))
+  );
+  yield* waitFor(10);
 });
