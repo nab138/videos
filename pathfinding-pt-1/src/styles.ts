@@ -18,6 +18,7 @@ export class MainColors {
     wheels3D: new Color("#3d3d3e"),
   };
   static blue = new Color("#363ceb");
+  static green = new Color("#6ccf70");
 
   static codeBackground = new Color("#151515");
 }

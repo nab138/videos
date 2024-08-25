@@ -25,7 +25,7 @@ import {
 import Overview from "../../../resources/overview.png";
 import { Fonts, MainColors } from "../../styles";
 import { DefinitionFeature } from "../../components/DefinitionFeature";
-import { drawPoint, inflateShape } from "../../utils";
+import { drawPoint, inflateShape, Robot } from "../../utils";
 import { CodeBlock } from "../../components/CodeBlock";
 
 export default makeScene2D(function* (view) {
@@ -589,12 +589,12 @@ export default makeScene2D(function* (view) {
   view.add(
     <Txt
       ref={pVerticesLabel}
-      text={"Path Vertices"}
+      text={""}
       fontSize={50}
       fill={MainColors.text}
       fontFamily={Fonts.main}
       y={-270}
-      x={-1200}
+      x={-650}
     />
   );
   let pVerticesArrow = createRef<Line>();
@@ -617,19 +617,23 @@ export default makeScene2D(function* (view) {
   );
   yield* all(
     notice().y(650, 1),
-    sequence(0.4, pVerticesLabel().x(-650, 1), pVerticesArrow().end(1, 1))
+    sequence(
+      0.4,
+      pVerticesLabel().text("Path Vertices", 1),
+      pVerticesArrow().end(1, 1)
+    )
   );
 
   let oEdgesLabel = createRef<Txt>();
   view.add(
     <Txt
       ref={oEdgesLabel}
-      text={"Obstacle Edges"}
+      text={""}
       fontSize={50}
       fill={MainColors.text}
       fontFamily={Fonts.main}
       y={1.5 * fieldScale}
-      x={-1200}
+      x={-700}
     />
   );
   let oEdgesArrow = createRef<Line>();
@@ -655,12 +659,12 @@ export default makeScene2D(function* (view) {
   view.add(
     <Txt
       ref={oVerticesLabel}
-      text={"Obstacle Vertices"}
+      text={""}
       fontSize={50}
       fill={MainColors.text}
       fontFamily={Fonts.main}
       y={280}
-      x={1200}
+      x={250}
     />
   );
   let oVerticesArrow = createRef<Line>();
@@ -682,8 +686,244 @@ export default makeScene2D(function* (view) {
     />
   );
   yield* waitUntil("obstacleEdges");
-  yield* sequence(0.4, oEdgesLabel().x(-700, 1), oEdgesArrow().end(1, 1));
+  yield* sequence(
+    0.4,
+    oEdgesLabel().text("Obstacle Edges", 1),
+    oEdgesArrow().end(1, 1)
+  );
   yield* waitUntil("obstacleVertices");
-  yield* sequence(0.4, oVerticesLabel().x(250, 1), oVerticesArrow().end(1, 1));
+  yield* sequence(
+    0.4,
+    oVerticesLabel().text("Obstacle Vertices", 1),
+    oVerticesArrow().end(1, 1)
+  );
+  yield* waitUntil("anotherIssue");
+  yield* sequence(
+    0.1,
+    all(pVerticesArrow().end(0, 1), pVerticesLabel().text("", 1)),
+    all(oEdgesArrow().end(0, 1), oEdgesLabel().text("", 1)),
+    all(oVerticesArrow().end(0, 1), oVerticesLabel().text("", 1))
+  );
+  let definition = createRef<DefinitionFeature>();
+  view.add(
+    <DefinitionFeature
+      ref={definition}
+      word={"Pre-Processing"}
+      definition={
+        "Work that is done to the data beforehand to make it easier to use and require less work at runtime."
+      }
+      featureWidth={view.height() / 1.5}
+      width={view.width()}
+      height={view.height()}
+      featureY={1000}
+      pads={25}
+    />
+  );
+  yield* waitUntil("definition");
+  yield* definition().slideInVertical(1);
+  yield* waitUntil("definitionDismiss");
+  yield* definition().slideOutVertical(1000, 1);
+  yield* waitUntil("robot");
+  let robot = Robot.dozer(
+    field(),
+    new Vector2(-7 * fieldScale, fieldScale * 2),
+    fieldScale * 2
+  );
+  let robotCenter = createRef<Circle>();
+  field().add(
+    <Circle
+      ref={robotCenter}
+      size={0}
+      fill={MainColors.green}
+      x={-7 * fieldScale}
+      y={fieldScale * 2}
+      zIndex={1000}
+    />
+  );
+  yield* all(robot.animateIn(1), robotCenter().size(25, 1));
+  yield* waitUntil("target");
+  let target = createRef<Circle>();
+  field().add(
+    <Circle
+      ref={target}
+      size={0}
+      fill={MainColors.green}
+      x={6 * fieldScale}
+      y={-4 * fieldScale}
+      zIndex={1000}
+    />
+  );
+  yield* target().size(25, 1);
+  yield* waitUntil("wontKnow");
+  let qMarkOne = createRef<Circle>();
+  let qMarkTwo = createRef<Txt>();
+  view.add(
+    <Circle
+      ref={qMarkOne}
+      fill={"#333a"}
+      opacity={0}
+      size={300}
+      x={-7 * fieldScale}
+      y={fieldScale * 2}
+    >
+      <Txt
+        text={"?"}
+        fontSize={300}
+        fill={MainColors.text}
+        fontFamily={Fonts.main}
+      />
+    </Circle>
+  );
+
+  view.add(
+    <Circle
+      ref={qMarkTwo}
+      fill={"#333a"}
+      opacity={0}
+      size={200}
+      x={6 * fieldScale}
+      y={fieldScale * -4}
+    >
+      <Txt
+        text={"?"}
+        fontSize={200}
+        fill={MainColors.text}
+        fontFamily={Fonts.main}
+      />
+    </Circle>
+  );
+  yield* all(qMarkOne().opacity(1, 1), qMarkTwo().opacity(1, 1));
+  yield* waitUntil("stranded");
+  let inflatedVerts = [...inflatedObs1Points2, ...inflatedObs2Points2];
+  let pathVisLines = [...fieldVisEdges, ...fieldEdges].map(([a, b]) => {
+    let line = createRef<Line>();
+    field().add(
+      <Line
+        ref={line}
+        points={[inflatedVerts[a]().position(), inflatedVerts[b]().position()]}
+        stroke={MainColors.blue.desaturate(1)}
+        lineWidth={10}
+        endOffset={0}
+        end={0}
+      />
+    );
+    return line;
+  });
+  let robotConnections = [0, 3];
+  let robotLines = robotConnections.map((i) => {
+    let line = createRef<Line>();
+    field().add(
+      <Line
+        ref={line}
+        points={[robot.body().position(), inflatedVerts[i]().position()]}
+        stroke={MainColors.green}
+        lineWidth={10}
+        zIndex={9999}
+        endOffset={0}
+        opacity={0.75}
+        lineDash={[20, 10]}
+        end={0}
+      />
+    );
+    return line;
+  });
+  let xPositions = robotLines.map(
+    (l, i) => l().getPointAtPercentage(i == 1 ? 0.7 : 0.5).position
+  );
+  // Exes are two lines that intersect at the xPosition, [line, line]
+  let Exes = xPositions.map((p) => {
+    let line1 = createRef<Line>();
+    let line2 = createRef<Line>();
+    field().add(
+      <Line
+        ref={line1}
+        points={[
+          p.add(new Vector2(-fieldScale / 3, fieldScale / 3)),
+          p.add(new Vector2(fieldScale / 3, -fieldScale / 3)),
+        ]}
+        stroke={MainColors.path}
+        lineWidth={10}
+        zIndex={9999}
+        endOffset={0}
+        end={0}
+      />
+    );
+    field().add(
+      <Line
+        ref={line2}
+        points={[
+          p.add(new Vector2(-fieldScale / 3, -fieldScale / 3)),
+          p.add(new Vector2(fieldScale / 3, fieldScale / 3)),
+        ]}
+        stroke={MainColors.path}
+        lineWidth={10}
+        zIndex={9999}
+        endOffset={0}
+        end={0}
+      />
+    );
+    return [line1, line2];
+  });
+  let test = Exes.map(([l1, l2]) => [l1().end(1, 1), l2().end(1, 1)]);
+  let xTotals = [];
+  for (let i = 0; i < test.length; i++) {
+    xTotals.push(...test[i]);
+  }
+
+  let textBox = createRef<Rect>();
+  let text = createRef<Txt>();
+  field().add(
+    <Rect
+      ref={textBox}
+      width={() => 350}
+      height={() => text().height() + 50}
+      fill={MainColors.backgroundDark.brighten(0.5)}
+      radius={15}
+      stroke={MainColors.border}
+      lineWidth={2}
+      x={-8 * fieldScale}
+      y={-fieldScale * 2}
+      opacity={0}
+    >
+      <Txt
+        ref={text}
+        width={300}
+        textWrap={true}
+        text={
+          "These don't exist beause the robot's position wasn't known when we made the visibility graph"
+        }
+        fontSize={24}
+        fill={MainColors.text}
+        fontFamily={Fonts.main}
+      />
+    </Rect>
+  );
+
+  let arrow = createRef<Line>();
+  field().add(
+    <Line
+      ref={arrow}
+      points={[
+        new Vector2(-8 * fieldScale, -fieldScale * 1),
+        new Vector2(-8 * fieldScale, -fieldScale * 0.3),
+        new Vector2(-6.5 * fieldScale, -fieldScale * 0.3),
+      ]}
+      stroke={MainColors.text}
+      lineWidth={15}
+      endArrow={true}
+      radius={10}
+      end={0}
+    />
+  );
+
+  yield* chain(
+    all(
+      qMarkOne().opacity(0, 1),
+      qMarkTwo().opacity(0, 1),
+      sequence(0.025, ...pathVisLines.map((l) => l().end(1, 0.75)))
+    ),
+    all(...robotLines.map((l) => l().end(1, 1))),
+    all(...xTotals, textBox().opacity(1, 1), arrow().end(1, 1))
+  );
   yield* waitFor(10);
 });

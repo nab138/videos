@@ -100,6 +100,34 @@
     {
       "name": "obstacleVertices",
       "targetTime": 78.64410748729937
+    },
+    {
+      "name": "anotherIssue",
+      "targetTime": 81.92002757711168
+    },
+    {
+      "name": "definition",
+      "targetTime": 84.52629568675448
+    },
+    {
+      "name": "definitionDismiss",
+      "targetTime": 89.1604127633468
+    },
+    {
+      "name": "robot",
+      "targetTime": 92.0369963227669
+    },
+    {
+      "name": "target",
+      "targetTime": 93.2811963855543
+    },
+    {
+      "name": "wontKnow",
+      "targetTime": 94.92926578295163
+    },
+    {
+      "name": "stranded",
+      "targetTime": 98.81420587902828
     }
   ],
   "seed": 1333645112
