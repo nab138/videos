@@ -934,6 +934,16 @@ export default makeScene2D(function* (view) {
       lineWidth={2}
     />
   );
+
+  yield* chain(
+    all(
+      qMarkOne().opacity(0, 1),
+      qMarkTwo().opacity(0, 1),
+      sequence(0.025, ...pathVisLines.map((l) => l().end(1, 0.75)))
+    ),
+    all(...robotLines.map((l) => l().end(1, 1))),
+    all(...xTotals, textBox().opacity(1, 1), arrow().end(1, 1))
+  );
   let pathVisLinesCopy = pathVisLines.map((l) => {
     let line = createRef<Line>();
     lineParents().add(
@@ -948,16 +958,6 @@ export default makeScene2D(function* (view) {
     );
     return line;
   });
-
-  yield* chain(
-    all(
-      qMarkOne().opacity(0, 1),
-      qMarkTwo().opacity(0, 1),
-      sequence(0.025, ...pathVisLines.map((l) => l().end(1, 0.75)))
-    ),
-    all(...robotLines.map((l) => l().end(1, 1))),
-    all(...xTotals, textBox().opacity(1, 1), arrow().end(1, 1))
-  );
   yield* waitUntil("store");
   pathVisLines.forEach((l) => l().opacity(0));
   yield* chain(
