@@ -122,7 +122,7 @@ async function holdUnitlFolderStopsBeingChanged(folderPath, timeout) {
         watcher.close();
         resolve(false);
       }
-      if (Date.now() - lastChange > 45000) {
+      if (Date.now() - lastChange > 120000) {
         clearInterval(interval);
         watcher.close();
         resolve(true);
