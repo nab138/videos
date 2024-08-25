@@ -390,7 +390,7 @@ export default makeScene2D(function* (view) {
     <Rect
       ref={occludeBlock}
       width={0}
-      height={view.height()}
+      height={view.height() + 50}
       x={-view.width() / 2}
       offset={[-1, 0]}
       fill={"#0d0d0d"}

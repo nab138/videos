@@ -335,7 +335,8 @@ export default makeScene2D(function* (view) {
         triangleInflated().radius(125, 1),
         squareInflated().radius(125, 1),
         triangle().x(view.width() / 4 + 2 * fieldScale, 1),
-        text.noWorksFor().text("Good enough", 1)
+        text.noWorksFor().text("Good", 1),
+        text.worksFor().text("Good", 1)
       )
     )
   );
