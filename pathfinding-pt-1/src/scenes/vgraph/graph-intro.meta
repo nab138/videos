@@ -128,6 +128,22 @@
     {
       "name": "stranded",
       "targetTime": 98.81420587902828
+    },
+    {
+      "name": "store",
+      "targetTime": 103.46346194610307
+    },
+    {
+      "name": "justRobot",
+      "targetTime": 109.32516566055958
+    },
+    {
+      "name": "targetLines",
+      "targetTime": 110.32516566055958
+    },
+    {
+      "name": "add",
+      "targetTime": 112.50932596553345
     }
   ],
   "seed": 1333645112

@@ -4,6 +4,7 @@ import {
   CODE,
   Grid,
   Img,
+  Layout,
   Line,
   makeScene2D,
   Rect,
@@ -356,7 +357,7 @@ export default makeScene2D(function* (view) {
 
   let inflatedObs1Points = inflatedObs1Coords.map((v) => {
     let p = drawPoint(field(), v, 0, MainColors.path);
-    p().zIndex(9);
+    p().zIndex(9999999);
     return p;
   });
 
@@ -818,7 +819,7 @@ export default makeScene2D(function* (view) {
         points={[robot.body().position(), inflatedVerts[i]().position()]}
         stroke={MainColors.green}
         lineWidth={10}
-        zIndex={9999}
+        zIndex={999}
         endOffset={0}
         opacity={0.75}
         lineDash={[20, 10]}
@@ -865,9 +866,14 @@ export default makeScene2D(function* (view) {
     return [line1, line2];
   });
   let test = Exes.map(([l1, l2]) => [l1().end(1, 1), l2().end(1, 1)]);
+  let testRev = Exes.map(([l1, l2]) => [l1().end(0, 1), l2().end(0, 1)]);
   let xTotals = [];
   for (let i = 0; i < test.length; i++) {
     xTotals.push(...test[i]);
+  }
+  let xTotalsReverse = [];
+  for (let i = 0; i < test.length; i++) {
+    xTotalsReverse.push(...testRev[i]);
   }
 
   let textBox = createRef<Rect>();
@@ -877,7 +883,7 @@ export default makeScene2D(function* (view) {
       ref={textBox}
       width={() => 350}
       height={() => text().height() + 50}
-      fill={MainColors.backgroundDark.brighten(0.5)}
+      fill={MainColors.backgroundDarkSecondary}
       radius={15}
       stroke={MainColors.border}
       lineWidth={2}
@@ -916,6 +922,33 @@ export default makeScene2D(function* (view) {
     />
   );
 
+  let lineParents = createRef<Rect>();
+  field().add(
+    <Rect
+      ref={lineParents}
+      width={(6 * fieldScale) / 0.4 - 20}
+      height={(4 * fieldScale) / 0.4 - 20}
+      fill={MainColors.backgroundDarkTertiary.alpha(0)}
+      radius={50}
+      stroke={MainColors.border.alpha(0)}
+      lineWidth={2}
+    />
+  );
+  let pathVisLinesCopy = pathVisLines.map((l) => {
+    let line = createRef<Line>();
+    lineParents().add(
+      <Line
+        ref={line}
+        points={l().points}
+        stroke={l().stroke}
+        lineWidth={l().lineWidth}
+        endOffset={l().endOffset}
+        zIndex={l().zIndex}
+      />
+    );
+    return line;
+  });
+
   yield* chain(
     all(
       qMarkOne().opacity(0, 1),
@@ -924,6 +957,53 @@ export default makeScene2D(function* (view) {
     ),
     all(...robotLines.map((l) => l().end(1, 1))),
     all(...xTotals, textBox().opacity(1, 1), arrow().end(1, 1))
+  );
+  yield* waitUntil("store");
+  pathVisLines.forEach((l) => l().opacity(0));
+  yield* chain(
+    all(
+      arrow().end(0, 1),
+      textBox().opacity(0, 1),
+      ...robotLines.map((l) => l().end(0, 1)),
+      ...xTotalsReverse,
+      lineParents().scale(0.4, 1),
+      ...pathVisLinesCopy.map((l) => l().y(30, 1)),
+      lineParents().position([7 * fieldScale, 3 * fieldScale], 1)
+    ),
+    all(
+      lineParents().fill(MainColors.backgroundDarkTertiary, 1),
+      lineParents().stroke(MainColors.border, 1)
+    )
+  );
+  yield* waitUntil("justRobot");
+  inflatedObs1Points2.forEach((p) => p().zIndex(99999));
+  robotLines.forEach((l) => l().opacity(1).lineDash([20, 0]));
+  let targetConnections = [5, 6];
+  let targetLines = targetConnections.map((i) => {
+    let line = createRef<Line>();
+    field().add(
+      <Line
+        ref={line}
+        points={[target().position(), inflatedVerts[i]().position()]}
+        stroke={MainColors.green}
+        lineWidth={10}
+        zIndex={0}
+        endOffset={0}
+        end={0}
+      />
+    );
+    return line;
+  });
+  yield* all(...robotLines.map((l) => l().end(1, 1)));
+  yield* waitUntil("targetLines");
+  yield* all(...targetLines.map((l) => l().end(1, 1)));
+  yield* waitUntil("add");
+  yield* all(
+    lineParents().fill(MainColors.backgroundDarkTertiary.alpha(0), 1),
+    lineParents().stroke(MainColors.border.alpha(0), 1),
+    lineParents().scale(1, 1),
+    ...pathVisLinesCopy.map((l) => l().y(0, 1)),
+    lineParents().position([0, 0], 1)
   );
   yield* waitFor(10);
 });
