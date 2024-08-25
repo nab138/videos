@@ -13,6 +13,7 @@ import {
   all,
   chain,
   createRef,
+  createSignal,
   Direction,
   sequence,
   slideTransition,
@@ -353,9 +354,11 @@ export default makeScene2D(function* (view) {
     90
   );
 
-  let inflatedObs1Points = inflatedObs1Coords.map((v) =>
-    drawPoint(field(), v, 0, MainColors.path)
-  );
+  let inflatedObs1Points = inflatedObs1Coords.map((v) => {
+    let p = drawPoint(field(), v, 0, MainColors.path);
+    p().zIndex(9);
+    return p;
+  });
 
   let inflatedObs2Coords = inflateShape(
     [
@@ -375,9 +378,11 @@ export default makeScene2D(function* (view) {
     90
   );
 
-  let inflatedObs2Points = inflatedObs2Coords.map((v) =>
-    drawPoint(field(), v, 0, MainColors.path)
-  );
+  let inflatedObs2Points = inflatedObs2Coords.map((v) => {
+    let p = drawPoint(field(), v, 0, MainColors.path);
+    p().zIndex(9);
+    return p;
+  });
 
   let occludeBlock = createRef<Rect>();
   view.add(
@@ -471,5 +476,214 @@ export default makeScene2D(function* (view) {
     edgeTable().x(-1600, 1)
   );
   yield* waitUntil("visgraph");
+  let allFieldVs = inflatedObs1Points.concat(inflatedObs2Points);
+  let fieldEdges = [
+    [0, 1],
+    [1, 2],
+    [2, 3],
+    [3, 0],
+    [4, 5],
+    [5, 6],
+    [6, 7],
+    [7, 4],
+  ];
+  let fieldLines = fieldEdges.map(([a, b]) => {
+    let line = createRef<Line>();
+    field().add(
+      <Line
+        ref={line}
+        points={[allFieldVs[a]().position(), allFieldVs[b]().position()]}
+        stroke={MainColors.obstacles}
+        lineWidth={15}
+        endOffset={0}
+        end={0}
+      />
+    );
+    return line;
+  });
+  let fieldVisEdges = [
+    [0, 4],
+    [0, 5],
+    [1, 4],
+    [1, 5],
+    [1, 7],
+    [2, 4],
+    [2, 6],
+    [2, 7],
+  ];
+  let fieldVisLines = fieldVisEdges.map(([a, b]) => {
+    let line = createRef<Line>();
+    field().add(
+      <Line
+        ref={line}
+        points={[allFieldVs[a]().position(), allFieldVs[b]().position()]}
+        stroke={MainColors.blue.desaturate(1)}
+        lineWidth={10}
+        endOffset={0}
+        end={0}
+      />
+    );
+    return line;
+  });
+  let adjacentFieldVisLines = fieldEdges.map(([a, b]) => {
+    let line = createRef<Line>();
+    field().add(
+      <Line
+        ref={line}
+        points={[allFieldVs[a]().position(), allFieldVs[b]().position()]}
+        stroke={MainColors.blue.desaturate(1)}
+        lineWidth={10}
+        endOffset={0}
+        end={0}
+      />
+    );
+    return line;
+  });
+
+  yield* sequence(
+    0.1,
+    ...[...adjacentFieldVisLines, ...fieldVisLines].map((l) => l().end(1, 1))
+  );
+  yield* waitUntil("adjacent");
+  yield* sequence(0.05, ...adjacentFieldVisLines.map((l) => l().end(0, 0.75)));
+  yield* waitUntil("intersect");
+  yield* sequence(0.05, ...fieldLines.map((l) => l().end(1, 0.75)));
+  yield* waitUntil("solve");
+  yield* sequence(0.05, ...fieldVisLines.map((l) => l().end(0, 0.75)));
+  yield* waitUntil("inflateAgain");
+  let extraInflateAmount = createSignal(0);
+  let inflatedObs1Points2 = inflatedObs1Coords.map((v, i) => {
+    let p = drawPoint(field(), v, 15, MainColors.path.brighten(0.5));
+    p().zIndex(8);
+    p().position(
+      () => inflateShape(inflatedObs1Coords, extraInflateAmount())[i]
+    );
+    return p;
+  });
+  let inflatedObs2Points2 = inflatedObs2Coords.map((v, i) => {
+    let p = drawPoint(field(), v, 15, MainColors.path.brighten(0.5));
+    p().zIndex(8);
+    p().position(
+      () => inflateShape(inflatedObs2Coords, extraInflateAmount())[i]
+    );
+    return p;
+  });
+  yield* extraInflateAmount(20, 1);
+  yield* waitUntil("slightlyMore");
+  let notice = createRef<Txt>();
+  view.add(
+    <Txt
+      ref={notice}
+      text={
+        "Again, the distance is actually something like 0.0000001m, but it's shown larger here for clarity."
+      }
+      fontSize={36}
+      fill={MainColors.text}
+      fontFamily={Fonts.main}
+      y={650}
+    />
+  );
+  yield* notice().y(460, 1);
+  yield* waitUntil("pathVertices");
+  let pVerticesLabel = createRef<Txt>();
+  view.add(
+    <Txt
+      ref={pVerticesLabel}
+      text={"Path Vertices"}
+      fontSize={50}
+      fill={MainColors.text}
+      fontFamily={Fonts.main}
+      y={-270}
+      x={-1200}
+    />
+  );
+  let pVerticesArrow = createRef<Line>();
+  view.add(
+    <Line
+      ref={pVerticesArrow}
+      points={[
+        new Vector2(-650, -230),
+        new Vector2(-650, -202),
+        new Vector2(-500, -202),
+      ]}
+      stroke={MainColors.text}
+      lineWidth={15}
+      radius={10}
+      endOffset={0}
+      endArrow={true}
+      zIndex={1}
+      end={0}
+    />
+  );
+  yield* all(
+    notice().y(650, 1),
+    sequence(0.4, pVerticesLabel().x(-650, 1), pVerticesArrow().end(1, 1))
+  );
+
+  let oEdgesLabel = createRef<Txt>();
+  view.add(
+    <Txt
+      ref={oEdgesLabel}
+      text={"Obstacle Edges"}
+      fontSize={50}
+      fill={MainColors.text}
+      fontFamily={Fonts.main}
+      y={1.5 * fieldScale}
+      x={-1200}
+    />
+  );
+  let oEdgesArrow = createRef<Line>();
+  view.add(
+    <Line
+      ref={oEdgesArrow}
+      points={[
+        new Vector2(-700, 170),
+        new Vector2(-700, 210),
+        new Vector2(-480, 210),
+      ]}
+      stroke={MainColors.text}
+      lineWidth={15}
+      radius={10}
+      endOffset={0}
+      endArrow={true}
+      zIndex={1}
+      end={0}
+    />
+  );
+
+  let oVerticesLabel = createRef<Txt>();
+  view.add(
+    <Txt
+      ref={oVerticesLabel}
+      text={"Obstacle Vertices"}
+      fontSize={50}
+      fill={MainColors.text}
+      fontFamily={Fonts.main}
+      y={280}
+      x={1200}
+    />
+  );
+  let oVerticesArrow = createRef<Line>();
+  view.add(
+    <Line
+      ref={oVerticesArrow}
+      points={[
+        new Vector2(250, 310),
+        new Vector2(250, 358),
+        new Vector2(-50, 358),
+      ]}
+      stroke={MainColors.text}
+      lineWidth={15}
+      radius={10}
+      endOffset={0}
+      endArrow={true}
+      zIndex={1}
+      end={0}
+    />
+  );
+  yield* waitUntil("obstacleEdges");
+  yield* sequence(0.4, oEdgesLabel().x(-700, 1), oEdgesArrow().end(1, 1));
+  yield* waitUntil("obstacleVertices");
+  yield* sequence(0.4, oVerticesLabel().x(250, 1), oVerticesArrow().end(1, 1));
   yield* waitFor(10);
 });

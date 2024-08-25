@@ -67,7 +67,39 @@
     },
     {
       "name": "visgraph",
-      "targetTime": 48.249832598946945
+      "targetTime": 49.24901393497818
+    },
+    {
+      "name": "adjacent",
+      "targetTime": 56.17026252397386
+    },
+    {
+      "name": "intersect",
+      "targetTime": 58.497304977638265
+    },
+    {
+      "name": "solve",
+      "targetTime": 61.09265140736803
+    },
+    {
+      "name": "inflateAgain",
+      "targetTime": 63.008277940787586
+    },
+    {
+      "name": "slightlyMore",
+      "targetTime": 64.55962051642082
+    },
+    {
+      "name": "pathVertices",
+      "targetTime": 69.8728759274131
+    },
+    {
+      "name": "obstacleEdges",
+      "targetTime": 77.24410748729936
+    },
+    {
+      "name": "obstacleVertices",
+      "targetTime": 78.64410748729937
     }
   ],
   "seed": 1333645112
