@@ -126,7 +126,7 @@ async function holdUnitlFolderStopsBeingChanged(folderPath, timeout) {
       if (Date.now() - lastChange > 240000) {
         console.log(`[${((Date.now() - startTime) / 1000).toFixed(
           1
-        )}s] No Changes detected for 4 minutes.`
+        )}s] No Changes detected for 4 minutes.`);
         clearInterval(interval);
         watcher.close();
         resolve(true);
