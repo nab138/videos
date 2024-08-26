@@ -118,11 +118,15 @@ async function holdUnitlFolderStopsBeingChanged(folderPath, timeout) {
     const interval = setInterval(() => {
       time += fileInterval;
       if (time >= timeout) {
+        console.log("Exceeded Timeout.");
         clearInterval(interval);
         watcher.close();
         resolve(false);
       }
-      if (Date.now() - lastChange > 120000) {
+      if (Date.now() - lastChange > 10 * 60 * 1000) {
+        console.log(`[${((Date.now() - startTime) / 1000).toFixed(
+          1
+        )}s] No Changes detected for 10 minutes.`);
         clearInterval(interval);
         watcher.close();
         resolve(true);
