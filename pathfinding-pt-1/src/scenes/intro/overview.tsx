@@ -38,7 +38,7 @@ export default makeScene2D(function* (view) {
       fill={MainColors.text}
       fontFamily={Fonts.main}
       fontSize={100}
-      position={new Vector2(0, -600)}
+      position={new Vector2(0, -650)}
       ref={text}
       text="Pathing Steps"
       zIndex={99999999}
