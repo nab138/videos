@@ -960,6 +960,19 @@ export default makeScene2D(function* (view) {
   });
   yield* waitUntil("store");
   pathVisLines.forEach((l) => l().opacity(0));
+  let storedText = createRef<Txt>();
+  view.add(
+    <Txt
+      ref={storedText}
+      text={"Stored (Precomputed)"}
+      fontSize={45}
+      fill={MainColors.text}
+      fontFamily={Fonts.main}
+      y={495}
+      x={7 * fieldScale}
+      opacity={0}
+    />
+  );
   yield* chain(
     all(
       arrow().end(0, 1),
@@ -972,7 +985,8 @@ export default makeScene2D(function* (view) {
     ),
     all(
       lineParents().fill(MainColors.backgroundDarkTertiary, 1),
-      lineParents().stroke(MainColors.border, 1)
+      lineParents().stroke(MainColors.border, 1),
+      storedText().opacity(1, 1)
     )
   );
   yield* waitUntil("justRobot");
@@ -1003,7 +1017,45 @@ export default makeScene2D(function* (view) {
     lineParents().stroke(MainColors.border.alpha(0), 1),
     lineParents().scale(1, 1),
     ...pathVisLinesCopy.map((l) => l().y(0, 1)),
-    lineParents().position([0, 0], 1)
+    lineParents().position([0, 0], 1),
+    storedText().opacity(0, 1)
   );
-  yield* waitFor(10);
+  yield* waitUntil("calculating");
+  yield* all(
+    ...targetLines.map((l) => l().end(0, 1)),
+    ...robotLines.map((l) => l().end(0, 1)),
+    ...pathVisLinesCopy.map((l) => l().end(0, 1))
+  );
+
+  yield* waitUntil("moreEfficient");
+  yield sequence(0.5, ...pathVisLinesCopy.map((l) => l().end(1, 1)));
+  yield* waitUntil("preProcessing");
+  yield* chain(
+    all(
+      ...robotLines.map((l) => l().end(0, 1)),
+      ...xTotalsReverse,
+      lineParents().scale(0.4, 1),
+      ...pathVisLinesCopy.map((l) => l().y(30, 1)),
+      lineParents().position([7 * fieldScale, 3 * fieldScale], 1)
+    ),
+    all(
+      lineParents().fill(MainColors.backgroundDarkTertiary, 1),
+      lineParents().stroke(MainColors.border, 1),
+      storedText().opacity(1, 1)
+    )
+  );
+  yield* waitUntil("addTo");
+  yield* all(
+    lineParents().fill(MainColors.backgroundDarkTertiary.alpha(0), 1),
+    lineParents().stroke(MainColors.border.alpha(0), 1),
+    lineParents().scale(1, 1),
+    ...pathVisLinesCopy.map((l) => l().y(0, 1)),
+    lineParents().position([0, 0], 1),
+    storedText().opacity(0, 1)
+  );
+  yield* waitUntil("start2");
+  yield all(...robotLines.map((l) => l().end(1, 1)));
+  yield* waitUntil("target2");
+  yield* all(...targetLines.map((l) => l().end(1, 1)));
+  yield* waitFor(30);
 });
