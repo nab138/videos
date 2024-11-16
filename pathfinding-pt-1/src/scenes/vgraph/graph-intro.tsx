@@ -1033,7 +1033,6 @@ export default makeScene2D(function* (view) {
   yield* chain(
     all(
       ...robotLines.map((l) => l().end(0, 1)),
-      ...xTotalsReverse,
       lineParents().scale(0.4, 1),
       ...pathVisLinesCopy.map((l) => l().y(30, 1)),
       lineParents().position([7 * fieldScale, 3 * fieldScale], 1)
